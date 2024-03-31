@@ -10,4 +10,8 @@
     <PackageReference Include="MongoDB.Driver" Version="2.24.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ServicesHealthCheck.Shared\ServicesHealthCheck.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

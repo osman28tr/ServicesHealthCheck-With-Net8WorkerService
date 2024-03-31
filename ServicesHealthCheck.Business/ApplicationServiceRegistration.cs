@@ -16,8 +16,10 @@ namespace ServicesHealthCheck.Business
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
-            services.AddTransient<IHealthCheck,HealthCheck>();
-            services.AddTransient<IMailService, MailService>();
+            services.AddSingleton<IHealthCheck,HealthCheck>();
+            services.AddSingleton<IMailService, MailService>();
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
             return services;
         }
     }

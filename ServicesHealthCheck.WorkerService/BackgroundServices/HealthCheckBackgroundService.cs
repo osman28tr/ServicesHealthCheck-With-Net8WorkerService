@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.SignalR;
+using ServicesHealthCheck.Business.CQRS.Features.Commands.ServiceHealthCheckCommands;
 using ServicesHealthCheck.Business.HealthChecks.Abstract;
 using ServicesHealthCheck.Business.RealTimes.SignalR;
 
@@ -11,11 +13,13 @@ namespace ServicesHealthCheck.WorkerService.BackgroundServices
 {
     public class HealthCheckBackgroundService : BackgroundService
     {
+        private readonly IMediator _mediator;
         private readonly IHealthCheck _healthCheck;
         private readonly IHubContext<HealthCheckHub> _healthCheckHub;
-        public HealthCheckBackgroundService(IHealthCheck healthCheck)
+        public HealthCheckBackgroundService(IHealthCheck healthCheck, IMediator mediator)
         {
             _healthCheck = healthCheck;
+            _mediator = mediator;
         }
         public override Task StartAsync(CancellationToken cancellationToken)
         {
@@ -33,15 +37,9 @@ namespace ServicesHealthCheck.WorkerService.BackgroundServices
                 var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
                 var services = configuration.GetSection("Services").Get<List<string>>();
 
-                var states = await _healthCheck.CheckServicesHealth(services);
-                foreach (var state in states)
-                {
-                    foreach (var item in state)
-                    {
-                        await _healthCheckHub.Clients.All.SendAsync("ReceiveMessage", item.Key, item.Value);
-                    }
-                }
-                return states;
+                //await _healthCheck.CheckServicesHealth(services);
+                await _mediator.Send(new CreatedServiceHealthCheckCommand() { Services = services });
+                System.Threading.Thread.Sleep(1000);
             }
             Console.ReadLine();
             return null;

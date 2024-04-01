@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.SignalR;
 using ServicesHealthCheck.Business.CQRS.Features.Commands.ServiceHealthCheckCommands;
-using ServicesHealthCheck.Business.HealthChecks.Abstract;
 using ServicesHealthCheck.Business.RealTimes.SignalR;
 
 namespace ServicesHealthCheck.WorkerService.BackgroundServices
@@ -14,11 +13,9 @@ namespace ServicesHealthCheck.WorkerService.BackgroundServices
     public class HealthCheckBackgroundService : BackgroundService
     {
         private readonly IMediator _mediator;
-        private readonly IHealthCheck _healthCheck;
         private readonly IHubContext<HealthCheckHub> _healthCheckHub;
-        public HealthCheckBackgroundService(IHealthCheck healthCheck, IMediator mediator)
+        public HealthCheckBackgroundService(IMediator mediator)
         {
-            _healthCheck = healthCheck;
             _mediator = mediator;
         }
         public override Task StartAsync(CancellationToken cancellationToken)

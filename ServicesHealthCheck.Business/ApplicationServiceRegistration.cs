@@ -5,8 +5,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using ServicesHealthCheck.Business.HealthChecks.Abstract;
-using ServicesHealthCheck.Business.HealthChecks;
 using ServicesHealthCheck.Business.Notifications.EMailService;
 using ServicesHealthCheck.Business.Notifications.EMailService.Abstract;
 
@@ -16,7 +14,6 @@ namespace ServicesHealthCheck.Business
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
-            services.AddSingleton<IHealthCheck,HealthCheck>();
             services.AddSingleton<IMailService, MailService>();
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
             services.AddAutoMapper(Assembly.GetExecutingAssembly());

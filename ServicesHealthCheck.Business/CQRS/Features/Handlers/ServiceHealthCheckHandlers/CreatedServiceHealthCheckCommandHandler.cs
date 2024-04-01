@@ -38,20 +38,31 @@ namespace ServicesHealthCheck.Business.CQRS.Features.Handlers.ServiceHealthCheck
             List<ServiceHealthCheckDto> serviceHealthCheckDtos = new List<ServiceHealthCheckDto>();
             foreach (var serviceName in request.Services)
             {
+                bool isHealthy = true;
                 ServiceController service = new ServiceController(serviceName);
                 Console.WriteLine("Servis durumu: " + service.Status);
-                if (service.Status != ServiceControllerStatus.Running)
-                {
-                    await _mailService.SendEmailAsync(new MailDto
-                    {
-                        FromMail = _mailSetting.FromMail,
-                        ToEmail = _mailSetting.ToMail,
-                        Subject = "Servis Durumu",
-                        Body = $"{serviceName} servisi çalışmıyor."
-                    }, CancellationToken.None);
-                }
+
                 var IsExistServiceHealthCheck =
                     await _serviceHealthCheckRepository.GetByServiceNameAsync(serviceName);
+
+                if (service.Status != ServiceControllerStatus.Running)
+                {
+                    if (IsExistServiceHealthCheck != null && IsExistServiceHealthCheck.IsHealthy == true)
+                    {
+                        await _mailService.SendEmailAsync(new MailDto
+                        {
+                            FromMail = _mailSetting.FromMail,
+                            ToEmail = _mailSetting.ToMail,
+                            Subject = "Servis Durumu",
+                            Body = $"{serviceName} servisi çalışmıyor."
+                        }, CancellationToken.None);
+                        isHealthy = false;
+                    }
+                    else if (IsExistServiceHealthCheck.IsHealthy == false)
+                    {
+                        isHealthy = false;
+                    }
+                }
                 if (IsExistServiceHealthCheck != null)
                 {
                     var resourceModel = CheckResourceUsage(serviceName);
@@ -59,6 +70,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.Handlers.ServiceHealthCheck
                     {
                         ServiceName = serviceName,
                         Status = service.Status.ToString(),
+                        IsHealthy = isHealthy,
                         CpuUsage = resourceModel.CpuUsage,
                         PhysicalMemoryUsage = resourceModel.PhysicalMemoryUsage,
                         PrivateMemoryUsage = resourceModel.PrivateMemoryUsage,
@@ -72,6 +84,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.Handlers.ServiceHealthCheck
                     {
                         ServiceName = serviceName,
                         Status = service.Status.ToString(),
+                        IsHealthy = isHealthy,
                         CpuUsage = resourceModel.CpuUsage,
                         PhysicalMemoryUsage = resourceModel.PhysicalMemoryUsage,
                         PrivateMemoryUsage = resourceModel.PrivateMemoryUsage,
@@ -107,7 +120,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.Handlers.ServiceHealthCheck
             float cpuUsage = cpuCounter.NextValue(); // CPU kullanımını al
                                                      // Sanal bellek boyutunu al
             float virtualMemorySize = virtualMemoryCounter.NextValue() / (1024 * 1024); // Byte cinsinden alınan değeri MB'ye çevir
-            Console.WriteLine(workingSet);
+
             ResourceUsageModel resourceUsageModel = new ResourceUsageModel()
             {
                 CpuUsage = cpuUsage + "%",

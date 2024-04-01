@@ -12,5 +12,6 @@ namespace ServicesHealthCheck.Business.CQRS.Features.Models.ServiceHealthCheckMo
         public string PhysicalMemoryUsage { get; set; }
         public string VirtualMemoryUsage { get; set; }
         public string PrivateMemoryUsage { get; set; }
+        public bool IsHealthy { get; set; }
     }
 }

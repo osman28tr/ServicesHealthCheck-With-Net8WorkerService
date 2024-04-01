@@ -4,12 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ServicesHealthCheck.Dtos.ServiceHealthCheckDtos
+namespace ServicesHealthCheck.Business.CQRS.Features.Models.ServiceHealthCheckModels
 {
-    public class ServiceHealthCheckDto
+    public class ResourceUsageModel
     {
-        public string ServiceName { get; set; }
-        public string Status { get; set; }
         public string CpuUsage { get; set; }
         public string PhysicalMemoryUsage { get; set; }
         public string VirtualMemoryUsage { get; set; }

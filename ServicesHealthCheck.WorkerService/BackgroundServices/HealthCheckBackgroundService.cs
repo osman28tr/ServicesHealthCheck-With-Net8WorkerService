@@ -31,7 +31,6 @@ namespace ServicesHealthCheck.WorkerService.BackgroundServices
         protected override async Task<List<Dictionary<string, string>>> ExecuteAsync(CancellationToken stoppingToken)
         {
             Console.WriteLine("HealthCheck Service executing...");
-
             while (!stoppingToken.IsCancellationRequested)
             {
                 var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();

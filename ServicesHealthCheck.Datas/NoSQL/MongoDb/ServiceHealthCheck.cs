@@ -17,5 +17,13 @@ namespace ServicesHealthCheck.Datas.NoSQL.MongoDb
         public string ServiceName { get; set; }
         [BsonRepresentation(MongoDB.Bson.BsonType.String)]
         public string Status { get; set; }
+        [BsonRepresentation(MongoDB.Bson.BsonType.String)]
+        public string CpuUsage { get; set; }
+        [BsonRepresentation(MongoDB.Bson.BsonType.String)]
+        public string PhysicalMemoryUsage { get; set; }
+        [BsonRepresentation(MongoDB.Bson.BsonType.String)]
+        public string VirtualMemoryUsage { get; set; }
+        [BsonRepresentation(MongoDB.Bson.BsonType.String)]
+        public string PrivateMemoryUsage { get; set; }
     }
 }

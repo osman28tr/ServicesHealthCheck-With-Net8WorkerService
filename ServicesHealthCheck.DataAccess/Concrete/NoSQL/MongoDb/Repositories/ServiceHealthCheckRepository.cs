@@ -33,6 +33,13 @@ namespace ServicesHealthCheck.DataAccess.Concrete.NoSQL.MongoDb.Repositories
             return await response.Result.FirstOrDefaultAsync();
         }
 
+        public async Task<ServiceHealthCheck> GetByServiceNameAsync(string serviceName)
+        {
+            var filter = Builders<ServiceHealthCheck>.Filter.Eq(x => x.ServiceName, serviceName);
+            var response = await _context.ServiceHealthCheck.FindAsync(filter);
+            return await response.FirstOrDefaultAsync();
+        }
+
         public async Task<IEnumerable<ServiceHealthCheck>> FindAsync(Expression<Func<ServiceHealthCheck,bool>> filterExpression)
         {
             var result = await _context.ServiceHealthCheck.FindAsync(filterExpression);

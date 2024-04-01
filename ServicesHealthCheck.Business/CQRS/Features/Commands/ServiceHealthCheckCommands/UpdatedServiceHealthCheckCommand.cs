@@ -8,8 +8,8 @@ using ServicesHealthCheck.Dtos.ServiceHealthCheckDtos;
 
 namespace ServicesHealthCheck.Business.CQRS.Features.Commands.ServiceHealthCheckCommands
 {
-    public class CreatedServiceHealthCheckCommand : IRequest<List<ServiceHealthCheckDto>>
+    public class UpdatedServiceHealthCheckCommand : IRequest
     {
-        public List<string> Services { get; set; }
+        public List<ServiceHealthCheckDto> ServiceHealthCheckDtos { get; set; }
     }
 }

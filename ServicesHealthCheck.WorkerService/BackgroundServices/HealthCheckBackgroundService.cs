@@ -37,8 +37,13 @@ namespace ServicesHealthCheck.WorkerService.BackgroundServices
                 var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
                 var services = configuration.GetSection("Services").Get<List<string>>();
 
-                //await _healthCheck.CheckServicesHealth(services);
-                await _mediator.Send(new CreatedServiceHealthCheckCommand() { Services = services });
+                // await _healthCheck.CheckServicesHealth(services);
+                var updateServiceHealthCheck = await _mediator.Send(new CreatedServiceHealthCheckCommand() { Services = services });
+                if (updateServiceHealthCheck.Any())
+                {
+                    _mediator.Send(new UpdatedServiceHealthCheckCommand()
+                        { ServiceHealthCheckDtos = updateServiceHealthCheck });
+                }
                 System.Threading.Thread.Sleep(1000);
             }
             Console.ReadLine();

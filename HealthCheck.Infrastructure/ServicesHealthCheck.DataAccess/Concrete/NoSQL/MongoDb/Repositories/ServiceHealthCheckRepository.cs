@@ -22,25 +22,25 @@ namespace ServicesHealthCheck.DataAccess.Concrete.NoSQL.MongoDb.Repositories
 
         public async Task<List<ServiceHealthCheck>> GetAllAsync()
         {
-            var result = await _context.ServiceHealthCheck.FindAsync(FilterDefinition<ServiceHealthCheck>.Empty);
+            var result = await _context.ServiceHealthCheck.FindAsync(MongoDB.Driver.FilterDefinition<ServiceHealthCheck>.Empty);
             return await result.ToListAsync();
         }
 
         public async Task<ServiceHealthCheck> GetByIdAsync(string id)
         {
-            var filter = Builders<ServiceHealthCheck>.Filter.Eq(x => x.Id, id);
+            var filter = MongoDB.Driver.Builders<ServiceHealthCheck>.Filter.Eq(x => x.Id, id);
             var response = await _context.ServiceHealthCheck.FindAsync(filter);
             return await response.FirstOrDefaultAsync();
         }
 
         public async Task<ServiceHealthCheck> GetByServiceNameAsync(string serviceName)
         {
-            var filter = Builders<ServiceHealthCheck>.Filter.Eq(x => x.ServiceName, serviceName);
+            var filter = MongoDB.Driver.Builders<ServiceHealthCheck>.Filter.Eq(x => x.ServiceName, serviceName);
             var response = await _context.ServiceHealthCheck.FindAsync(filter);
             return await response.FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<ServiceHealthCheck>> FindAsync(Expression<Func<ServiceHealthCheck,bool>> filterExpression)
+        public async Task<IEnumerable<ServiceHealthCheck>> FindAsync(Expression<Func<ServiceHealthCheck, bool>> filterExpression)
         {
             var result = await _context.ServiceHealthCheck.FindAsync(filterExpression);
             return await result.ToListAsync();

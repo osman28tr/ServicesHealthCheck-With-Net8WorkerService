@@ -7,15 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Notifications\SmsService\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="MailKit" Version="4.4.0" />
     <PackageReference Include="MediatR" Version="12.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.0.15" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.0" />
     <PackageReference Include="MimeKit" Version="4.4.0" />
     <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="8.0.0" />
     <PackageReference Include="System.Management" Version="8.0.0" />
@@ -23,7 +17,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ServicesHealthCheck.DataAccess\ServicesHealthCheck.DataAccess.csproj" />
+    <ProjectReference Include="..\ServicesHealthCheck.Datas\ServicesHealthCheck.Datas.csproj" />
     <ProjectReference Include="..\ServicesHealthCheck.Dtos\ServicesHealthCheck.Dtos.csproj" />
+    <ProjectReference Include="..\ServicesHealthCheck.Shared\ServicesHealthCheck.Shared.csproj" />
   </ItemGroup>
 
 </Project>

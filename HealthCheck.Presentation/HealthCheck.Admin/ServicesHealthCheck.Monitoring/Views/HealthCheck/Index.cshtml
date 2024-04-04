@@ -1,8 +1,6 @@
 ﻿@{
     Layout = null;
 }
-@model List<GetListServiceHealthCheckResult>
-
 <!DOCTYPE html>
 
 <html>
@@ -20,34 +18,34 @@
                 .build();
 
             connection.start();
-            var messages = [];
             //servicename and status received
-            connection.on("receiveMessage", (serviceName, status,cpuUsage,physicalMemoryUsage,virtualMemoryUsage,privateMemoryUsage,isHealthy) => {
-                updateTable(serviceName, status, cpuUsage, physicalMemoryUsage, virtualMemoryUsage, privateMemoryUsage, isHealthy);
+            connection.on("receiveMessage", (serviceHealthCheckSignalRDto) => {
+               // console.log(serviceHealthCheckSignalRDto.serviceName.toString());
+               updateTable(serviceHealthCheckSignalRDto);
             }); // noktalı virgül eklenmeli
 
-            function updateTable(serviceName, status, cpuUsage, physicalMemoryUsage, virtualMemoryUsage, privateMemoryUsage, isHealthy) {
+            function updateTable(serviceHealthCheckSignalRDto) {
                 var existingRow = $('#table-body tr').filter(function () {
-                    return $(this).find('td:nth-child(2)').text() === serviceName;
+                    return $(this).find('td:nth-child(2)').text() === serviceHealthCheckSignalRDto.serviceName
                 });
 
                 if (existingRow.length > 0) {
-                    existingRow.find('td:nth-child(3)').text(status);
-                    existingRow.find('td:nth-child(4)').text(cpuUsage);
-                    existingRow.find('td:nth-child(5)').text(physicalMemoryUsage);
-                    existingRow.find('td:nth-child(6)').text(virtualMemoryUsage);
-                    existingRow.find('td:nth-child(7)').text(privateMemoryUsage);
-                    existingRow.find('td:nth-child(8)').text(isHealthy);
+                    existingRow.find('td:nth-child(3)').text(serviceHealthCheckSignalRDto.status);
+                    existingRow.find('td:nth-child(4)').text(serviceHealthCheckSignalRDto.cpuUsage);
+                    existingRow.find('td:nth-child(5)').text(serviceHealthCheckSignalRDto.physicalMemoryUsage);
+                    existingRow.find('td:nth-child(6)').text(serviceHealthCheckSignalRDto.virtualMemoryUsage);
+                    existingRow.find('td:nth-child(7)').text(serviceHealthCheckSignalRDto.privateMemoryUsage);
+                    existingRow.find('td:nth-child(8)').text(serviceHealthCheckSignalRDto.isHealthy);
                 } else {
                     var row = `<tr>
                                         <td></td>
-                                        <td>${serviceName}</td>
-                                        <td>${status}</td>
-                                                <td>${cpuUsage}</td>
-                                                <td>${physicalMemoryUsage}</td>
-                                                <td>${virtualMemoryUsage}</td>
-                                                <td>${privateMemoryUsage}</td>
-                                                <td>${isHealthy}</td>
+                                                                        <td>${serviceHealthCheckSignalRDto.serviceName}</td>
+                                                                        <td>${serviceHealthCheckSignalRDto.status}</td>
+                                                                                <td>${serviceHealthCheckSignalRDto.cpuUsage}</td>
+                                                                                <td>${serviceHealthCheckSignalRDto.physicalMemoryUsage}</td>
+                                                                                <td>${serviceHealthCheckSignalRDto.virtualMemoryUsage}</td>
+                                                                                <td>${serviceHealthCheckSignalRDto.privateMemoryUsage}</td>
+                                                                                <td>${serviceHealthCheckSignalRDto.isHealthy}</td>
                                    </tr>`;
                     $('#table-body').append(row);
                 }

@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
 using ServicesHealthCheck.Business.RealTimes.SignalR.Abstract;
+using ServicesHealthCheck.Dtos.ServiceHealthCheckDtos;
+using ServicesHealthCheck.Dtos.SignalRDtos;
 
 namespace ServicesHealthCheck.Business.RealTimes.SignalR
 {
@@ -28,12 +30,10 @@ namespace ServicesHealthCheck.Business.RealTimes.SignalR
             return;
         }
 
-        public async Task SendMessageAsync(string serviceName, string status, string cpuUsage, string physicalMemoryUsage,
-            string virtualMemoryUsage, string privateMemoryUsage, bool isHealthy)
+        public async Task SendMessageAsync(ServicesHealthCheckSignalRDto servicesHealthCheckSignalRDto)
         {
             await StartConnectionAsync();
-            await _hubConnection.InvokeAsync("SendMessageAsync", serviceName, status, cpuUsage, physicalMemoryUsage,
-                virtualMemoryUsage, privateMemoryUsage, isHealthy);
+            await _hubConnection.InvokeAsync("SendMessageAsync", servicesHealthCheckSignalRDto);
         }
     }
 }

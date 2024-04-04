@@ -1,13 +1,14 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using ServicesHealthCheck.Dtos.ServiceHealthCheckDtos;
+using ServicesHealthCheck.Dtos.SignalRDtos;
 
 namespace ServicesHealthCheck.SignalR.Hubs
 {
     public class HealthCheckHub : Hub
     {
-        public async Task SendMessageAsync(string serviceName,string status,string cpuUsage,string physicalMemoryUsage,string virtualMemoryUsage,string privateMemoryUsage,bool isHealthy)
+        public async Task SendMessageAsync(ServicesHealthCheckSignalRDto servicesHealthCheckSignalRDto)
         {
-            await Clients.All.SendAsync("receiveMessage", serviceName, status, cpuUsage, physicalMemoryUsage,
-                virtualMemoryUsage, privateMemoryUsage, isHealthy);
+            await Clients.All.SendAsync("receiveMessage", servicesHealthCheckSignalRDto);
         }
     }
 }

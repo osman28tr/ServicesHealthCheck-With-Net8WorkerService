@@ -17,6 +17,7 @@ using ServicesHealthCheck.DataAccess.Abstract;
 using ServicesHealthCheck.Datas.NoSQL.MongoDb;
 using ServicesHealthCheck.Dtos.MailDtos;
 using ServicesHealthCheck.Dtos.ServiceHealthCheckDtos;
+using ServicesHealthCheck.Dtos.SignalRDtos;
 using ServicesHealthCheck.Shared.Settings;
 
 namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handlers.CommandHandlers
@@ -45,8 +46,6 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                 ServiceController service = new ServiceController(serviceName);
                 Console.WriteLine("Servis durumu: " + service.Status);
 
-                
-
                 var IsExistServiceHealthCheck =
                     await _serviceHealthCheckRepository.GetByServiceNameAsync(serviceName);
 
@@ -71,11 +70,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                 if (IsExistServiceHealthCheck != null)
                 {
                     var resourceModel = CheckResourceUsage(serviceName);
-                    await _signalRService.SendMessageAsync(serviceName, service.Status.ToString(),
-                        resourceModel.CpuUsage, resourceModel.PhysicalMemoryUsage, resourceModel.VirtualMemoryUsage,
-                        resourceModel.PrivateMemoryUsage, isHealthy);
-
-                    updateServiceHealthCheckDtos.Add(new ServiceHealthCheckDto()
+                    var serviceHealthCheckDto = new ServiceHealthCheckDto()
                     {
                         ServiceName = serviceName,
                         Status = service.Status.ToString(),
@@ -84,15 +79,15 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                         PhysicalMemoryUsage = resourceModel.PhysicalMemoryUsage,
                         PrivateMemoryUsage = resourceModel.PrivateMemoryUsage,
                         VirtualMemoryUsage = resourceModel.VirtualMemoryUsage
-                    });
+                    };
+                    var serviceHealthCheckSignalRDto = _mapper.Map<ServicesHealthCheckSignalRDto>(serviceHealthCheckDto);
+                    await _signalRService.SendMessageAsync(serviceHealthCheckSignalRDto);
+
+                    updateServiceHealthCheckDtos.Add(serviceHealthCheckDto);
                 }
                 else
                 {
                     var resourceModel = CheckResourceUsage(serviceName);
-
-                    await _signalRService.SendMessageAsync(serviceName, service.Status.ToString(),
-                        resourceModel.CpuUsage, resourceModel.PhysicalMemoryUsage, resourceModel.VirtualMemoryUsage,
-                        resourceModel.PrivateMemoryUsage, resourceModel.IsHealthy);
 
                     var serviceHealthCheck = new ServiceHealthCheck()
                     {
@@ -104,6 +99,8 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                         PrivateMemoryUsage = resourceModel.PrivateMemoryUsage,
                         VirtualMemoryUsage = resourceModel.VirtualMemoryUsage
                     };
+                    var serviceHealthCheckSignalRDto = _mapper.Map<ServicesHealthCheckSignalRDto>(serviceHealthCheck);
+                    await _signalRService.SendMessageAsync(serviceHealthCheckSignalRDto);
                     await _serviceHealthCheckRepository.AddAsync(serviceHealthCheck);
                 }
                 //check resource usage

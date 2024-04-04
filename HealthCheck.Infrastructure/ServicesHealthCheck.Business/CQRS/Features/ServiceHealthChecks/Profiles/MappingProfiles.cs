@@ -8,6 +8,7 @@ using ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Commands;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Results;
 using ServicesHealthCheck.Datas.NoSQL.MongoDb;
 using ServicesHealthCheck.Dtos.ServiceHealthCheckDtos;
+using ServicesHealthCheck.Dtos.SignalRDtos;
 
 namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Profiles
 {
@@ -17,6 +18,8 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Profile
         {
             CreateMap<CreatedServiceHealthCheckCommand, ServiceHealthCheck>().ReverseMap();
             CreateMap<ServiceHealthCheckDto, ServiceHealthCheck>().ReverseMap();
+            CreateMap<ServicesHealthCheckSignalRDto, ServiceHealthCheck>().ReverseMap();
+            CreateMap<ServicesHealthCheckSignalRDto, ServiceHealthCheckDto>().ReverseMap();
             CreateMap<GetListServiceHealthCheckResult, ServiceHealthCheck>().ReverseMap();
         }
     }

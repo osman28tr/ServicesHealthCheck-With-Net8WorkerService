@@ -12,6 +12,7 @@ using Microsoft.Extensions.Options;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Commands;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Models;
 using ServicesHealthCheck.Business.Notifications.EMailService.Abstract;
+using ServicesHealthCheck.Business.RealTimes.SignalR.Abstract;
 using ServicesHealthCheck.DataAccess.Abstract;
 using ServicesHealthCheck.Datas.NoSQL.MongoDb;
 using ServicesHealthCheck.Dtos.MailDtos;
@@ -26,21 +27,25 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
         private readonly IMapper _mapper;
         private readonly IMailService _mailService;
         private readonly MailSetting _mailSetting;
-        public CreatedServiceHealthCheckCommandHandler(IServiceHealthCheckRepository serviceHealthCheckRepository, IMapper mapper, IOptions<MailSetting> mailSetting, IMailService mailService)
+        private readonly ISignalRService _signalRService;
+        public CreatedServiceHealthCheckCommandHandler(IServiceHealthCheckRepository serviceHealthCheckRepository, IMapper mapper, IOptions<MailSetting> mailSetting, IMailService mailService, ISignalRService signalRService)
         {
             _serviceHealthCheckRepository = serviceHealthCheckRepository;
             _mapper = mapper;
             _mailSetting = mailSetting.Value;
             _mailService = mailService;
+            _signalRService = signalRService;
         }
         public async Task<List<ServiceHealthCheckDto>> Handle(CreatedServiceHealthCheckCommand request, CancellationToken cancellationToken)
         {
-            List<ServiceHealthCheckDto> serviceHealthCheckDtos = new List<ServiceHealthCheckDto>();
+            List<ServiceHealthCheckDto> updateServiceHealthCheckDtos = new List<ServiceHealthCheckDto>();
             foreach (var serviceName in request.Services)
             {
                 bool isHealthy = true;
                 ServiceController service = new ServiceController(serviceName);
                 Console.WriteLine("Servis durumu: " + service.Status);
+
+                
 
                 var IsExistServiceHealthCheck =
                     await _serviceHealthCheckRepository.GetByServiceNameAsync(serviceName);
@@ -66,7 +71,11 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                 if (IsExistServiceHealthCheck != null)
                 {
                     var resourceModel = CheckResourceUsage(serviceName);
-                    serviceHealthCheckDtos.Add(new ServiceHealthCheckDto()
+                    await _signalRService.SendMessageAsync(serviceName, service.Status.ToString(),
+                        resourceModel.CpuUsage, resourceModel.PhysicalMemoryUsage, resourceModel.VirtualMemoryUsage,
+                        resourceModel.PrivateMemoryUsage, isHealthy);
+
+                    updateServiceHealthCheckDtos.Add(new ServiceHealthCheckDto()
                     {
                         ServiceName = serviceName,
                         Status = service.Status.ToString(),
@@ -80,6 +89,11 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                 else
                 {
                     var resourceModel = CheckResourceUsage(serviceName);
+
+                    await _signalRService.SendMessageAsync(serviceName, service.Status.ToString(),
+                        resourceModel.CpuUsage, resourceModel.PhysicalMemoryUsage, resourceModel.VirtualMemoryUsage,
+                        resourceModel.PrivateMemoryUsage, resourceModel.IsHealthy);
+
                     var serviceHealthCheck = new ServiceHealthCheck()
                     {
                         ServiceName = serviceName,
@@ -94,7 +108,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                 }
                 //check resource usage
             }
-            return serviceHealthCheckDtos;
+            return updateServiceHealthCheckDtos;
             //var serviceHealthCheck = _mapper.Map<ServiceHealthCheck>(request);
         }
         private ResourceUsageModel CheckResourceUsage(string serviceName)

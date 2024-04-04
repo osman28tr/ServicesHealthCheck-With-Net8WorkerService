@@ -19,11 +19,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServicesHealthCheck.DataAcc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServicesHealthCheck.Business", "HealthCheck.Infrastructure\ServicesHealthCheck.Business\ServicesHealthCheck.Business.csproj", "{2702E6C4-DF79-4385-B931-BBDC62515A5F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServicesHealthCheck.WorkerService", "HealthCheck.Servis\ServicesHealthCheck.WorkerService\ServicesHealthCheck.WorkerService.csproj", "{A897E9AA-A640-457A-94BA-58D4FAFC70BA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServicesHealthCheck.WorkerService", "HealthCheck.Servis\ServicesHealthCheck.WorkerService\ServicesHealthCheck.WorkerService.csproj", "{A897E9AA-A640-457A-94BA-58D4FAFC70BA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HealthCheck.Admin", "HealthCheck.Admin", "{11B3CCA9-2FF8-4854-ADE8-61D9FCC27348}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServicesHealthCheck.Monitoring", "HealthCheck.Presentation\HealthCheck.Admin\ServicesHealthCheck.Monitoring\ServicesHealthCheck.Monitoring.csproj", "{703E905C-DDC2-47C5-B8D0-10A68E662F5D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServicesHealthCheck.Monitoring", "HealthCheck.Presentation\HealthCheck.Admin\ServicesHealthCheck.Monitoring\ServicesHealthCheck.Monitoring.csproj", "{703E905C-DDC2-47C5-B8D0-10A68E662F5D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServicesHealthCheck.SignalR", "HealthCheck.Servis\ServicesHealthCheck.SignalR\ServicesHealthCheck.SignalR.csproj", "{D169B1E2-C2D6-4CAC-A218-4A7E6D78DA4E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,6 +61,10 @@ Global
 		{703E905C-DDC2-47C5-B8D0-10A68E662F5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{703E905C-DDC2-47C5-B8D0-10A68E662F5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{703E905C-DDC2-47C5-B8D0-10A68E662F5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D169B1E2-C2D6-4CAC-A218-4A7E6D78DA4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D169B1E2-C2D6-4CAC-A218-4A7E6D78DA4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D169B1E2-C2D6-4CAC-A218-4A7E6D78DA4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D169B1E2-C2D6-4CAC-A218-4A7E6D78DA4E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -72,6 +78,7 @@ Global
 		{A897E9AA-A640-457A-94BA-58D4FAFC70BA} = {7E3CC866-38EB-4359-BC2F-35014B1CF985}
 		{11B3CCA9-2FF8-4854-ADE8-61D9FCC27348} = {F2415B28-B2DB-4928-92F1-AA796D6F0FD5}
 		{703E905C-DDC2-47C5-B8D0-10A68E662F5D} = {11B3CCA9-2FF8-4854-ADE8-61D9FCC27348}
+		{D169B1E2-C2D6-4CAC-A218-4A7E6D78DA4E} = {7E3CC866-38EB-4359-BC2F-35014B1CF985}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F52289B2-0A6E-4BD5-A3D4-675A400AC148}

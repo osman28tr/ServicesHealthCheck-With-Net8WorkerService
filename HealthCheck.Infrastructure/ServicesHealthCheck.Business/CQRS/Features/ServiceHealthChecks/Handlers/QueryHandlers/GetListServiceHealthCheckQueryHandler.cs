@@ -7,6 +7,7 @@ using AutoMapper;
 using MediatR;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Queries;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Results;
+using ServicesHealthCheck.Business.RealTimes.SignalR.Abstract;
 using ServicesHealthCheck.DataAccess.Abstract;
 
 namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handlers.QueryHandlers
@@ -15,10 +16,12 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
     {
         private readonly IServiceHealthCheckRepository _serviceHealthCheckRepository;
         private readonly IMapper _mapper;
-        public GetListServiceHealthCheckQueryHandler(IServiceHealthCheckRepository serviceHealthCheckRepository, IMapper mapper)
+        private readonly ISignalRService _signalRService;
+        public GetListServiceHealthCheckQueryHandler(IServiceHealthCheckRepository serviceHealthCheckRepository, IMapper mapper, ISignalRService signalRService)
         {
             _serviceHealthCheckRepository = serviceHealthCheckRepository;
             _mapper = mapper;
+            _signalRService = signalRService;
         }
         public async Task<List<GetListServiceHealthCheckResult>> Handle(GetListServiceHealthCheckQuery request, CancellationToken cancellationToken)
         {

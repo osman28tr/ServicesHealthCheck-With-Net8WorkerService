@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using ServicesHealthCheck.Business.Helpers;
 using ServicesHealthCheck.Business.Notifications.EMailService;
 using ServicesHealthCheck.Business.Notifications.EMailService.Abstract;
+using ServicesHealthCheck.Business.RealTimes.SignalR;
+using ServicesHealthCheck.Business.RealTimes.SignalR.Abstract;
 
 namespace ServicesHealthCheck.Business
 {
@@ -16,6 +18,7 @@ namespace ServicesHealthCheck.Business
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
             services.AddSingleton<IMailService, MailService>();
+            services.AddSingleton<ISignalRService, SignalRService>();
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
             services.AddSingleton<IGetMediatr, GetMediatr>();
             services.AddAutoMapper(Assembly.GetExecutingAssembly());

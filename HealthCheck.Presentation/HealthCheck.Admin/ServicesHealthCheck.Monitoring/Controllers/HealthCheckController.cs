@@ -14,8 +14,8 @@ namespace ServicesHealthCheck.Monitoring.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            var result = await _mediatr.Send(new GetListServiceHealthCheckQuery());
-            return View(result);
+            //var result = await _mediatr.Send(new GetListServiceHealthCheckQuery());
+            return View();
         }
     }
 }

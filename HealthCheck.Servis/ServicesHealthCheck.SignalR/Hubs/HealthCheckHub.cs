@@ -6,9 +6,6 @@ namespace ServicesHealthCheck.SignalR.Hubs
 {
     public class HealthCheckHub : Hub
     {
-        public async Task SendMessageAsync(ServicesHealthCheckSignalRDto servicesHealthCheckSignalRDto)
-        {
-            await Clients.All.SendAsync("receiveMessage", servicesHealthCheckSignalRDto);
-        }
+        public async Task SendMessageAsync(ServicesHealthCheckSignalRDto servicesHealthCheckSignalRDto) => await Clients.All.SendAsync("receiveMessage", servicesHealthCheckSignalRDto);
     }
 }

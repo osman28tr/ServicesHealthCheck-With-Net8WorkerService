@@ -62,8 +62,11 @@ It is the layer that allows data coming from the Worker service to be received v
 
 <h3>5. Language and Development Environment Used: C# - .Net 8.0</h3>
 
+<h3>6. ScreenShots</h3>
 
-<h3>6. Video Impression</h3>
+<img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/healthcheckmonitoring.PNG">
+
+<h3>7. Video Impression</h3>
 <p align="justify">
 For the video demonstration of the project, change the place that says "github.com" in your URL to "github.dev". Then you can follow this path and access the video.<br>
 HealthCheck.Presentation -> HealthCheck.Admin -> ServicesHealthCheck.Monitoring -> wwwroot -> videos -> projectvideoimpression.mp4

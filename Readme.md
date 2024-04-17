@@ -35,4 +35,4 @@ HealthCheck.Presentation -> HealthCheck.Admin -> ServicesHealthCheck.Monitoring 
 
 <img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/mailservice.PNG">
 <br><br>
-<footer><b>Supported by CTS Yazılım as an intern project</b></footer>
+<footer><b>Supported by CTS Yazılım as an intern project.</b></footer>

@@ -10,18 +10,42 @@
 <b>HealthCheck.Servis:</b> Background services (worker services) required for our application are the part that includes some 3rd party services.
 </p>
 
-<h3>2. Used Technologies</h3>
+<h3>2. Technical Information</h3>
+<h4>HealthCheck.Infrastructure - Layers</h4>
+
+<p align="justify">
+    <b>ServicesHealthCheck.Datas: </b> 
+It is the layer where classes corresponding to collections in the database are defined.
+</p>
+
+<p align="justify">
+    <b>ServicesHealthCheck.DataAccessLayer: </b> It is the layer where database-related CRUD operations are performed. There is a context class that corresponds to the database and where configuration settings related to the database are made. It references the entities layer to correspond to collections in the database.
+</p>
+
+<p align="justify">
+    <b>ServicesHealthCheck.Shared: </b> It is the layer where classes and interfaces commonly used by more than one layer are defined. It contains IEntity and Settings elements. IEntity defines classes as collections of databases. The Settings class is the class that corresponds to the database configuration settings.
+</p>
+
+<p align="justify">
+    <b>ServicesHealthCheck.Dtos: </b> It is the layer where dto classes are hosted instead of direct entities in the execution of database-related CRUD operations. Dto classes are used to send and receive data with the outside world. It increases the security of our application. Sending and receiving data to the outside world through entities creates security vulnerabilities and causes unwanted information flow. For this reason, dto classes are used to interact with the outside world.
+</p>
+
+<p align="justify">
+    <b>ServicesHealthCheck.BusinessLayer: </b> It is the layer where application-related business processes are carried out and database manager classes are located. CQRS design pattern is used to separate data reading and writing operations in CRUD operations. In this way, flexibility and sustainability are increased. The mediator library is used to use the CQRS design pattern effectively. The automapper library is used to easily perform mapping between dto classes and entity classes. Mailkit library is used to send notifications. The signalr.client library is used to send instant data to the SignalR layer.
+</p>
+
+<h3>3. Used Technologies</h3>
 <p align="justify">
 .Net Worker Background Services, WindowsServices, Asp.Net Core Mvc, Asp.Net Core API, Repository Design Pattern, CQRS Design Pattern, Mediator, Dtos, AutoMapper, SignalR, MailKit, MongoDb</p>
 
-<h3>3. General Outlines of the Architecture Used in the Project</h3>
+<h3>4. General Outlines of the Architecture Used in the Project</h3>
 
 <img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/arhitecture3.PNG" height="400px" width="650px">
 
-<h3>4. Language and Development Environment Used: C# - .Net 8.0</h3>
+<h3>5. Language and Development Environment Used: C# - .Net 8.0</h3>
 
 
-<h3>5. Video Impression</h3>
+<h3>6. Video Impression</h3>
 <p align="justify">
 For the video demonstration of the project, change the place that says "github.com" in your URL to "github.dev". Then you can follow this path and access the video.<br>
 HealthCheck.Presentation -> HealthCheck.Admin -> ServicesHealthCheck.Monitoring -> wwwroot -> videos -> projectvideoimpression.mp4

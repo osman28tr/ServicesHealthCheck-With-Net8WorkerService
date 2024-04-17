@@ -10,7 +10,15 @@
 <b>HealthCheck.Servis:</b> Background services (worker services) required for our application are the part that includes some 3rd party services.
 </p>
 
-<h3>2. Technical Information</h3>
+<h3>2. Used Technologies</h3>
+<p align="justify">
+.Net Worker Background Services, WindowsServices, Asp.Net Core Mvc, Asp.Net Core API, Repository Design Pattern, CQRS Design Pattern, Mediator, Dtos, AutoMapper, SignalR, MailKit, MongoDb</p>
+
+<h3>3. General Outlines of the Architecture Used in the Project</h3>
+
+<img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/arhitecture3.PNG" height="400px" width="650px">
+
+<h3>4. Technical Information</h3>
 <h4>HealthCheck.Infrastructure - Layers</h4>
 
 <p align="justify">
@@ -33,14 +41,6 @@ It is the layer where classes corresponding to collections in the database are d
 <p align="justify">
     <b>ServicesHealthCheck.BusinessLayer: </b> It is the layer where application-related business processes are carried out and database manager classes are located. CQRS design pattern is used to separate data reading and writing operations in CRUD operations. In this way, flexibility and sustainability are increased. The mediator library is used to use the CQRS design pattern effectively. The automapper library is used to easily perform mapping between dto classes and entity classes. Mailkit library is used to send notifications. The signalr.client library is used to send instant data to the SignalR layer.
 </p>
-
-<h3>3. Used Technologies</h3>
-<p align="justify">
-.Net Worker Background Services, WindowsServices, Asp.Net Core Mvc, Asp.Net Core API, Repository Design Pattern, CQRS Design Pattern, Mediator, Dtos, AutoMapper, SignalR, MailKit, MongoDb</p>
-
-<h3>4. General Outlines of the Architecture Used in the Project</h3>
-
-<img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/arhitecture3.PNG" height="400px" width="650px">
 
 <h3>5. Language and Development Environment Used: C# - .Net 8.0</h3>
 

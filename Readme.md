@@ -39,8 +39,20 @@ It is the layer where classes corresponding to collections in the database are d
 </p>
 
 <p align="justify">
-    <b>ServicesHealthCheck.BusinessLayer: </b> It is the layer where application-related business processes are carried out and database manager classes are located. CQRS design pattern is used to separate data reading and writing operations in CRUD operations. In this way, flexibility and sustainability are increased. The mediator library is used to use the CQRS design pattern effectively. The automapper library is used to easily perform mapping between dto classes and entity classes. Mailkit library is used to send notifications. The signalr.client library is used to send instant data to the SignalR layer.
+    <b>ServicesHealthCheck.BusinessLayer: </b> It is the layer where application-related business processes are carried out and database manager classes are located. CQRS design pattern is used to separate data reading and writing operations in CRUD operations. In this way, flexibility and sustainability are increased. The mediator library is used to use the CQRS design pattern effectively. The automapper library is used to easily perform mapping between dto classes and entity classes. Mailkit library is used to send notifications. The signalr.client library was used within the service under the Realtimes folder to send instant data from the Worker Service to the signalR layer.
 </p>
+
+<h4>HealthCheck.Servis - Layers</h4>
+
+<p align="justify">
+<b>ServicesHealthCheck.WorkerService: </b> It is the layer that contains background services that instantly check the status and resource consumption of Windows services installed in our system and communicate with the business layer and log this information into the database. At the same time, it communicates with the business layer and sends the status and resource consumption data of instant incoming Windows services to the SignalR layer.
+</p>
+
+<p align="justify">
+<b>ServicesHealthCheck.SignalR: </b> 
+It is the layer that allows data coming from the Worker service to be received via SignalR technology instead of receiving it directly. The reason for collecting data via SignalR is to make the application more manageable (for example, filtering on a client basis) and to reduce the code complexity that may occur. It contains the hub structure that forms the center of SignalR. Data sending and receiving operations are carried out through the hub structure. This layer is implemented with Asp.Net Core API.
+</p>
+
 
 <h3>5. Language and Development Environment Used: C# - .Net 8.0</h3>
 

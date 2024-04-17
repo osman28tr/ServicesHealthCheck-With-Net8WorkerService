@@ -27,7 +27,8 @@ It is the layer where classes corresponding to collections in the database are d
 </p>
 
 <p align="justify">
-    <b>ServicesHealthCheck.DataAccessLayer: </b> It is the layer where database-related CRUD operations are performed. There is a context class that corresponds to the database and where configuration settings related to the database are made. It references the entities layer to correspond to collections in the database.
+    <b>ServicesHealthCheck.DataAccessLayer: </b> It is the layer where database-related CRUD operations are performed. There is a context class that corresponds to the database and where configuration settings related to the database are made. It references the entities layer to correspond to collections in the database. Since there are not many relational scripts and for fast read and write operation
+Mongodb was used as the database.
 </p>
 
 <p align="justify">

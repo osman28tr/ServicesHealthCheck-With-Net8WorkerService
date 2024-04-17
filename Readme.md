@@ -53,6 +53,12 @@ It is the layer where classes corresponding to collections in the database are d
 It is the layer that allows data coming from the Worker service to be received via SignalR technology instead of receiving it directly. The reason for collecting data via SignalR is to make the application more manageable (for example, filtering on a client basis) and to reduce the code complexity that may occur. It contains the hub structure that forms the center of SignalR. Data sending and receiving operations are carried out through the hub structure. This layer is implemented with Asp.Net Core API.
 </p>
 
+<h4>HealthCheck.Presentation -> HealthCheck.Admin - Layers</h4>
+
+<p align="justify">
+<b>ServicesHealthCheck.Monitoring: </b> 
+    It is the layer that communicates with the SignalR layer and displays the incoming instant data on the front. It was built with Asp.Net Core Mvc.
+</p>
 
 <h3>5. Language and Development Environment Used: C# - .Net 8.0</h3>
 

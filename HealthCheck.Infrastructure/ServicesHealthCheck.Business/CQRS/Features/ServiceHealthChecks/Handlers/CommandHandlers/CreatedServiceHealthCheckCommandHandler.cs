@@ -54,14 +54,17 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                 {
                     if (IsExistServiceHealthCheck != null && IsExistServiceHealthCheck.IsHealthy == true)
                     {
-                        await _mailService.SendEmailAsync(new MailDto
+                        foreach (var mail in _mailSetting.ToMail)
                         {
-                            FromMail = _mailSetting.FromMail,
-                            ToEmail = _mailSetting.ToMail,
-                            Subject = "Servis Durumu",
-                            Body = $"{serviceName} servisi çalışmıyor."
-                        }, CancellationToken.None);
-                        isHealthy = false;
+                            await _mailService.SendEmailAsync(new MailDto
+                            {
+                                FromMail = _mailSetting.FromMail,
+                                ToEmail = mail,
+                                Subject = "Servis Durumu",
+                                Body = $"{serviceName} servisi çalışmıyor."
+                            }, CancellationToken.None);
+                            isHealthy = false;
+                        }
                     }
                     else if (IsExistServiceHealthCheck.IsHealthy == false)
                     {

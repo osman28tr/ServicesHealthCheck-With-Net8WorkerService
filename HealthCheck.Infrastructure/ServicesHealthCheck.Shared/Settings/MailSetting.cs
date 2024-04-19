@@ -9,7 +9,7 @@ namespace ServicesHealthCheck.Shared.Settings
 {
     public class MailSetting : IMailSetting
     {
-        public string ToMail { get; set; }
+        public List<string> ToMail { get; set; }
         public string FromMail { get; set; }
     }
 }

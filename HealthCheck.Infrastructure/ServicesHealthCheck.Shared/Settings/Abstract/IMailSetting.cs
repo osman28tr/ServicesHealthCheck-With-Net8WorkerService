@@ -8,7 +8,7 @@ namespace ServicesHealthCheck.Shared.Settings.Abstract
 {
     public interface IMailSetting
     {
-        public string ToMail { get; set; }
+        public List<string> ToMail { get; set; }
         public string FromMail { get; set; }
     }
 }

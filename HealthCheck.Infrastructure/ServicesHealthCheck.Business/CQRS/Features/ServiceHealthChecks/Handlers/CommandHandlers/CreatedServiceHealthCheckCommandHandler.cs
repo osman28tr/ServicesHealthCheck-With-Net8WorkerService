@@ -48,11 +48,11 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                 Console.WriteLine("Servis durumu: " + service.Status);
 
                 var IsExistServiceHealthCheck =
-                    await _serviceHealthCheckRepository.GetByServiceNameAsync(serviceName);
+                    await _serviceHealthCheckRepository.GetByServiceNameAsync(serviceName); //servis'in veritabanında olup olmadığınının kontrolü
 
-                if (service.Status != ServiceControllerStatus.Running)
+                if (service.Status != ServiceControllerStatus.Running) // servis çalışmıyorsa veya sağlıksız ise
                 {
-                    if (IsExistServiceHealthCheck != null && IsExistServiceHealthCheck.IsHealthy == true)
+                    if (IsExistServiceHealthCheck != null && IsExistServiceHealthCheck.IsHealthy == true) // mevcut servis sağlıklı iken sağlıksız hale geldiyse(yeni bir durum oluşmuş, boşa mail göndermeyi engeller.)
                     {
                         foreach (var mail in _mailSetting.ToMail)
                         {
@@ -63,17 +63,17 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                                 Subject = "Servis Durumu",
                                 Body = $"{serviceName} servisi çalışmıyor."
                             }, CancellationToken.None);
-                            isHealthy = false;
+                            isHealthy = false; // durumunu sağlıksız hale getir
                         }
                     }
-                    else if (IsExistServiceHealthCheck.IsHealthy == false)
+                    else if (IsExistServiceHealthCheck.IsHealthy == false) //mevcut servis'in durumu sağlıksız ise başta verilen sağlık durumunu false yap, mail gönderme(zaten önceden gönderilmiş)
                     {
                         isHealthy = false;
                     }
                 }
-                if (IsExistServiceHealthCheck != null)
+                if (IsExistServiceHealthCheck != null) //mevcut servis var ise, yeni bir servis değilse, güncelleme yap
                 {
-                    var resourceModel = CheckResourceUsage(serviceName);
+                    var resourceModel = CheckResourceUsage(serviceName); // kaynak kullanımlarını al
                     var serviceHealthCheckDto = new ServiceHealthCheckDto()
                     {
                         ServiceName = serviceName,
@@ -85,11 +85,11 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                         VirtualMemoryUsage = resourceModel.VirtualMemoryUsage
                     };
                     var serviceHealthCheckSignalRDto = _mapper.Map<ServicesHealthCheckSignalRDto>(serviceHealthCheckDto);
-                    await _signalRService.SendMessageAsync(serviceHealthCheckSignalRDto);
+                    await _signalRService.SendMessageAsync(serviceHealthCheckSignalRDto); // servis ile ilgili bilgileri signalR'a gönder
 
-                    updateServiceHealthCheckDtos.Add(serviceHealthCheckDto);
+                    updateServiceHealthCheckDtos.Add(serviceHealthCheckDto); // servis'i güncellemek için dto'ya ekle ve döndür
                 }
-                else
+                else //servis veritabanında yok, yeni bir servis,veritabanına ekle
                 {
                     var resourceModel = CheckResourceUsage(serviceName);
 
@@ -104,13 +104,11 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                         VirtualMemoryUsage = resourceModel.VirtualMemoryUsage
                     };
                     var serviceHealthCheckSignalRDto = _mapper.Map<ServicesHealthCheckSignalRDto>(serviceHealthCheck);
-                    await _signalRService.SendMessageAsync(serviceHealthCheckSignalRDto);
+                    await _signalRService.SendMessageAsync(serviceHealthCheckSignalRDto); // servis ile ilgili bilgileri signalR'a gönder
                     await _serviceHealthCheckRepository.AddAsync(serviceHealthCheck);
                 }
-                //check resource usage
             }
             return updateServiceHealthCheckDtos;
-            //var serviceHealthCheck = _mapper.Map<ServiceHealthCheck>(request);
         }
         private ResourceUsageModel CheckResourceUsage(string serviceName)
         {

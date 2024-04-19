@@ -2,15 +2,12 @@ using System.Reflection;
 using ServicesHealthCheck.Business;
 using ServicesHealthCheck.DataAccess;
 using ServicesHealthCheck.DataAccess.Concrete.NoSQL.MongoDb.Contexts;
+using ServicesHealthCheck.Shared;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
-builder.Services.AddSingleton<HealthCheckContext>();
-builder.Services.AddApplicationServices();
-builder.Services.AddPersistanceServices();
 
 var app = builder.Build();
 

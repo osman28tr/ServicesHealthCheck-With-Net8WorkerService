@@ -73,12 +73,16 @@ For the video demonstration of the project, change the place that says "github.c
 HealthCheck.Presentation -> HealthCheck.Admin -> ServicesHealthCheck.Monitoring -> wwwroot -> videos -> projectvideoimpression.mp4
 </p>
 
-<br/>
-
-<p align="justify"> <b>Note: </b> After installing the project, go to the appsettings.json file. Edit the "ConnectionStrings", "Services", "Notifications" fields according to your own system.</p>
-
-<p align="justify"> <b>Note: </b> In order for the notification service to work properly in the application, please update the e-mail addresses under the "Notifications" heading in the appsettings.json file accordingly. Then, turn on the two-step authentication feature of the sender's e-mail address in the application. Finally, go to the security section of the e-mail address and create a password for the application from the "application passwords" section. Go to the mailservice class in the business layer and type your password in the 2nd parameter shown in the </p>
-
-<img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/mailservice.PNG">
+<h3>8. Setup</h3>
+<ul>
+    <li><p align="justify"> After installing the project, go to the appsettings.json file. Edit the "ConnectionStrings", "Services", "Notifications" fields according to your own system.</p>
+    </li>
+    <li><p align="justify"> In order for the notification service to work properly in the application, please update the e-mail addresses under the "Notifications" heading in the appsettings.json file accordingly. Then, turn on the two-step authentication feature of the sender's e-mail address in the application. Later, go to the security section of the e-mail address and create a password for the application from the "application passwords" section. Go to the mailservice class in the business layer and type your password in the 2nd parameter shown in the </p>
+    </li>
+    <img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/mailservice.PNG">
+    <li> 
+Finally, click on the down arrow icon next to the start button. Click on the section that says "Configure startup projects". Select the "Multiple startup projects" option. Bring the "ServicesHealthCheck.WorkerService", "ServicesHealthCheck.SignalR", "ServicesHealthCheck.Monitoring" projects to their start status, respectively. Then press the "apply" and "ok" buttons at the bottom right. Then start the project from the start button.
+    </li>
+</ul>
 <br><br>
 <footer><b>Supported by CTS Yazılım as an intern project.</b></footer>

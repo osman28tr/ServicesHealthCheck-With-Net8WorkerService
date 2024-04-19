@@ -48,11 +48,11 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                 Console.WriteLine("Servis durumu: " + service.Status);
 
                 var IsExistServiceHealthCheck =
-                    await _serviceHealthCheckRepository.GetByServiceNameAsync(serviceName); //servis'in veritabanında olup olmadığınının kontrolü
+                    await _serviceHealthCheckRepository.GetByServiceNameAsync(serviceName); //Checking whether the service is in the database
 
-                if (service.Status != ServiceControllerStatus.Running) // servis çalışmıyorsa veya sağlıksız ise
+                if (service.Status != ServiceControllerStatus.Running) // If the service is not working or unhealthy
                 {
-                    if (IsExistServiceHealthCheck != null && IsExistServiceHealthCheck.IsHealthy == true) // mevcut servis sağlıklı iken sağlıksız hale geldiyse(yeni bir durum oluşmuş, boşa mail göndermeyi engeller.)
+                    if (IsExistServiceHealthCheck != null && IsExistServiceHealthCheck.IsHealthy == true) // If the current service has become unhealthy while it was healthy (a new situation has occurred, it prevents sending unnecessary e-mails).
                     {
                         foreach (var mail in _mailSetting.ToMail)
                         {
@@ -63,17 +63,17 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                                 Subject = "Servis Durumu",
                                 Body = $"{serviceName} servisi çalışmıyor."
                             }, CancellationToken.None);
-                            isHealthy = false; // durumunu sağlıksız hale getir
+                            isHealthy = false; // make your condition unhealthy
                         }
                     }
-                    else if (IsExistServiceHealthCheck.IsHealthy == false) //mevcut servis'in durumu sağlıksız ise başta verilen sağlık durumunu false yap, mail gönderme(zaten önceden gönderilmiş)
+                    else if (IsExistServiceHealthCheck.IsHealthy == false) //If the current service's status is unhealthy, set the initial health status to false and do not send an e-mail (it has already been sent).
                     {
                         isHealthy = false;
                     }
                 }
-                if (IsExistServiceHealthCheck != null) //mevcut servis var ise, yeni bir servis değilse, güncelleme yap
+                if (IsExistServiceHealthCheck != null) //If there is an existing service, if it is not a new service, update it
                 {
-                    var resourceModel = CheckResourceUsage(serviceName); // kaynak kullanımlarını al
+                    var resourceModel = CheckResourceUsage(serviceName); // get resource usages
                     var serviceHealthCheckDto = new ServiceHealthCheckDto()
                     {
                         ServiceName = serviceName,
@@ -85,11 +85,11 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                         VirtualMemoryUsage = resourceModel.VirtualMemoryUsage
                     };
                     var serviceHealthCheckSignalRDto = _mapper.Map<ServicesHealthCheckSignalRDto>(serviceHealthCheckDto);
-                    await _signalRService.SendMessageAsync(serviceHealthCheckSignalRDto); // servis ile ilgili bilgileri signalR'a gönder
+                    await _signalRService.SendMessageAsync(serviceHealthCheckSignalRDto); // Send service related information to signalR
 
-                    updateServiceHealthCheckDtos.Add(serviceHealthCheckDto); // servis'i güncellemek için dto'ya ekle ve döndür
+                    updateServiceHealthCheckDtos.Add(serviceHealthCheckDto); // add to dto and rotate to update service
                 }
-                else //servis veritabanında yok, yeni bir servis,veritabanına ekle
+                else //The service is not in the database, add a new service to the database
                 {
                     var resourceModel = CheckResourceUsage(serviceName);
 
@@ -104,7 +104,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                         VirtualMemoryUsage = resourceModel.VirtualMemoryUsage
                     };
                     var serviceHealthCheckSignalRDto = _mapper.Map<ServicesHealthCheckSignalRDto>(serviceHealthCheck);
-                    await _signalRService.SendMessageAsync(serviceHealthCheckSignalRDto); // servis ile ilgili bilgileri signalR'a gönder
+                    await _signalRService.SendMessageAsync(serviceHealthCheckSignalRDto); // Send service related information to signalR
                     await _serviceHealthCheckRepository.AddAsync(serviceHealthCheck);
                 }
             }
@@ -119,20 +119,21 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
             int processId = (int)(uint)o;
             Process process = Process.GetProcessById(processId);
 
+            // Creating performance counters for CPU, Memory usage(gets in bytes)
+
             PerformanceCounter cpuCounter = new PerformanceCounter("Process", "% Processor Time", process.ProcessName);
             PerformanceCounter workingSetCounter = new PerformanceCounter("Process", "Working Set", process.ProcessName);
             PerformanceCounter privateBytesCounter = new PerformanceCounter("Process", "Private Bytes", process.ProcessName);
 
-            // Sanal bellek boyutu için performans sayaçlarını oluştur
             PerformanceCounter virtualMemoryCounter = new PerformanceCounter("Process", "Virtual Bytes", process.ProcessName);
 
-            // Saniyede bir toplam CPU kullanımını al ve yazdır
+            // Gets current memory and CPU information
 
-            double workingSet = workingSetCounter.NextValue() / (1024 * 1024); // Byte cinsinden alınan değeri MB'ye çevir
-            float privateBytes = privateBytesCounter.NextValue() / (1024 * 1024); // Byte cinsinden alınan değeri MB'ye çevir
-            float cpuUsage = cpuCounter.NextValue(); // CPU kullanımını al
-                                                     // Sanal bellek boyutunu al
-            float virtualMemorySize = virtualMemoryCounter.NextValue() / (1024 * 1024); // Byte cinsinden alınan değeri MB'ye çevir
+            double workingSet = workingSetCounter.NextValue() / (1024 * 1024); // Converts the value received in bytes to MB
+            float privateBytes = privateBytesCounter.NextValue() / (1024 * 1024); // Converts the value received in bytes to MB
+            float cpuUsage = cpuCounter.NextValue(); // Get cpu usage
+                                                    
+            float virtualMemorySize = virtualMemoryCounter.NextValue() / (1024 * 1024); // Converts the value received in bytes to MB
 
             ResourceUsageModel resourceUsageModel = new ResourceUsageModel()
             {

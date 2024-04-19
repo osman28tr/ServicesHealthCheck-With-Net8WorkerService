@@ -19,6 +19,7 @@ using ServicesHealthCheck.Dtos.MailDtos;
 using ServicesHealthCheck.Dtos.ServiceHealthCheckDtos;
 using ServicesHealthCheck.Dtos.SignalRDtos;
 using ServicesHealthCheck.Shared.Settings;
+using ServicesHealthCheck.Shared.Settings.Abstract;
 
 namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handlers.CommandHandlers
 {
@@ -27,13 +28,13 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
         private readonly IServiceHealthCheckRepository _serviceHealthCheckRepository;
         private readonly IMapper _mapper;
         private readonly IMailService _mailService;
-        private readonly MailSetting _mailSetting;
+        private readonly IMailSetting _mailSetting;
         private readonly ISignalRService _signalRService;
-        public CreatedServiceHealthCheckCommandHandler(IServiceHealthCheckRepository serviceHealthCheckRepository, IMapper mapper, IOptions<MailSetting> mailSetting, IMailService mailService, ISignalRService signalRService)
+        public CreatedServiceHealthCheckCommandHandler(IServiceHealthCheckRepository serviceHealthCheckRepository, IMapper mapper, IMailSetting mailSetting, IMailService mailService, ISignalRService signalRService)
         {
             _serviceHealthCheckRepository = serviceHealthCheckRepository;
             _mapper = mapper;
-            _mailSetting = mailSetting.Value;
+            _mailSetting = mailSetting;
             _mailService = mailService;
             _signalRService = signalRService;
         }

@@ -54,38 +54,40 @@
     </script>
 </head>
 <body>
-    <div class="container-fluid" style="display:flex">
-        <h3 style="margin-top:12px">Health Check Status</h3>
-        <img src="~/icons/status.png" width="120px" height="60px" />
-    </div>
-    <br />
-    @*  <ul id="messages">
+<br/>
+<div class="container-fluid" style="display:flex">
+    <h3 style="margin-top:12px">Health Check Status</h3>
+    <img src="~/icons/status.png" width="120px" height="60px"/>
+    <img src="~/icons/live-streaming.png" width="120px" height="60px"/>
+</div>
+<br/>
+@*  <ul id="messages">
     <li>servicename</li>
     </ul> *@
 
-    <table class="table">
-        <thead style="background-color:green; color:white">
-        <tr>
-            <th scope="col"></th>
-            <th scope="col">Name</th>
-            <th scope="col">Health</th>
-            <th scope="col">CpuUsage</th>
-            <th scope="col">PhysicalMemoryUsage</th>
-            <th scope="col">VirtualMemoryUsage</th>
-            <th scope="col">PrivateMemoryUsage</th>
-            <th scope="col">IsHealthy</th>
-@*             <th scope="col">Cpu Usage</th>
+<table class="table">
+    <thead style="background-color:green; color:white">
+    <tr>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col">Health</th>
+        <th scope="col">CpuUsage</th>
+        <th scope="col">PhysicalMemoryUsage</th>
+        <th scope="col">VirtualMemoryUsage</th>
+        <th scope="col">PrivateMemoryUsage</th>
+        <th scope="col">IsHealthy</th>
+        @*             <th scope="col">Cpu Usage</th>
             <th scope="col">Physical Memory Usage</th>
             <th scope="col">Private Memory Usage</th>
             <th scope="col">Virtual Memory Usage</th> *@
-            @*    <th scope="col">Description</th>
+        @*    <th scope="col">Description</th>
                 <th scope="col">On state from</th>
                 <th scope="col">Last execution</th> *@
-        </tr>
-        </thead>
-        <tbody id="table-body">
-        
-        </tbody>
-    </table>
+    </tr>
+    </thead>
+    <tbody id="table-body">
+
+    </tbody>
+</table>
 </body>
 </html>

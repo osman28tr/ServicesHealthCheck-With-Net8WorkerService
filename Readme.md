@@ -65,7 +65,7 @@ It is the layer that allows data coming from the Worker service to be received v
 
 <h3>6. ScreenShots</h3>
 
-<img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/healthcheckmonitoring.PNG">
+<img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/screenshot.PNG">
 
 <h3>7. Video Impression</h3>
 <p align="justify">

@@ -16,7 +16,7 @@
 
 <h3>3. General Outlines of the Architecture Used in the Project</h3>
 
-<img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/arhitecture3.PNG" height="400px" width="650px">
+<img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/arhitecture3.1.PNG" height="400px" width="650px">
 
 <h3>4. Technical Information</h3>
 <h4>HealthCheck.Infrastructure - Layers</h4>
@@ -51,7 +51,7 @@ Mongodb was used as the database.
 
 <p align="justify">
 <b>ServicesHealthCheck.SignalR: </b> 
-It is the layer that allows data coming from the Worker service to be received via SignalR technology instead of receiving it directly. The reason for collecting data via SignalR is to make the application more manageable (for example, filtering on a client basis) and to reduce the code complexity that may occur. It contains the hub structure that forms the center of SignalR. Data sending and receiving operations are carried out through the hub structure. This layer is implemented with Asp.Net Core API.
+It is the layer that allows data coming from the Worker service to be received via SignalR technology instead of receiving it directly. It is based on websocket technology. It allows constantly changing data to be displayed instantly on the front end. The reason for collecting data via SignalR is to make the application more manageable (for example, filtering on a client basis) and to reduce the code complexity that may occur. It contains the hub structure that forms the center of SignalR. Data sending and receiving operations are carried out through the hub structure. This layer is implemented with Asp.Net Core API.
 </p>
 
 <h4>HealthCheck.Presentation -> HealthCheck.Admin - Layers</h4>

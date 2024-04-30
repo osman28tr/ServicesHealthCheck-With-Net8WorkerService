@@ -35,5 +35,11 @@ namespace ServicesHealthCheck.Business.RealTimes.SignalR
             await StartConnectionAsync();
             await _hubConnection.InvokeAsync("SendMessageAsync", servicesHealthCheckSignalRDto);
         }
+
+        public async Task SendVisualizationMessageAsync(ServiceResourceUsageVisualizationSignalRDto serviceResourceUsageVisualizationSignalRDto)
+        {
+            await StartConnectionAsync();
+            await _hubConnection.InvokeAsync("SendVisualizationMessageAsync", serviceResourceUsageVisualizationSignalRDto);
+        }
     }
 }

@@ -20,6 +20,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Profile
             CreateMap<ServiceHealthCheckDto, ServiceHealthCheck>().ReverseMap();
             CreateMap<ServicesHealthCheckSignalRDto, ServiceHealthCheck>().ReverseMap();
             CreateMap<ServicesHealthCheckSignalRDto, ServiceHealthCheckDto>().ReverseMap();
+            CreateMap<ServiceResourceUsageVisualizationSignalRDto, ServicesHealthCheckSignalRDto>().ReverseMap();
             CreateMap<GetListServiceHealthCheckResult, ServiceHealthCheck>().ReverseMap();
         }
     }

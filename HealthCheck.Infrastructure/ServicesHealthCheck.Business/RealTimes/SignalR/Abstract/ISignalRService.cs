@@ -11,5 +11,6 @@ namespace ServicesHealthCheck.Business.RealTimes.SignalR.Abstract
     public interface ISignalRService
     {
         Task SendMessageAsync(ServicesHealthCheckSignalRDto servicesHealthCheckSignalRDto);
+        Task SendVisualizationMessageAsync(ServiceResourceUsageVisualizationSignalRDto serviceResourceUsageVisualizationSignalRDto);
     }
 }

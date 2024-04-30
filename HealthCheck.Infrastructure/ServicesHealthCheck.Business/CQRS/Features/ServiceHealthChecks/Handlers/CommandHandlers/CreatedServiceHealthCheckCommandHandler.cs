@@ -120,8 +120,10 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                             IsResourceUsageLimitExceeded = isResourceUsageLimitExceeded
                         };
                         var serviceHealthCheckSignalRDto = _mapper.Map<ServicesHealthCheckSignalRDto>(serviceHealthCheckDto);
-                        await _signalRService.SendMessageAsync(serviceHealthCheckSignalRDto); // Send service related information to signalR
+                        var serviceResourceUsageVisualizationSignalRDto = _mapper.Map<ServiceResourceUsageVisualizationSignalRDto>(serviceHealthCheckSignalRDto);
 
+                        await _signalRService.SendMessageAsync(serviceHealthCheckSignalRDto); // Send service related information to signalR
+                        await _signalRService.SendVisualizationMessageAsync(serviceResourceUsageVisualizationSignalRDto);
                         updateServiceHealthCheckDtos.Add(serviceHealthCheckDto); // add to dto and rotate to update service
                     }
                     else //The service is not in the database, add a new service to the database
@@ -140,7 +142,10 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                             IsResourceUsageLimitExceeded = isResourceUsageLimitExceeded
                         };
                         var serviceHealthCheckSignalRDto = _mapper.Map<ServicesHealthCheckSignalRDto>(serviceHealthCheck);
+                        var serviceResourceUsageVisualizationSignalRDto = _mapper.Map<ServiceResourceUsageVisualizationSignalRDto>(serviceHealthCheckSignalRDto);
+
                         await _signalRService.SendMessageAsync(serviceHealthCheckSignalRDto); // Send service related information to signalR
+                        await _signalRService.SendVisualizationMessageAsync(serviceResourceUsageVisualizationSignalRDto);
                         await _serviceHealthCheckRepository.AddAsync(serviceHealthCheck);
                     }
                 }

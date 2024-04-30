@@ -14,6 +14,8 @@ namespace ServicesHealthCheck.Dtos.SignalRDtos
         public string PhysicalMemoryUsage { get; set; }
         public string VirtualMemoryUsage { get; set; }
         public string PrivateMemoryUsage { get; set; }
+        public string DiskUsage { get; set; }
+        public string AverageDiskQueueUsage { get; set; }
         public bool IsHealthy { get; set; }
     }
 }

@@ -24,6 +24,10 @@ namespace ServicesHealthCheck.Datas.NoSQL.MongoDb
         public string VirtualMemoryUsage { get; set; }
         [BsonRepresentation(MongoDB.Bson.BsonType.String)]
         public string PrivateMemoryUsage { get; set; }
+        [BsonRepresentation(MongoDB.Bson.BsonType.String)]
+        public string DiskUsage { get; set; }
+        [BsonRepresentation(MongoDB.Bson.BsonType.String)]
+        public string AverageDiskQueueUsage { get; set; }
         [BsonRepresentation(MongoDB.Bson.BsonType.Boolean)]
         public bool IsHealthy { get; set; }
     }

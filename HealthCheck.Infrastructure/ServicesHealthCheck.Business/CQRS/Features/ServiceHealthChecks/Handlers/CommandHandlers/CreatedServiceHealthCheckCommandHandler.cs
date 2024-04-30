@@ -47,7 +47,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                 {
                     bool isHealthy = true;
                     ServiceController service = new ServiceController(serviceName);
-
+                    
                     Console.WriteLine($"{serviceName} is status: " + service.Status);
 
                     var IsExistServiceHealthCheck =
@@ -57,6 +57,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                     {
                         if (IsExistServiceHealthCheck != null && IsExistServiceHealthCheck.IsHealthy == true) // If the current service has become unhealthy while it was healthy (a new situation has occurred, it prevents sending unnecessary e-mails).
                         {
+                            service.Start();
                             foreach (var mail in _mailSetting.ToMail)
                             {
                                 await _mailService.SendEmailAsync(new MailDto
@@ -64,15 +65,15 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                                     FromMail = _mailSetting.FromMail,
                                     ToEmail = mail,
                                     Subject = "Servis Durumu",
-                                    Body = $"{serviceName} servisi çalışmıyor."
+                                    Body = $"{serviceName} servisi durduruldu, ardından tekrar çalıştırıldı."
                                 }, CancellationToken.None);
-                                isHealthy = false; // make your condition unhealthy
+                                //isHealthy = false; // make your condition unhealthy
                             }
                         }
-                        else if (IsExistServiceHealthCheck.IsHealthy == false) //If the current service's status is unhealthy, set the initial health status to false and do not send an e-mail (it has already been sent).
-                        {
-                            isHealthy = false;
-                        }
+                        //else if (service.Status != ServiceControllerStatus.Running) //If the current service's status is unhealthy, set the initial health status to false and do not send an e-mail (it has already been sent).
+                        //{
+                        //    isHealthy = false;
+                        //}
                     }
                     if (IsExistServiceHealthCheck != null) //If there is an existing service, if it is not a new service, update it
                     {
@@ -85,7 +86,9 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                             CpuUsage = resourceModel.CpuUsage,
                             PhysicalMemoryUsage = resourceModel.PhysicalMemoryUsage,
                             PrivateMemoryUsage = resourceModel.PrivateMemoryUsage,
-                            VirtualMemoryUsage = resourceModel.VirtualMemoryUsage
+                            VirtualMemoryUsage = resourceModel.VirtualMemoryUsage,
+                            DiskUsage = resourceModel.DiskUsage,
+                            AverageDiskQueueUsage = resourceModel.AverageDiskQueueUsage
                         };
                         var serviceHealthCheckSignalRDto = _mapper.Map<ServicesHealthCheckSignalRDto>(serviceHealthCheckDto);
                         await _signalRService.SendMessageAsync(serviceHealthCheckSignalRDto); // Send service related information to signalR
@@ -104,7 +107,9 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                             CpuUsage = resourceModel.CpuUsage,
                             PhysicalMemoryUsage = resourceModel.PhysicalMemoryUsage,
                             PrivateMemoryUsage = resourceModel.PrivateMemoryUsage,
-                            VirtualMemoryUsage = resourceModel.VirtualMemoryUsage
+                            VirtualMemoryUsage = resourceModel.VirtualMemoryUsage,
+                            DiskUsage = resourceModel.DiskUsage,
+                            AverageDiskQueueUsage = resourceModel.AverageDiskQueueUsage
                         };
                         var serviceHealthCheckSignalRDto = _mapper.Map<ServicesHealthCheckSignalRDto>(serviceHealthCheck);
                         await _signalRService.SendMessageAsync(serviceHealthCheckSignalRDto); // Send service related information to signalR
@@ -153,29 +158,46 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
 
             int processId = (int)(uint)o;
             Process process = Process.GetProcessById(processId);
-
+            
             // Creating performance counters for CPU, Memory usage(gets in bytes)
-
+            
+            //Cpu counter
             PerformanceCounter cpuCounter = new PerformanceCounter("Process", "% Processor Time", process.ProcessName);
+            
+            //Memory counters
             PerformanceCounter workingSetCounter = new PerformanceCounter("Process", "Working Set", process.ProcessName);
             PerformanceCounter privateBytesCounter = new PerformanceCounter("Process", "Private Bytes", process.ProcessName);
 
             PerformanceCounter virtualMemoryCounter = new PerformanceCounter("Process", "Virtual Bytes", process.ProcessName);
 
+            //disk counter
+            PerformanceCounter diskCounter = new PerformanceCounter("PhysicalDisk", "% Disk Time", "_Total");
+            
+            PerformanceCounter avgDiskQueueLengthCounter = new PerformanceCounter("PhysicalDisk", "Avg. Disk Queue Length", "_Total");
             // Gets current memory and CPU information
 
             double workingSet = workingSetCounter.NextValue() / (1024 * 1024); // Converts the value received in bytes to MB
             float privateBytes = privateBytesCounter.NextValue() / (1024 * 1024); // Converts the value received in bytes to MB
-            float cpuUsage = cpuCounter.NextValue(); // Get cpu usage
 
             float virtualMemorySize = virtualMemoryCounter.NextValue() / (1024 * 1024); // Converts the value received in bytes to MB
 
+            float cpuUsage = cpuCounter.NextValue(); // Get cpu usage
+
+            Thread.Sleep(1000);
+
+            cpuUsage = cpuCounter.NextValue();
+
+            float diskUsage = diskCounter.NextValue(); // Get disk usage
+
+            var avgDiskQueueLength = avgDiskQueueLengthCounter.NextValue(); // Get average disk queue length
             ResourceUsageModel resourceUsageModel = new ResourceUsageModel()
             {
                 CpuUsage = cpuUsage + "%",
                 PrivateMemoryUsage = privateBytes.ToString() + "MB",
                 VirtualMemoryUsage = virtualMemorySize.ToString() + "MB",
-                PhysicalMemoryUsage = workingSet.ToString() + "MB"
+                PhysicalMemoryUsage = workingSet.ToString() + "MB",
+                DiskUsage = diskUsage.ToString() + "%",
+                AverageDiskQueueUsage = avgDiskQueueLength.ToString()
             };
             return resourceUsageModel;
         }

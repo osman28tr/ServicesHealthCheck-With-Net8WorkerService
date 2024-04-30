@@ -35,7 +35,9 @@
                     existingRow.find('td:nth-child(5)').text(serviceHealthCheckSignalRDto.physicalMemoryUsage);
                     existingRow.find('td:nth-child(6)').text(serviceHealthCheckSignalRDto.virtualMemoryUsage);
                     existingRow.find('td:nth-child(7)').text(serviceHealthCheckSignalRDto.privateMemoryUsage);
-                    existingRow.find('td:nth-child(8)').text(serviceHealthCheckSignalRDto.isHealthy);
+                    existingRow.find('td:nth-child(8)').text(serviceHealthCheckSignalRDto.diskUsage);
+                    existingRow.find('td:nth-child(9)').text(serviceHealthCheckSignalRDto.averageDiskQueueUsage);
+                    existingRow.find('td:nth-child(10)').text(serviceHealthCheckSignalRDto.isHealthy);
                 } else {
                     var row = `<tr>
                                         <td></td>
@@ -45,6 +47,8 @@
                                                                                 <td>${serviceHealthCheckSignalRDto.physicalMemoryUsage}</td>
                                                                                 <td>${serviceHealthCheckSignalRDto.virtualMemoryUsage}</td>
                                                                                 <td>${serviceHealthCheckSignalRDto.privateMemoryUsage}</td>
+                                                                                        <td>${serviceHealthCheckSignalRDto.diskUsage}</td>
+                                                                                                <td>${serviceHealthCheckSignalRDto.averageDiskQueueUsage}</td>
                                                                                 <td>${serviceHealthCheckSignalRDto.isHealthy}</td>
                                    </tr>`;
                     $('#table-body').append(row);
@@ -75,6 +79,8 @@
         <th scope="col">PhysicalMemoryUsage</th>
         <th scope="col">VirtualMemoryUsage</th>
         <th scope="col">PrivateMemoryUsage</th>
+        <th scope="col">DiskUsage</th>
+        <th scope="col">AverageDiskQueueUsage</th>
         <th scope="col">IsHealthy</th>
         @*             <th scope="col">Cpu Usage</th>
             <th scope="col">Physical Memory Usage</th>

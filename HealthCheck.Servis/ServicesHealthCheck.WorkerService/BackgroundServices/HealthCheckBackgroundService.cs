@@ -37,7 +37,6 @@ namespace ServicesHealthCheck.WorkerService.BackgroundServices
                     _mediator.Send(new UpdatedServiceHealthCheckCommand()
                         { ServiceHealthCheckDtos = updateServiceHealthCheck });
                 }
-                System.Threading.Thread.Sleep(1000);
             }
             Console.ReadLine();
             return null;

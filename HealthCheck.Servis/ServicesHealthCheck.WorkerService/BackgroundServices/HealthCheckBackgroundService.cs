@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MediatR;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Commands;
+using ServicesHealthCheck.Shared.Models;
 
 namespace ServicesHealthCheck.WorkerService.BackgroundServices
 {
@@ -29,13 +30,18 @@ namespace ServicesHealthCheck.WorkerService.BackgroundServices
             {
                 var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
                 var services = configuration.GetSection("Services").Get<List<string>>();
+                var serviceCpuUsageLimit = configuration.GetSection("ResourceLimits:MaxCpuUsage").Value;
+
+                var serviceResourceUsageLimit = new ServiceResourceUsageLimit() { CpuMaxUsage = Convert.ToInt16(serviceCpuUsageLimit) };
 
                 // await _healthCheck.CheckServicesHealth(services);
-                var updateServiceHealthCheck = await _mediator.Send(new CreatedServiceHealthCheckCommand() { Services = services });
+                var updateServiceHealthCheck = await _mediator.Send(new CreatedServiceHealthCheckCommand()
+                    { Services = services, ServiceResourceUsageLimit = serviceResourceUsageLimit });
+
                 if (updateServiceHealthCheck.Any())
                 {
                     _mediator.Send(new UpdatedServiceHealthCheckCommand()
-                        { ServiceHealthCheckDtos = updateServiceHealthCheck });
+                    { ServiceHealthCheckDtos = updateServiceHealthCheck });
                 }
             }
             Console.ReadLine();

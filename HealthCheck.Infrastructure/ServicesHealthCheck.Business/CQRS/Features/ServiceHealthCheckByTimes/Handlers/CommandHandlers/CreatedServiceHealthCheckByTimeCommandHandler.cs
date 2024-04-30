@@ -36,6 +36,8 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthCheckByTimes.H
                 try
                 {
                     bool isHealthy = true;
+                    bool isResourceUsageLimitExceeded = false;
+
                     ServiceController service = new ServiceController(serviceName);
 
                     Console.WriteLine($"{serviceName} is status in servicehealthcheckbytime: " + service.Status);
@@ -46,9 +48,16 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthCheckByTimes.H
                     {
                         isHealthy = false;
                     }
+
+                    if (request.ServiceResourceUsageLimit.CpuMaxUsage < resourceModel.CpuUsage)
+                    {
+                        isHealthy = false;
+                        isResourceUsageLimitExceeded = true;
+                    }
                     var serviceHealthCheckByTime = _mapper.Map<ServiceHealthCheckByTime>(resourceModel);
                     serviceHealthCheckByTime.ServiceName = serviceName;
                     serviceHealthCheckByTime.IsHealthy = isHealthy;
+                    serviceHealthCheckByTime.IsResourceUsageLimitExceeded = isResourceUsageLimitExceeded;
                     serviceHealthCheckByTime.Status = service.Status.ToString();
 
                     serviceHealthCheckByTime.Date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");

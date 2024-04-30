@@ -20,8 +20,8 @@
             connection.start();
             //servicename and status received
             connection.on("receiveMessage", (serviceHealthCheckSignalRDto) => {
-               // console.log(serviceHealthCheckSignalRDto.serviceName.toString());
-               updateTable(serviceHealthCheckSignalRDto);
+                // console.log(serviceHealthCheckSignalRDto.serviceName.toString());
+                updateTable(serviceHealthCheckSignalRDto);
             }); // noktalı virgül eklenmeli
 
             function updateTable(serviceHealthCheckSignalRDto) {
@@ -38,19 +38,21 @@
                     existingRow.find('td:nth-child(8)').text(serviceHealthCheckSignalRDto.diskUsage + '%');
                     existingRow.find('td:nth-child(9)').text(serviceHealthCheckSignalRDto.averageDiskQueueUsage);
                     existingRow.find('td:nth-child(10)').text(serviceHealthCheckSignalRDto.isHealthy);
+                    existingRow.find('td:nth-child(11)').text(serviceHealthCheckSignalRDto.isResourceUsageLimitExceeded);
                 } else {
                     var row = `<tr>
-                                        <td></td>
-                                                                        <td>${serviceHealthCheckSignalRDto.serviceName}</td>
-                                                                        <td>${serviceHealthCheckSignalRDto.status}</td>
-                                                                                <td>${serviceHealthCheckSignalRDto.cpuUsage}</td>
-                                                                                <td>${serviceHealthCheckSignalRDto.physicalMemoryUsage}</td>
-                                                                                <td>${serviceHealthCheckSignalRDto.virtualMemoryUsage}</td>
-                                                                                <td>${serviceHealthCheckSignalRDto.privateMemoryUsage}</td>
-                                                                                        <td>${serviceHealthCheckSignalRDto.diskUsage}</td>
-                                                                                                <td>${serviceHealthCheckSignalRDto.averageDiskQueueUsage}</td>
-                                                                                <td>${serviceHealthCheckSignalRDto.isHealthy}</td>
-                                   </tr>`;
+                                                <td></td>
+                                                                                <td>${serviceHealthCheckSignalRDto.serviceName}</td>
+                                                                                <td>${serviceHealthCheckSignalRDto.status}</td>
+                                                                                        <td>${serviceHealthCheckSignalRDto.cpuUsage}</td>
+                                                                                        <td>${serviceHealthCheckSignalRDto.physicalMemoryUsage}</td>
+                                                                                        <td>${serviceHealthCheckSignalRDto.virtualMemoryUsage}</td>
+                                                                                        <td>${serviceHealthCheckSignalRDto.privateMemoryUsage}</td>
+                                                                                                <td>${serviceHealthCheckSignalRDto.diskUsage}</td>
+                                                                                                        <td>${serviceHealthCheckSignalRDto.averageDiskQueueUsage}</td>
+                                                                                        <td>${serviceHealthCheckSignalRDto.isHealthy}</td>
+                                                                                                <td>${serviceHealthCheckSignalRDto.isResourceUsageLimitExceeded}</td>
+                                           </tr>`;
                     $('#table-body').append(row);
                 }
             }
@@ -58,42 +60,42 @@
     </script>
 </head>
 <body>
-<br/>
-<div class="container-fluid" style="display:flex">
-    <h3 style="margin-top:12px">Health Check Status</h3>
-    <img src="~/icons/status.png" width="120px" height="60px"/>
-    <img src="~/icons/live-streaming.png" width="120px" height="60px"/>
-</div>
-<br/>
-@*  <ul id="messages">
+    <br />
+    <div class="container-fluid" style="display:flex">
+        <h3 style="margin-top:12px">Health Check Status</h3>
+        <img src="~/icons/status.png" width="120px" height="60px" />
+        <img src="~/icons/live-streaming.png" width="120px" height="60px" />
+    </div>
+    <br />
+    @*  <ul id="messages">
     <li>servicename</li>
     </ul> *@
 
-<table class="table">
-    <thead style="background-color:green; color:white">
-    <tr>
-        <th scope="col"></th>
-        <th scope="col">Name</th>
-        <th scope="col">Health</th>
-        <th scope="col">CpuUsage</th>
-        <th scope="col">PhysicalMemoryUsage</th>
-        <th scope="col">VirtualMemoryUsage</th>
-        <th scope="col">PrivateMemoryUsage</th>
-        <th scope="col">DiskUsage</th>
-        <th scope="col">AverageDiskQueueUsage</th>
-        <th scope="col">IsHealthy</th>
-        @*             <th scope="col">Cpu Usage</th>
-            <th scope="col">Physical Memory Usage</th>
-            <th scope="col">Private Memory Usage</th>
-            <th scope="col">Virtual Memory Usage</th> *@
-        @*    <th scope="col">Description</th>
+    <table class="table">
+        <thead style="background-color:green; color:white">
+            <tr>
+                <th scope="col"></th>
+                <th scope="col">Name</th>
+                <th scope="col">Health</th>
+                <th scope="col">CpuUsage</th>
+                <th scope="col">PhysicalMemoryUsage</th>
+                <th scope="col">VirtualMemoryUsage</th>
+                <th scope="col">PrivateMemoryUsage</th>
+                <th scope="col">DiskUsage</th>
+                <th scope="col">AverageDiskQueueUsage</th>
+                <th scope="col">IsHealthy</th>
+                <th scope="col">IsResourceUsageLimitExceeded</th>
+                @*             <th scope="col">Cpu Usage</th>
+                <th scope="col">Physical Memory Usage</th>
+                <th scope="col">Private Memory Usage</th>
+                <th scope="col">Virtual Memory Usage</th> *@
+                @*    <th scope="col">Description</th>
                 <th scope="col">On state from</th>
                 <th scope="col">Last execution</th> *@
-    </tr>
-    </thead>
-    <tbody id="table-body">
-
-    </tbody>
-</table>
+            </tr>
+        </thead>
+        <tbody id="table-body">
+        </tbody>
+    </table>
 </body>
 </html>

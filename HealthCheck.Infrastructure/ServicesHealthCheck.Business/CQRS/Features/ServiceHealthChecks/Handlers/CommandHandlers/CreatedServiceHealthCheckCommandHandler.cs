@@ -46,8 +46,9 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                 try
                 {
                     bool isHealthy = true;
+                    bool isResourceUsageLimitExceeded = false;
                     ServiceController service = new ServiceController(serviceName);
-                    
+
                     Console.WriteLine($"{serviceName} is status: " + service.Status);
 
                     var IsExistServiceHealthCheck =
@@ -70,14 +71,41 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                                 //isHealthy = false; // make your condition unhealthy
                             }
                         }
-                        //else if (service.Status != ServiceControllerStatus.Running) //If the current service's status is unhealthy, set the initial health status to false and do not send an e-mail (it has already been sent).
-                        //{
-                        //    isHealthy = false;
-                        //}
+                        else if (service.Status != ServiceControllerStatus.Running) //If the current service's status is unhealthy, set the initial health status to false and do not send an e-mail (it has already been sent).
+                        {
+                            isHealthy = false;
+                        }
+                    }
+                    var resourceModel = CheckResourceUsage(serviceName);
+
+                    if (resourceModel.CpuUsage >
+                        request.ServiceResourceUsageLimit
+                            .CpuMaxUsage) // If the service's CPU usage exceeds the limit, send an e-mail
+                    {
+                        if (IsExistServiceHealthCheck.IsResourceUsageLimitExceeded == false)
+                        {
+                            foreach (var mail in _mailSetting.ToMail)
+                            {
+                                await _mailService.SendEmailAsync(new MailDto
+                                {
+                                    FromMail = _mailSetting.FromMail,
+                                    ToEmail = mail,
+                                    Subject = "Servis Durumu",
+                                    Body = $"{serviceName} servisinin CPU kullanım limiti aşıldı."
+                                }, CancellationToken.None);
+                                isResourceUsageLimitExceeded = true;
+                                isHealthy = false;
+                            }
+                        }
+                        else
+                        {
+                            isResourceUsageLimitExceeded = true;
+                            isHealthy = false;
+                        }
                     }
                     if (IsExistServiceHealthCheck != null) //If there is an existing service, if it is not a new service, update it
                     {
-                        var resourceModel = CheckResourceUsage(serviceName); // get resource usages
+                        // get resource usages
                         var serviceHealthCheckDto = new ServiceHealthCheckDto()
                         {
                             ServiceName = serviceName,
@@ -88,7 +116,8 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                             PrivateMemoryUsage = resourceModel.PrivateMemoryUsage,
                             VirtualMemoryUsage = resourceModel.VirtualMemoryUsage,
                             DiskUsage = resourceModel.DiskUsage,
-                            AverageDiskQueueUsage = resourceModel.AverageDiskQueueUsage
+                            AverageDiskQueueUsage = resourceModel.AverageDiskQueueUsage,
+                            IsResourceUsageLimitExceeded = isResourceUsageLimitExceeded
                         };
                         var serviceHealthCheckSignalRDto = _mapper.Map<ServicesHealthCheckSignalRDto>(serviceHealthCheckDto);
                         await _signalRService.SendMessageAsync(serviceHealthCheckSignalRDto); // Send service related information to signalR
@@ -97,8 +126,6 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                     }
                     else //The service is not in the database, add a new service to the database
                     {
-                        var resourceModel = CheckResourceUsage(serviceName);
-
                         var serviceHealthCheck = new ServiceHealthCheck()
                         {
                             ServiceName = serviceName,
@@ -109,7 +136,8 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                             PrivateMemoryUsage = resourceModel.PrivateMemoryUsage,
                             VirtualMemoryUsage = resourceModel.VirtualMemoryUsage,
                             DiskUsage = resourceModel.DiskUsage,
-                            AverageDiskQueueUsage = resourceModel.AverageDiskQueueUsage
+                            AverageDiskQueueUsage = resourceModel.AverageDiskQueueUsage,
+                            IsResourceUsageLimitExceeded = isResourceUsageLimitExceeded
                         };
                         var serviceHealthCheckSignalRDto = _mapper.Map<ServicesHealthCheckSignalRDto>(serviceHealthCheck);
                         await _signalRService.SendMessageAsync(serviceHealthCheckSignalRDto); // Send service related information to signalR
@@ -158,12 +186,12 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
 
             int processId = (int)(uint)o;
             Process process = Process.GetProcessById(processId);
-            
+
             // Creating performance counters for CPU, Memory usage(gets in bytes)
-            
+
             //Cpu counter
             PerformanceCounter cpuCounter = new PerformanceCounter("Process", "% Processor Time", process.ProcessName);
-            
+
             //Memory counters
             PerformanceCounter workingSetCounter = new PerformanceCounter("Process", "Working Set", process.ProcessName);
             PerformanceCounter privateBytesCounter = new PerformanceCounter("Process", "Private Bytes", process.ProcessName);
@@ -172,7 +200,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
 
             //disk counter
             PerformanceCounter diskCounter = new PerformanceCounter("PhysicalDisk", "% Disk Time", "_Total");
-            
+
             PerformanceCounter avgDiskQueueLengthCounter = new PerformanceCounter("PhysicalDisk", "Avg. Disk Queue Length", "_Total");
             // Gets current memory and CPU information
 

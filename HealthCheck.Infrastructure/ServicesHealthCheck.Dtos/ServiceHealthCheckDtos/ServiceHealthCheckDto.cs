@@ -17,5 +17,6 @@ namespace ServicesHealthCheck.Dtos.ServiceHealthCheckDtos
         public float DiskUsage { get; set; }
         public int AverageDiskQueueUsage { get; set; }
         public bool IsHealthy { get; set; }
+        public bool IsResourceUsageLimitExceeded { get; set; }
     }
 }

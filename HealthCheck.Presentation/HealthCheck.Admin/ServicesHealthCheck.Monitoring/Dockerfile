@@ -8,9 +8,9 @@ EXPOSE 8080
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/ServicesHealthCheck.Monitoring.csproj", "HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/"]
+COPY ["HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring.csproj", "HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/"]
 RUN dotnet restore "./HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/ServicesHealthCheck.Monitoring.csproj"
-COPY . .
+COPY . ./HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/
 WORKDIR "/src/HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring"
 RUN dotnet build "./ServicesHealthCheck.Monitoring.csproj" -c $BUILD_CONFIGURATION -o /app/build
 

@@ -16,19 +16,12 @@ namespace ServicesHealthCheck.Datas.NoSQL.MongoDb
         public string ServiceName { get; set; }
         [BsonRepresentation(MongoDB.Bson.BsonType.String)]
         public string Status { get; set; }
-        [BsonRepresentation(MongoDB.Bson.BsonType.String)]
-        public string CpuUsage { get; set; }
-        [BsonRepresentation(MongoDB.Bson.BsonType.String)]
-        public string PhysicalMemoryUsage { get; set; }
-        [BsonRepresentation(MongoDB.Bson.BsonType.String)]
-        public string VirtualMemoryUsage { get; set; }
-        [BsonRepresentation(MongoDB.Bson.BsonType.String)]
-        public string PrivateMemoryUsage { get; set; }
-        [BsonRepresentation(MongoDB.Bson.BsonType.String)]
-        public string DiskUsage { get; set; }
-        [BsonRepresentation(MongoDB.Bson.BsonType.String)]
-        public string AverageDiskQueueUsage { get; set; }
-        [BsonRepresentation(MongoDB.Bson.BsonType.Boolean)]
+        public float CpuUsage { get; set; }
+        public float PhysicalMemoryUsage { get; set; }
+        public float VirtualMemoryUsage { get; set; }
+        public float PrivateMemoryUsage { get; set; }
+        public float DiskUsage { get; set; }
+        public int AverageDiskQueueUsage { get; set; }
         public bool IsHealthy { get; set; }
     }
 }

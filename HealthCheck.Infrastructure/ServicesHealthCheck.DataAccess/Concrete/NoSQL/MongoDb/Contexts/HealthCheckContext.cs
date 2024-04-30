@@ -20,5 +20,6 @@ namespace ServicesHealthCheck.DataAccess.Concrete.NoSQL.MongoDb.Contexts
         }
 
         public IMongoCollection<ServiceHealthCheck> ServiceHealthCheck => _database.GetCollection<ServiceHealthCheck>("ServiceHealthChecks");
+        public IMongoCollection<ServiceHealthCheckByTime> ServiceHealthCheckByTime => _database.GetCollection<ServiceHealthCheckByTime>("ServiceHealthCheckByTimes");
     }
 }

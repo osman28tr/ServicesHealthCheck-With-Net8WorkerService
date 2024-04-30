@@ -127,10 +127,10 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                             ServiceName = "Undefined",
                             Status = "-",
                             IsHealthy = false,
-                            CpuUsage = "-",
-                            PhysicalMemoryUsage = "-",
-                            PrivateMemoryUsage = "-",
-                            VirtualMemoryUsage = "-"
+                            CpuUsage = 0,
+                            PhysicalMemoryUsage = 0,
+                            PrivateMemoryUsage = 0,
+                            VirtualMemoryUsage = 0
                         };
                         try
                         {
@@ -176,7 +176,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
             PerformanceCounter avgDiskQueueLengthCounter = new PerformanceCounter("PhysicalDisk", "Avg. Disk Queue Length", "_Total");
             // Gets current memory and CPU information
 
-            double workingSet = workingSetCounter.NextValue() / (1024 * 1024); // Converts the value received in bytes to MB
+            float workingSet = workingSetCounter.NextValue() / (1024 * 1024); // Converts the value received in bytes to MB
             float privateBytes = privateBytesCounter.NextValue() / (1024 * 1024); // Converts the value received in bytes to MB
 
             float virtualMemorySize = virtualMemoryCounter.NextValue() / (1024 * 1024); // Converts the value received in bytes to MB
@@ -192,12 +192,12 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
             var avgDiskQueueLength = avgDiskQueueLengthCounter.NextValue(); // Get average disk queue length
             ResourceUsageModel resourceUsageModel = new ResourceUsageModel()
             {
-                CpuUsage = cpuUsage + "%",
-                PrivateMemoryUsage = privateBytes.ToString() + "MB",
-                VirtualMemoryUsage = virtualMemorySize.ToString() + "MB",
-                PhysicalMemoryUsage = workingSet.ToString() + "MB",
-                DiskUsage = diskUsage.ToString() + "%",
-                AverageDiskQueueUsage = avgDiskQueueLength.ToString()
+                CpuUsage = cpuUsage,
+                PrivateMemoryUsage = privateBytes,
+                VirtualMemoryUsage = virtualMemorySize,
+                PhysicalMemoryUsage = workingSet,
+                DiskUsage = diskUsage,
+                AverageDiskQueueUsage = Convert.ToInt16(avgDiskQueueLength)
             };
             return resourceUsageModel;
         }

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Models
+namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthCheckByTimes.Models
 {
-    public class ResourceUsageModel
+    public class ResourceUsageModelByTime
     {
         public float CpuUsage { get; set; }
         public float PhysicalMemoryUsage { get; set; }
@@ -15,5 +15,6 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Models
         public float DiskUsage { get; set; }
         public int AverageDiskQueueUsage { get; set; }
         public bool IsHealthy { get; set; }
+        public DateTime Date { get; set; }
     }
 }

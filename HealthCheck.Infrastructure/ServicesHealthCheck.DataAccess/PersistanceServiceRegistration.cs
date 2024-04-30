@@ -14,6 +14,7 @@ namespace ServicesHealthCheck.DataAccess
         public static IServiceCollection AddPersistanceServices(this IServiceCollection services)
         {
             services.AddSingleton<IServiceHealthCheckRepository, ServiceHealthCheckRepository>();
+            services.AddSingleton<IServiceHealthCheckByTimeRepository, ServiceHealthCheckByTimeRepository>();
             return services;
         }
     }

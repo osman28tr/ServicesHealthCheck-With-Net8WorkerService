@@ -11,10 +11,10 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Results
         public string Id { get; set; }
         public string ServiceName { get; set; }
         public string Status { get; set; }
-        public string CpuUsage { get; set; }
-        public string PhysicalMemoryUsage { get; set; }
-        public string VirtualMemoryUsage { get; set; }
-        public string PrivateMemoryUsage { get; set; }
+        public float CpuUsage { get; set; }
+        public float PhysicalMemoryUsage { get; set; }
+        public float VirtualMemoryUsage { get; set; }
+        public float PrivateMemoryUsage { get; set; }
         public bool IsHealthy { get; set; }
     }
 }

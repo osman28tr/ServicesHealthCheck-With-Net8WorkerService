@@ -6,13 +6,17 @@
     <style>
         .chart-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); /* Her sütun en az 400 piksel genişliğinde olacak */
+            grid-template-columns: repeat(auto-fill, 400px); /* Her sütun en az 400 piksel genişliğinde olacak */
             gap: 20px; /* Grafikler arasında boşluk */
+           
         }
 
         .chart-item {
             border: 1px solid #ccc;
             padding: 10px;
+            /* width: 400px;
+            height: 250px;
+            float:left; */
         }
 
         canvas {
@@ -38,7 +42,7 @@
 
 
         // SignalR hub'a bağlan
-        var connection = new signalR.HubConnectionBuilder().withUrl("http://localhost:5012/healthcheckhub").build();
+        var connection = new signalR.HubConnectionBuilder().withUrl("http://localhost:5181/healthcheckhub").build();
         var existingCharts = {};
         // Veri geldiğinde grafikleri güncelle
         connection.on("receiveVisualizationMessage", function (serviceDatas) {

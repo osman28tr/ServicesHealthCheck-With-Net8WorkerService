@@ -17,7 +17,7 @@ namespace ServicesHealthCheck.Business.RealTimes.SignalR
         public SignalRService()
         {
             _hubConnection = new HubConnectionBuilder()
-                .WithUrl("http://localhost:5012/healthcheckhub")
+                .WithUrl("http://localhost:5181/healthcheckhub")
                 .Build();
         }
         private async Task StartConnectionAsync()

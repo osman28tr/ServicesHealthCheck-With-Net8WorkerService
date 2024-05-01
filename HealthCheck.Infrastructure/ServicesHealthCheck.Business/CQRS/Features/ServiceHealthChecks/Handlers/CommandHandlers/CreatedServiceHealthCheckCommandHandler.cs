@@ -77,6 +77,8 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                         }
                     }
                     var resourceModel = CheckResourceUsage(serviceName);
+                    
+
 
                     if (resourceModel.CpuUsage >
                         request.ServiceResourceUsageLimit
@@ -176,6 +178,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                     }
                     else
                     {
+                        //mongoya log atabilirsin, erroMessage prop'u olsun. Oraya mesajları atsın.
                         Console.WriteLine("An error occurred: " + exception.Message);
                     }
                     continue;

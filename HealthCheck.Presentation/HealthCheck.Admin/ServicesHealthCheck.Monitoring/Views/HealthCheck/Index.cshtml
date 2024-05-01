@@ -14,7 +14,7 @@
     <script>
         $(document).ready(() => {
             var connection = new signalR.HubConnectionBuilder()
-                .withUrl("http://localhost:5012/healthcheckhub")
+                .withUrl("http://localhost:5181/healthcheckhub")
                 .build();
 
             connection.start();

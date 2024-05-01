@@ -58,7 +58,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                     {
                         if (IsExistServiceHealthCheck != null && IsExistServiceHealthCheck.IsHealthy == true) // If the current service has become unhealthy while it was healthy (a new situation has occurred, it prevents sending unnecessary e-mails).
                         {
-                            service.Start();
+                            //service.Start();
                             foreach (var mail in _mailSetting.ToMail)
                             {
                                 await _mailService.SendEmailAsync(new MailDto
@@ -191,9 +191,9 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
 
             int processId = (int)(uint)o;
             Process process = Process.GetProcessById(processId);
-
+            
             // Creating performance counters for CPU, Memory usage(gets in bytes)
-
+            
             //Cpu counter
             PerformanceCounter cpuCounter = new PerformanceCounter("Process", "% Processor Time", process.ProcessName);
 

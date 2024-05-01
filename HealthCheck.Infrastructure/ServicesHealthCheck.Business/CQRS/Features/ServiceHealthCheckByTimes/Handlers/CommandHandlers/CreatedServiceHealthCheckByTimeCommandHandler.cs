@@ -116,6 +116,10 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthCheckByTimes.H
 
             float diskUsage = diskCounter.NextValue(); // Get disk usage
 
+            Thread.Sleep(1000);
+
+            diskUsage = diskCounter.NextValue();
+
             var avgDiskQueueLength = avgDiskQueueLengthCounter.NextValue(); // Get average disk queue length
             ResourceUsageModelByTime resourceUsageModel = new ResourceUsageModelByTime()
             {

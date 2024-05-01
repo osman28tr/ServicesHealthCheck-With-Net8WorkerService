@@ -6,9 +6,7 @@ namespace ServicesHealthCheck.Monitoring.Controllers
     {
         public IActionResult Index()
         {
-            var data = new int[] { 10, 20, 30, 40, 50 }; // Örnek CPU kullanımı
-
-            return View(data);
+            return View();
         }
     }
 }

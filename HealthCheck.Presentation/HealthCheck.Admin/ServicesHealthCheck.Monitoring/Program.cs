@@ -1,4 +1,5 @@
 using System.Reflection;
+using Microsoft.Extensions.Hosting.WindowsServices;
 using ServicesHealthCheck.Business;
 using ServicesHealthCheck.DataAccess;
 using ServicesHealthCheck.DataAccess.Concrete.NoSQL.MongoDb.Contexts;
@@ -13,8 +14,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddHostedService<HealthCheckBackgroundService>();
 builder.Services.AddHostedService<HealthCheckByTimeBackgroundService>();
-
+builder.Services.AddWindowsService();
 builder.Services.AddSignalR();
+
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.ListenAnyIP(5181);
+});
 
 var option = builder.Configuration.GetSection("Notifications:Email");
 builder.Services.Configure<MailSetting>(option);

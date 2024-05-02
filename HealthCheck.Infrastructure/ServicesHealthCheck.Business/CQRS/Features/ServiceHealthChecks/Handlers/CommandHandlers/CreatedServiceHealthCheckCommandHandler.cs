@@ -58,7 +58,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                     {
                         if (IsExistServiceHealthCheck != null && IsExistServiceHealthCheck.IsHealthy == true) // If the current service has become unhealthy while it was healthy (a new situation has occurred, it prevents sending unnecessary e-mails).
                         {
-                            //service.Start();
+                            service.Start();
                             foreach (var mail in _mailSetting.ToMail)
                             {
                                 await _mailService.SendEmailAsync(new MailDto
@@ -68,17 +68,19 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                                     Subject = "Servis Durumu",
                                     Body = $"{serviceName} servisi durduruldu, ardından tekrar çalıştırıldı."
                                 }, CancellationToken.None);
-                                //isHealthy = false; // make your condition unhealthy
+                                isHealthy = false; // make your condition unhealthy
                             }
                         }
                         else if (service.Status != ServiceControllerStatus.Running) //If the current service's status is unhealthy, set the initial health status to false and do not send an e-mail (it has already been sent).
                         {
+                            service.Start();
                             isHealthy = false;
                         }
                     }
                     var resourceModel = CheckResourceUsage(serviceName);
-                    
 
+                    if (service.Status != ServiceControllerStatus.Running)
+                        resourceModel.CpuUsage = 0;
 
                     if (resourceModel.CpuUsage >
                         request.ServiceResourceUsageLimit
@@ -194,9 +196,9 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
 
             int processId = (int)(uint)o;
             Process process = Process.GetProcessById(processId);
-            
+
             // Creating performance counters for CPU, Memory usage(gets in bytes)
-            
+
             //Cpu counter
             PerformanceCounter cpuCounter = new PerformanceCounter("Process", "% Processor Time", process.ProcessName);
 

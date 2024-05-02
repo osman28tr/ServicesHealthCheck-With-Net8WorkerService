@@ -47,6 +47,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthCheckByTimes.H
                     if (service.Status != ServiceControllerStatus.Running)
                     {
                         isHealthy = false;
+                        resourceModel.CpuUsage = 0;
                     }
 
                     if (request.ServiceResourceUsageLimit.CpuMaxUsage < resourceModel.CpuUsage)

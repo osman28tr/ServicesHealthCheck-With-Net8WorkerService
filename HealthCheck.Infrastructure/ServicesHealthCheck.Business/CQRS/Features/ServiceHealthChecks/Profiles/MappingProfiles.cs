@@ -7,6 +7,7 @@ using AutoMapper;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Commands;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Results;
 using ServicesHealthCheck.Datas.NoSQL.MongoDb;
+using ServicesHealthCheck.Dtos.ServiceErrorLogDtos;
 using ServicesHealthCheck.Dtos.ServiceHealthCheckDtos;
 using ServicesHealthCheck.Dtos.SignalRDtos;
 

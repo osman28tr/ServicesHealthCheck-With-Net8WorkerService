@@ -192,9 +192,12 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                         {
                             generalServiceHealthCheckDto.Errors.Add(new CreatedServiceErrorLogDto()
                             {
-                                ServiceName = serviceName, ErrorMessage = exception.Message, ErrorDate = DateTime.Now,
+                                ServiceName = serviceName,
+                                ErrorMessage = exception.Message,
+                                ErrorDate = DateTime.Now,
                                 IsCompleted = false
                             });
+
                             Console.WriteLine("An error occurred: " + signalrException.Message);
                         }
                     }
@@ -203,9 +206,12 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                         //mongoya log atabilirsin, erroMessage prop'u olsun. Oraya mesajları atsın.
                         generalServiceHealthCheckDto.Errors.Add(new CreatedServiceErrorLogDto()
                         {
-                            ServiceName = serviceName, ErrorMessage = exception.Message, ErrorDate = DateTime.Now,
+                            ServiceName = serviceName,
+                            ErrorMessage = exception.Message,
+                            ErrorDate = DateTime.Now,
                             IsCompleted = false
                         });
+
                         Console.WriteLine("An error occurred: " + exception.Message);
                     }
                     continue;

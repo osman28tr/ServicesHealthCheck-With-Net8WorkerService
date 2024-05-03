@@ -25,10 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="CQRS\Features\ServiceErrorLogs\Handlers\QueryHandlers\" />
     <Folder Include="CQRS\Features\ServiceErrorLogs\Models\" />
-    <Folder Include="CQRS\Features\ServiceErrorLogs\Queries\" />
-    <Folder Include="CQRS\Features\ServiceErrorLogs\Results\" />
     <Folder Include="CQRS\Features\ServiceHealthCheckByTimes\Handlers\QueryHandlers\" />
     <Folder Include="CQRS\Features\ServiceHealthCheckByTimes\Results\" />
     <Folder Include="CQRS\Features\ServiceHealthCheckByTimes\Queries\" />

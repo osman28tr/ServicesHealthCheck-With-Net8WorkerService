@@ -8,7 +8,7 @@ using ServicesHealthCheck.Dtos.ServiceErrorLogDtos;
 
 namespace ServicesHealthCheck.Business.CQRS.Features.ServiceErrorLogs.Commands
 {
-    public class CreatedServiceErrorLogCommand : IRequest
+    public class CreatedServiceErrorLogCommand : IRequest<List<UpdatedServiceErrorLogDto>>
     {
         public List<CreatedServiceErrorLogDto> Errors { get; set; }
     }

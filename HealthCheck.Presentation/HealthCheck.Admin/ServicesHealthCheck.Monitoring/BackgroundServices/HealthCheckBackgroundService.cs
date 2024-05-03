@@ -48,8 +48,16 @@ namespace ServicesHealthCheck.Monitoring.BackgroundServices
                     }
                     if(generalServiceHealthCheckDto.Errors.Any())
                     {
-                        await _mediator.Send(new CreatedServiceErrorLogCommand()
+                        var updatedServiceErrorLogs = await _mediator.Send(new CreatedServiceErrorLogCommand()
                         { Errors = generalServiceHealthCheckDto.Errors });
+                        if (updatedServiceErrorLogs.Any())
+                        {
+                            updatedServiceErrorLogs.ForEach(async x =>
+                            {
+                                await _mediator.Send(new UpdatedServiceErrorLogCommand()
+                                { Id = x.Id, IsCompleted = x.IsCompleted });
+                            });
+                        }
                     }
                 }
             }

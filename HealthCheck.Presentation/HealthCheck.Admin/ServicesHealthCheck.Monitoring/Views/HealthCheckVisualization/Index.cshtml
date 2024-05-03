@@ -1,45 +1,13 @@
-﻿<!DOCTYPE html>
+﻿
+<!DOCTYPE html>
 <html>
 <head>
     <title>Resource Usage Chart</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        .chart-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, 400px); /* Her sütun en az 400 piksel genişliğinde olacak */
-            gap: 20px; /* Grafikler arasında boşluk */
-           
-        }
-
-        .chart-item {
-            border: 1px solid #ccc;
-            padding: 10px;
-            /* width: 400px;
-            height: 250px;
-            float:left; */
-        }
-
-        canvas {
-            width: 100% !important; /* Canvas genişliği 100% olacak */
-            height: auto !important; /* Canvas yüksekliği otomatik olacak */
-        }
-    </style>
-</head>
-<body>
-
-    <div class="container-fluid" style="left:10px; position:inherit;">
-        <img src="~/icons/live-streaming.png" width="120px" height="60px" />
-    </div>
-    <br />
-    <div class="chart-container">
-        <!-- Grafiklerin yerleştirileceği grid container -->
-        <!-- Diğer çizgi grafiklerini buraya ekleyebilirsiniz -->
-    </div>
 
     <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script>
-
 
         // SignalR hub'a bağlan
         var connection = new signalR.HubConnectionBuilder().withUrl("http://localhost:5181/healthcheckhub").build();
@@ -106,5 +74,38 @@
             }
         }
     </script>
+
+    <style>
+        .chart-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, 400px); /* Her sütun en az 400 piksel genişliğinde olacak */
+            gap: 20px; /* Grafikler arasında boşluk */
+           
+        }
+
+        .chart-item {
+            border: 1px solid #ccc;
+            padding: 10px;
+            /* width: 400px;
+            height: 250px;
+            float:left; */
+        }
+
+        canvas {
+            width: 100% !important; /* Canvas genişliği 100% olacak */
+            height: auto !important; /* Canvas yüksekliği otomatik olacak */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container-fluid" style="left:10px; position:inherit;">
+        <img src="~/icons/live-streaming.png" width="120px" height="60px" />
+    </div>
+    <br />
+    <div class="chart-container">
+        <!-- Grafiklerin yerleştirileceği grid container -->
+        <!-- Diğer çizgi grafiklerini buraya ekleyebilirsiniz -->
+    </div>
 </body>
 </html>

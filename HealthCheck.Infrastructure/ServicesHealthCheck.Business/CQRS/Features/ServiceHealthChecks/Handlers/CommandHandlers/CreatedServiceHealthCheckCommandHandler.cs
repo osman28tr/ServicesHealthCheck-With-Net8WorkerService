@@ -198,7 +198,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
             Process process = Process.GetProcessById(processId);
 
             // Creating performance counters for CPU, Memory usage(gets in bytes)
-
+            
             //Cpu counter
             PerformanceCounter cpuCounter = new PerformanceCounter("Process", "% Processor Time", process.ProcessName);
 

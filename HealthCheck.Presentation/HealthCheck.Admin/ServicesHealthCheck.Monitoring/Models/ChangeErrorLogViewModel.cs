@@ -3,6 +3,6 @@
     public class ChangeErrorLogViewModel
     {
         public string Id { get; set; }
-        public string IsCompleted { get; set; }
+        public bool IsCompleted { get; set; }
     }
 }

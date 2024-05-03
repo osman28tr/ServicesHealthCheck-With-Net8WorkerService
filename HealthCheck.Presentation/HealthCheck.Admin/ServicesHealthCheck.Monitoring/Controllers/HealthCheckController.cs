@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using ServicesHealthCheck.Business.CQRS.Features.ServiceErrorLogs.Commands;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceErrorLogs.Queries;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Queries;
 using ServicesHealthCheck.Monitoring.Models;
@@ -27,10 +28,10 @@ namespace ServicesHealthCheck.Monitoring.Controllers
         }
 
         [HttpPost("HealthCheck/ChangeErrorLogStatus")]
-        public async Task<IActionResult> ChangeErrorLogStatus(ChangeErrorLogViewModel changeErrorLogViewModel)
+        public async Task ChangeErrorLogStatus(ChangeErrorLogViewModel changeErrorLogViewModel)
         {
-            //var result = await _mediatr.Send(new ChangeErrorLogStatusCommand { Id = id });
-            return RedirectToAction("ErrorMessages");
+            await _mediatr.Send(new UpdatedServiceErrorLogCommand()
+                { Id = changeErrorLogViewModel.Id, IsCompleted = changeErrorLogViewModel.IsCompleted });
         }
     }
 }

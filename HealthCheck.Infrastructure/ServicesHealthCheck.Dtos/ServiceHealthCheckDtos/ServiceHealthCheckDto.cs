@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ServicesHealthCheck.Dtos.ServiceErrorLogDtos;
 
 namespace ServicesHealthCheck.Dtos.ServiceHealthCheckDtos
 {
@@ -18,5 +19,6 @@ namespace ServicesHealthCheck.Dtos.ServiceHealthCheckDtos
         public int AverageDiskQueueUsage { get; set; }
         public bool IsHealthy { get; set; }
         public bool IsResourceUsageLimitExceeded { get; set; }
+        public List<CreatedServiceErrorLogDto> Errors { get; set; }
     }
 }

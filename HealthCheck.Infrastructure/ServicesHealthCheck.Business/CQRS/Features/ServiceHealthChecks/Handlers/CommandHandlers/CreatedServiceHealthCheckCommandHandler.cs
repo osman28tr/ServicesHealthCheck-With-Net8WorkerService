@@ -16,6 +16,7 @@ using ServicesHealthCheck.Business.RealTimes.SignalR.Abstract;
 using ServicesHealthCheck.DataAccess.Abstract;
 using ServicesHealthCheck.Datas.NoSQL.MongoDb;
 using ServicesHealthCheck.Dtos.MailDtos;
+using ServicesHealthCheck.Dtos.ServiceErrorLogDtos;
 using ServicesHealthCheck.Dtos.ServiceHealthCheckDtos;
 using ServicesHealthCheck.Dtos.SignalRDtos;
 using ServicesHealthCheck.Shared.Settings;
@@ -23,7 +24,7 @@ using ServicesHealthCheck.Shared.Settings.Abstract;
 
 namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handlers.CommandHandlers
 {
-    public class CreatedServiceHealthCheckCommandHandler : IRequestHandler<CreatedServiceHealthCheckCommand, List<ServiceHealthCheckDto>>
+    public class CreatedServiceHealthCheckCommandHandler : IRequestHandler<CreatedServiceHealthCheckCommand, GeneralServiceHealthCheckDto>
     {
         private readonly IServiceHealthCheckRepository _serviceHealthCheckRepository;
         private readonly IMapper _mapper;
@@ -38,11 +39,14 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
             _mailService = mailService;
             _signalRService = signalRService;
         }
-        public async Task<List<ServiceHealthCheckDto>> Handle(CreatedServiceHealthCheckCommand request, CancellationToken cancellationToken)
+        public async Task<GeneralServiceHealthCheckDto> Handle(CreatedServiceHealthCheckCommand request, CancellationToken cancellationToken)
         {
-            List<ServiceHealthCheckDto> updateServiceHealthCheckDtos = new List<ServiceHealthCheckDto>();
+            //List<ServiceHealthCheckDto> updateServiceHealthCheckDtos = new List<ServiceHealthCheckDto>();
+            GeneralServiceHealthCheckDto generalServiceHealthCheckDto = new GeneralServiceHealthCheckDto();
+
             foreach (var serviceName in request.Services)
             {
+                var serviceHealthCheckDto = new ServiceHealthCheckDto();
                 try
                 {
                     bool isHealthy = true;
@@ -56,6 +60,14 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
 
                     if (service.Status != ServiceControllerStatus.Running) // If the service is not working or unhealthy
                     {
+                        generalServiceHealthCheckDto.Errors.Add(new CreatedServiceErrorLogDto()
+                        {
+                            ServiceName = serviceName,
+                            ErrorMessage = $"{serviceName} is stopped.",
+                            ErrorDate = DateTime.Now,
+                            IsCompleted = false
+                        });
+
                         if (IsExistServiceHealthCheck != null && IsExistServiceHealthCheck.IsHealthy == true) // If the current service has become unhealthy while it was healthy (a new situation has occurred, it prevents sending unnecessary e-mails).
                         {
                             service.Start();
@@ -110,25 +122,23 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                     if (IsExistServiceHealthCheck != null) //If there is an existing service, if it is not a new service, update it
                     {
                         // get resource usages
-                        var serviceHealthCheckDto = new ServiceHealthCheckDto()
-                        {
-                            ServiceName = serviceName,
-                            Status = service.Status.ToString(),
-                            IsHealthy = isHealthy,
-                            CpuUsage = resourceModel.CpuUsage,
-                            PhysicalMemoryUsage = resourceModel.PhysicalMemoryUsage,
-                            PrivateMemoryUsage = resourceModel.PrivateMemoryUsage,
-                            VirtualMemoryUsage = resourceModel.VirtualMemoryUsage,
-                            DiskUsage = resourceModel.DiskUsage,
-                            AverageDiskQueueUsage = resourceModel.AverageDiskQueueUsage,
-                            IsResourceUsageLimitExceeded = isResourceUsageLimitExceeded
-                        };
+                        serviceHealthCheckDto.ServiceName = serviceName;
+                        serviceHealthCheckDto.Status = service.Status.ToString();
+                        serviceHealthCheckDto.IsHealthy = isHealthy;
+                        serviceHealthCheckDto.CpuUsage = resourceModel.CpuUsage;
+                        serviceHealthCheckDto.PhysicalMemoryUsage = resourceModel.PhysicalMemoryUsage;
+                        serviceHealthCheckDto.PrivateMemoryUsage = resourceModel.PrivateMemoryUsage;
+                        serviceHealthCheckDto.VirtualMemoryUsage = resourceModel.VirtualMemoryUsage;
+                        serviceHealthCheckDto.DiskUsage = resourceModel.DiskUsage;
+                        serviceHealthCheckDto.AverageDiskQueueUsage = resourceModel.AverageDiskQueueUsage;
+                        serviceHealthCheckDto.IsResourceUsageLimitExceeded = isResourceUsageLimitExceeded;
+
                         var serviceHealthCheckSignalRDto = _mapper.Map<ServicesHealthCheckSignalRDto>(serviceHealthCheckDto);
                         var serviceResourceUsageVisualizationSignalRDto = _mapper.Map<ServiceResourceUsageVisualizationSignalRDto>(serviceHealthCheckSignalRDto);
 
                         await _signalRService.SendMessageAsync(serviceHealthCheckSignalRDto); // Send service related information to signalR
                         await _signalRService.SendVisualizationMessageAsync(serviceResourceUsageVisualizationSignalRDto);
-                        updateServiceHealthCheckDtos.Add(serviceHealthCheckDto); // add to dto and rotate to update service
+                        generalServiceHealthCheckDto.ServiceHealthCheckDtos.Add(serviceHealthCheckDto); // add to dto and rotate to update service
                     }
                     else //The service is not in the database, add a new service to the database
                     {
@@ -169,24 +179,39 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                             PrivateMemoryUsage = 0,
                             VirtualMemoryUsage = 0
                         };
+                        generalServiceHealthCheckDto.Errors.Add(new CreatedServiceErrorLogDto()
+                        {
+                            ServiceName = serviceName, ErrorMessage = exception.Message, ErrorDate = DateTime.Now,
+                            IsCompleted = false
+                        });
                         try
                         {
                             await _signalRService.SendMessageAsync(serviceHealthCheckSignalRDto);
                         }
-                        catch (Exception)
+                        catch (Exception signalrException)
                         {
-                            Console.WriteLine("An error occurred: Failed to connect with signalR.");
+                            generalServiceHealthCheckDto.Errors.Add(new CreatedServiceErrorLogDto()
+                            {
+                                ServiceName = serviceName, ErrorMessage = exception.Message, ErrorDate = DateTime.Now,
+                                IsCompleted = false
+                            });
+                            Console.WriteLine("An error occurred: " + signalrException.Message);
                         }
                     }
                     else
                     {
                         //mongoya log atabilirsin, erroMessage prop'u olsun. Oraya mesajları atsın.
+                        generalServiceHealthCheckDto.Errors.Add(new CreatedServiceErrorLogDto()
+                        {
+                            ServiceName = serviceName, ErrorMessage = exception.Message, ErrorDate = DateTime.Now,
+                            IsCompleted = false
+                        });
                         Console.WriteLine("An error occurred: " + exception.Message);
                     }
                     continue;
                 }
             }
-            return updateServiceHealthCheckDtos;
+            return generalServiceHealthCheckDto;
         }
         private ResourceUsageModel CheckResourceUsage(string serviceName)
         {
@@ -198,7 +223,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
             Process process = Process.GetProcessById(processId);
 
             // Creating performance counters for CPU, Memory usage(gets in bytes)
-            
+
             //Cpu counter
             PerformanceCounter cpuCounter = new PerformanceCounter("Process", "% Processor Time", process.ProcessName);
 

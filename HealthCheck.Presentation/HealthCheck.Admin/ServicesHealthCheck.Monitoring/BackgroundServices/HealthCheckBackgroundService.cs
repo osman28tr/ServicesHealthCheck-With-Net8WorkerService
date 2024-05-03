@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MediatR;
+using ServicesHealthCheck.Business.CQRS.Features.ServiceErrorLogs.Commands;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Commands;
 using ServicesHealthCheck.Shared.Models;
 
@@ -35,13 +36,21 @@ namespace ServicesHealthCheck.Monitoring.BackgroundServices
                 var serviceResourceUsageLimit = new ServiceResourceUsageLimit() { CpuMaxUsage = Convert.ToInt16(serviceCpuUsageLimit) };
 
                 // await _healthCheck.CheckServicesHealth(services);
-                var updateServiceHealthCheck = await _mediator.Send(new CreatedServiceHealthCheckCommand()
+                var generalServiceHealthCheckDto = await _mediator.Send(new CreatedServiceHealthCheckCommand()
                 { Services = services, ServiceResourceUsageLimit = serviceResourceUsageLimit });
 
-                if (updateServiceHealthCheck.Any())
+                if (generalServiceHealthCheckDto.ServiceHealthCheckDtos.Any() || generalServiceHealthCheckDto.Errors.Any())
                 {
-                    _mediator.Send(new UpdatedServiceHealthCheckCommand()
-                    { ServiceHealthCheckDtos = updateServiceHealthCheck });
+                    if (generalServiceHealthCheckDto.ServiceHealthCheckDtos.Any())
+                    {
+                        await _mediator.Send(new UpdatedServiceHealthCheckCommand()
+                        { ServiceHealthCheckDtos = generalServiceHealthCheckDto.ServiceHealthCheckDtos });
+                    }
+                    if(generalServiceHealthCheckDto.Errors.Any())
+                    {
+                        await _mediator.Send(new CreatedServiceErrorLogCommand()
+                        { Errors = generalServiceHealthCheckDto.Errors });
+                    }
                 }
             }
             Console.ReadLine();

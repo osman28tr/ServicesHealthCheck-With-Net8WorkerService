@@ -15,6 +15,7 @@ namespace ServicesHealthCheck.DataAccess
         {
             services.AddSingleton<IServiceHealthCheckRepository, ServiceHealthCheckRepository>();
             services.AddSingleton<IServiceHealthCheckByTimeRepository, ServiceHealthCheckByTimeRepository>();
+            services.AddSingleton<IServiceErrorLogRepository, ServiceErrorLogRepository>();
             return services;
         }
     }

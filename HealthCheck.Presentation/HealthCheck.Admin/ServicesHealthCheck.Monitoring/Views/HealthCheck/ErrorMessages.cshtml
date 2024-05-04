@@ -1,7 +1,7 @@
 ﻿@{
     Layout = "_HealthCheckLayout";
 }
-<br/>
+<br />
 
 @using ServicesHealthCheck.Business.CQRS.Features.ServiceErrorLogs.Results
 @model List<GetListServiceErrorLogQueryResult>
@@ -49,10 +49,18 @@
                 </tr>
             }
         </tbody>
+
+        <tfoot>
+            <tr>
+                <td colspan="5">
+                    <button type="button" class="btn btn-danger" onclick="deleteCompletedErrors()">Delete All Completed Errors</button>
+                </td>
+            </tr>
+        </tfoot>
     </table>
 
     <script>
-        function errorFunction(id,isCompleted) {
+        function errorFunction(id, isCompleted) {
             var url = '/HealthCheck/ChangeErrorLogStatus';
             $.ajax({
                 type: 'POST',
@@ -63,6 +71,20 @@
                     location.reload();
                 },
                 error: function (data) {
+                    alert('Error');
+                }
+            });
+        }
+        function deleteCompletedErrors() {
+            var url = '/HealthCheck/DeleteCompletedErrors';
+            $.ajax({
+                type: 'DELETE',
+                url: url,
+                success: function () {
+                    alert('Success');
+                    location.reload();
+                },
+                error: function () {
                     alert('Error');
                 }
             });

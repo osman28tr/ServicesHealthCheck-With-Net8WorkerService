@@ -33,5 +33,11 @@ namespace ServicesHealthCheck.Monitoring.Controllers
             await _mediatr.Send(new UpdatedServiceErrorLogCommand()
                 { Id = changeErrorLogViewModel.Id, IsCompleted = changeErrorLogViewModel.IsCompleted });
         }
+
+        [HttpDelete("HealthCheck/DeleteCompletedErrors")]
+        public async Task DeleteCompletedErrors()
+        {
+            await _mediatr.Send(new DeletedServiceErrorLogCommand());
+        }
     }
 }

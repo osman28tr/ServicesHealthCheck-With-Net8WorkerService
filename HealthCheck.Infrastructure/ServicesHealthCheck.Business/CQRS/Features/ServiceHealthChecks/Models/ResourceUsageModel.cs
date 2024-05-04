@@ -13,7 +13,6 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Models
         public float VirtualMemoryUsage { get; set; }
         public float PrivateMemoryUsage { get; set; }
         public float DiskUsage { get; set; }
-        public int AverageDiskQueueUsage { get; set; }
         public bool IsHealthy { get; set; }
         public bool IsResourceUsageLimitExceeded { get; set; }
     }

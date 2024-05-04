@@ -16,9 +16,7 @@ namespace ServicesHealthCheck.Dtos.ServiceHealthCheckDtos
         public float VirtualMemoryUsage { get; set; }
         public float PrivateMemoryUsage { get; set; }
         public float DiskUsage { get; set; }
-        public int AverageDiskQueueUsage { get; set; }
         public bool IsHealthy { get; set; }
         public bool IsResourceUsageLimitExceeded { get; set; }
-        public List<CreatedServiceErrorLogDto> Errors { get; set; }
     }
 }

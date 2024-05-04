@@ -130,7 +130,6 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                         serviceHealthCheckDto.PrivateMemoryUsage = resourceModel.PrivateMemoryUsage;
                         serviceHealthCheckDto.VirtualMemoryUsage = resourceModel.VirtualMemoryUsage;
                         serviceHealthCheckDto.DiskUsage = resourceModel.DiskUsage;
-                        serviceHealthCheckDto.AverageDiskQueueUsage = resourceModel.AverageDiskQueueUsage;
                         serviceHealthCheckDto.IsResourceUsageLimitExceeded = isResourceUsageLimitExceeded;
 
                         var serviceHealthCheckSignalRDto = _mapper.Map<ServicesHealthCheckSignalRDto>(serviceHealthCheckDto);
@@ -152,7 +151,6 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                             PrivateMemoryUsage = resourceModel.PrivateMemoryUsage,
                             VirtualMemoryUsage = resourceModel.VirtualMemoryUsage,
                             DiskUsage = resourceModel.DiskUsage,
-                            AverageDiskQueueUsage = resourceModel.AverageDiskQueueUsage,
                             IsResourceUsageLimitExceeded = isResourceUsageLimitExceeded
                         };
                         var serviceHealthCheckSignalRDto = _mapper.Map<ServicesHealthCheckSignalRDto>(serviceHealthCheck);
@@ -242,7 +240,6 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
             //disk counter
             PerformanceCounter diskCounter = new PerformanceCounter("PhysicalDisk", "% Disk Time", "_Total");
 
-            PerformanceCounter avgDiskQueueLengthCounter = new PerformanceCounter("PhysicalDisk", "Avg. Disk Queue Length", "_Total");
             // Gets current memory and CPU information
 
             float workingSet = workingSetCounter.NextValue() / (1024 * 1024); // Converts the value received in bytes to MB
@@ -258,7 +255,6 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
 
             float diskUsage = diskCounter.NextValue(); // Get disk usage
 
-            var avgDiskQueueLength = avgDiskQueueLengthCounter.NextValue(); // Get average disk queue length
             ResourceUsageModel resourceUsageModel = new ResourceUsageModel()
             {
                 CpuUsage = cpuUsage,
@@ -266,7 +262,6 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                 VirtualMemoryUsage = virtualMemorySize,
                 PhysicalMemoryUsage = workingSet,
                 DiskUsage = diskUsage,
-                AverageDiskQueueUsage = Convert.ToInt16(avgDiskQueueLength)
             };
             return resourceUsageModel;
         }

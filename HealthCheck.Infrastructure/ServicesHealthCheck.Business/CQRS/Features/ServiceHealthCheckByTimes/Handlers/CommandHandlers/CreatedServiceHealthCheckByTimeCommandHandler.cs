@@ -97,8 +97,6 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthCheckByTimes.H
             //disk counter
             PerformanceCounter diskCounter = new PerformanceCounter("PhysicalDisk", "% Disk Time", "_Total");
 
-            PerformanceCounter avgDiskQueueLengthCounter =
-                new PerformanceCounter("PhysicalDisk", "Avg. Disk Queue Length", "_Total");
             // Gets current memory and CPU information
 
             float workingSet =
@@ -121,7 +119,6 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthCheckByTimes.H
 
             diskUsage = diskCounter.NextValue();
 
-            var avgDiskQueueLength = avgDiskQueueLengthCounter.NextValue(); // Get average disk queue length
             ResourceUsageModelByTime resourceUsageModel = new ResourceUsageModelByTime()
             {
                 CpuUsage = cpuUsage,
@@ -129,7 +126,6 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthCheckByTimes.H
                 VirtualMemoryUsage = virtualMemorySize,
                 PhysicalMemoryUsage = workingSet,
                 DiskUsage = diskUsage,
-                AverageDiskQueueUsage = Convert.ToInt16(avgDiskQueueLength)
             };
             return resourceUsageModel;
         }

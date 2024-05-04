@@ -58,8 +58,14 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                     var IsExistServiceHealthCheck =
                         await _serviceHealthCheckRepository.GetByServiceNameAsync(serviceName); //Checking whether the service is in the database
 
+                    var resourceModel = CheckResourceUsage(serviceName);
+
                     if (service.Status != ServiceControllerStatus.Running) // If the service is not working or unhealthy
                     {
+                       // service.Start();
+                        isHealthy = false;
+                        resourceModel.CpuUsage = 0;
+
                         generalServiceHealthCheckDto.Errors.Add(new CreatedServiceErrorLogDto()
                         {
                             ServiceName = serviceName,
@@ -70,7 +76,6 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
 
                         if (IsExistServiceHealthCheck != null && IsExistServiceHealthCheck.IsHealthy == true) // If the current service has become unhealthy while it was healthy (a new situation has occurred, it prevents sending unnecessary e-mails).
                         {
-                            service.Start();
                             foreach (var mail in _mailSetting.ToMail)
                             {
                                 await _mailService.SendEmailAsync(new MailDto
@@ -80,24 +85,25 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                                     Subject = "Servis Durumu",
                                     Body = $"{serviceName} servisi durduruldu, ardından tekrar çalıştırıldı."
                                 }, CancellationToken.None);
-                                isHealthy = false; // make your condition unhealthy
                             }
                         }
-                        else if (service.Status != ServiceControllerStatus.Running) //If the current service's status is unhealthy, set the initial health status to false and do not send an e-mail (it has already been sent).
-                        {
-                            service.Start();
-                            isHealthy = false;
-                        }
                     }
-                    var resourceModel = CheckResourceUsage(serviceName);
-
-                    if (service.Status != ServiceControllerStatus.Running)
-                        resourceModel.CpuUsage = 0;
-
+                    
                     if (resourceModel.CpuUsage >
                         request.ServiceResourceUsageLimit
                             .CpuMaxUsage) // If the service's CPU usage exceeds the limit, send an e-mail
                     {
+                        isResourceUsageLimitExceeded = true;
+                        isHealthy = false;
+
+                        generalServiceHealthCheckDto.Errors.Add(new CreatedServiceErrorLogDto()
+                        {
+                            ServiceName = serviceName,
+                            ErrorMessage = $"{serviceName} service's CPU usage limit has been exceeded.",
+                            ErrorDate = DateTime.Now,
+                            IsCompleted = false
+                        });
+
                         if (IsExistServiceHealthCheck.IsResourceUsageLimitExceeded == false)
                         {
                             foreach (var mail in _mailSetting.ToMail)
@@ -109,14 +115,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                                     Subject = "Servis Durumu",
                                     Body = $"{serviceName} servisinin CPU kullanım limiti aşıldı."
                                 }, CancellationToken.None);
-                                isResourceUsageLimitExceeded = true;
-                                isHealthy = false;
                             }
-                        }
-                        else
-                        {
-                            isResourceUsageLimitExceeded = true;
-                            isHealthy = false;
                         }
                     }
                     if (IsExistServiceHealthCheck != null) //If there is an existing service, if it is not a new service, update it

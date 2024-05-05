@@ -12,7 +12,7 @@ using ServicesHealthCheck.Dtos.ServiceErrorLogDtos;
 
 namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handlers.CommandHandlers
 {
-    public class UpdatedServiceHealthCheckCommandHandler : IRequestHandler<UpdatedServiceHealthCheckCommand,List< CreatedServiceErrorLogDto>>
+    public class UpdatedServiceHealthCheckCommandHandler : IRequestHandler<UpdatedServiceHealthCheckCommand, List<CreatedServiceErrorLogDto>>
     {
         private readonly IServiceHealthCheckRepository _serviceHealthCheckRepository;
         private readonly IMapper _mapper;
@@ -24,27 +24,27 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
         public async Task<List<CreatedServiceErrorLogDto>> Handle(UpdatedServiceHealthCheckCommand request, CancellationToken cancellationToken)
         {
             var errorLogs = new List<CreatedServiceErrorLogDto>();
-            var serviceName = "";
-            try
+            if (request.ServiceHealthCheckDtos != null)
             {
                 foreach (var serviceHealthCheckDto in request.ServiceHealthCheckDtos)
                 {
-                    serviceName = serviceHealthCheckDto.ServiceName;
+                    try
+                    {
+                        var serviceHealthCheck = _mapper.Map<ServiceHealthCheck>(serviceHealthCheckDto);
 
-                    var serviceHealthCheck = _mapper.Map<ServiceHealthCheck>(serviceHealthCheckDto);
+                        var findHealthCheck =
+                            await _serviceHealthCheckRepository.GetByServiceNameAsync(serviceHealthCheck.ServiceName);
 
-                    var findHealthCheck =
-                        await _serviceHealthCheckRepository.GetByServiceNameAsync(serviceHealthCheck.ServiceName);
+                        serviceHealthCheck.Id = findHealthCheck.Id;
 
-                    serviceHealthCheck.Id = findHealthCheck.Id;
-
-                    await _serviceHealthCheckRepository.UpdateAsync(serviceHealthCheck);
+                        await _serviceHealthCheckRepository.UpdateAsync(serviceHealthCheck);
+                    }
+                    catch (Exception exception)
+                    {
+                        errorLogs.Add(new CreatedServiceErrorLogDto()
+                            { ServiceName = serviceHealthCheckDto.ServiceName, ErrorMessage = exception.Message, IsCompleted = false, ErrorDate = DateTime.Now.AddHours(3) });
+                    }
                 }
-            }
-            catch (Exception exception)
-            {
-                errorLogs.Add(new CreatedServiceErrorLogDto()
-                    {ServiceName = serviceName, ErrorMessage = exception.Message, IsCompleted = false, ErrorDate = DateTime.Now.AddHours(3) });
             }
             return errorLogs;
         }

@@ -43,13 +43,14 @@
                                                         <td></td>
                                                                                         <td>${serviceHealthCheckSignalRDto.serviceName}</td>
                                                                                         <td>${serviceHealthCheckSignalRDto.status}</td>
-                                                                                                <td>${serviceHealthCheckSignalRDto.cpuUsage}</td>
-                                                                                                <td>${serviceHealthCheckSignalRDto.physicalMemoryUsage}</td>
-                                                                                                <td>${serviceHealthCheckSignalRDto.virtualMemoryUsage}</td>
-                                                                                                <td>${serviceHealthCheckSignalRDto.privateMemoryUsage}</td>
+                                                                                                <td>${serviceHealthCheckSignalRDto.cpuUsage + '%'}</td>
+                                                                                                <td>${serviceHealthCheckSignalRDto.physicalMemoryUsage + 'MB'}</td>
+                                                                                                <td>${serviceHealthCheckSignalRDto.virtualMemoryUsage + 'MB'}</td>
+                                                                                                <td>${serviceHealthCheckSignalRDto.privateMemoryUsage + 'MB'}</td>
                                                                                                      
                                                                                                 <td>${serviceHealthCheckSignalRDto.isHealthy}</td>
                                                                                                         <td>${serviceHealthCheckSignalRDto.isResourceUsageLimitExceeded}</td>
+                                                                                            
                                                    </tr>`;
                     $('#table-body').append(row);
                 }

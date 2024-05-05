@@ -48,18 +48,18 @@ namespace ServicesHealthCheck.Monitoring.BackgroundServices
                         if (updatedServiceHealthCheckErrors.Any()) // servisleri güncelleme sırasında hata varsa logla
                         {
                             var updatedServiceErrorLogsByUpdateHealthCheck = await _mediator.Send(new CreatedServiceErrorLogCommand()
-                                { Errors = updatedServiceHealthCheckErrors });
+                            { Errors = updatedServiceHealthCheckErrors });
                             if (updatedServiceErrorLogsByUpdateHealthCheck.Any()) // loglanan hatalarda aynıları varsa güncelle
                             {
                                 updatedServiceErrorLogsByUpdateHealthCheck.ForEach(async x =>
                                 {
                                     await _mediator.Send(new UpdatedServiceErrorLogCommand()
-                                        { Id = x.Id, IsCompleted = x.IsCompleted });
+                                    { Id = x.Id, IsCompleted = x.IsCompleted });
                                 });
                             }
                         }
                     }
-                    if(generalServiceHealthCheckDto.Errors.Any())
+                    if (generalServiceHealthCheckDto.Errors.Any())
                     {
                         var updatedServiceErrorLogs = await _mediator.Send(new CreatedServiceErrorLogCommand()
                         { Errors = generalServiceHealthCheckDto.Errors });

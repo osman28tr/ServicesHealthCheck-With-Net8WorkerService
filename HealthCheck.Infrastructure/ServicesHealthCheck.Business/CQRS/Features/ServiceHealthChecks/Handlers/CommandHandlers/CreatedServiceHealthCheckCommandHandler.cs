@@ -62,7 +62,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
 
                     if (service.Status != ServiceControllerStatus.Running) // If the service is not working or unhealthy
                     {
-                       // service.Start();
+                        // service.Start();
                         isHealthy = false;
                         resourceModel.CpuUsage = 0;
 
@@ -70,7 +70,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                         {
                             ServiceName = serviceName,
                             ErrorMessage = $"{serviceName} is stopped.",
-                            ErrorDate = DateTime.Now,
+                            ErrorDate = DateTime.Now.AddHours(3),
                             IsCompleted = false
                         });
 
@@ -88,7 +88,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                             }
                         }
                     }
-                    
+
                     if (resourceModel.CpuUsage >
                         request.ServiceResourceUsageLimit
                             .CpuMaxUsage) // If the service's CPU usage exceeds the limit, send an e-mail
@@ -100,7 +100,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                         {
                             ServiceName = serviceName,
                             ErrorMessage = $"{serviceName} service's CPU usage limit has been exceeded.",
-                            ErrorDate = DateTime.Now,
+                            ErrorDate = DateTime.Now.AddHours(3),
                             IsCompleted = false
                         });
 
@@ -178,25 +178,21 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                         };
                         generalServiceHealthCheckDto.Errors.Add(new CreatedServiceErrorLogDto()
                         {
-                            ServiceName = serviceName, ErrorMessage = exception.Message, ErrorDate = DateTime.Now,
+                            ServiceName = serviceName,
+                            ErrorMessage = exception.Message,
+                            ErrorDate = DateTime.Now.AddHours(3),
                             IsCompleted = false
                         });
-                        try
-                        {
-                            await _signalRService.SendMessageAsync(serviceHealthCheckSignalRDto);
-                        }
-                        catch (Exception signalrException)
-                        {
-                            generalServiceHealthCheckDto.Errors.Add(new CreatedServiceErrorLogDto()
-                            {
-                                ServiceName = serviceName,
-                                ErrorMessage = exception.Message,
-                                ErrorDate = DateTime.Now,
-                                IsCompleted = false
-                            });
 
-                            Console.WriteLine("An error occurred: " + signalrException.Message);
-                        }
+                        await _signalRService.SendMessageAsync(serviceHealthCheckSignalRDto);
+
+                        //generalServiceHealthCheckDto.Errors.Add(new CreatedServiceErrorLogDto()
+                        //{
+                        //    ServiceName = serviceName,
+                        //    ErrorMessage = exception.Message,
+                        //    ErrorDate = DateTime.Now,
+                        //    IsCompleted = false
+                        //});
                     }
                     else
                     {
@@ -205,7 +201,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                         {
                             ServiceName = serviceName,
                             ErrorMessage = exception.Message,
-                            ErrorDate = DateTime.Now,
+                            ErrorDate = DateTime.Now.AddHours(3),
                             IsCompleted = false
                         });
 

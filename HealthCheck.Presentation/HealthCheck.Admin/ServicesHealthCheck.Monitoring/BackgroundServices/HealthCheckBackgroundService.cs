@@ -41,10 +41,23 @@ namespace ServicesHealthCheck.Monitoring.BackgroundServices
 
                 if (generalServiceHealthCheckDto.ServiceHealthCheckDtos.Any() || generalServiceHealthCheckDto.Errors.Any())
                 {
-                    if (generalServiceHealthCheckDto.ServiceHealthCheckDtos.Any())
+                    if (generalServiceHealthCheckDto.ServiceHealthCheckDtos.Any()) // güncellenecek servis varsa güncelle
                     {
-                        await _mediator.Send(new UpdatedServiceHealthCheckCommand()
-                        { ServiceHealthCheckDtos = generalServiceHealthCheckDto.ServiceHealthCheckDtos });
+                        var updatedServiceHealthCheckErrors = await _mediator.Send(new UpdatedServiceHealthCheckCommand()
+                        { ServiceHealthCheckDtos = generalServiceHealthCheckDto.ServiceHealthCheckDtos }); // servisleri güncelle, hata varsa al
+                        if (updatedServiceHealthCheckErrors.Any()) // servisleri güncelleme sırasında hata varsa logla
+                        {
+                            var updatedServiceErrorLogsByUpdateHealthCheck = await _mediator.Send(new CreatedServiceErrorLogCommand()
+                                { Errors = updatedServiceHealthCheckErrors });
+                            if (updatedServiceErrorLogsByUpdateHealthCheck.Any()) // loglanan hatalarda aynıları varsa güncelle
+                            {
+                                updatedServiceErrorLogsByUpdateHealthCheck.ForEach(async x =>
+                                {
+                                    await _mediator.Send(new UpdatedServiceErrorLogCommand()
+                                        { Id = x.Id, IsCompleted = x.IsCompleted });
+                                });
+                            }
+                        }
                     }
                     if(generalServiceHealthCheckDto.Errors.Any())
                     {

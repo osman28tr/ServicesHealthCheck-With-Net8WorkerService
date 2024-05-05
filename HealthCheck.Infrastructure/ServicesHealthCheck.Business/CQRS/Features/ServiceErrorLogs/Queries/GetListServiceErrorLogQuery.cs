@@ -8,7 +8,7 @@ using ServicesHealthCheck.Business.CQRS.Features.ServiceErrorLogs.Results;
 
 namespace ServicesHealthCheck.Business.CQRS.Features.ServiceErrorLogs.Queries
 {
-    public class GetListServiceErrorLogQuery : IRequest<List<GetListServiceErrorLogQueryResult>>
+    public class GetListServiceErrorLogQuery : IRequest<GeneralGetListServiceErrorLogQueryResult>
     {
     }
 }

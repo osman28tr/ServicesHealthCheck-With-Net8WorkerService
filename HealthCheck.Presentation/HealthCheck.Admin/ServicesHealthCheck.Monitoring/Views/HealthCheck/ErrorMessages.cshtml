@@ -19,45 +19,55 @@
     </script>
 </head>
 <body>
-    <table class="table">
-        <thead style="background-color:green; color:white">
-            <tr>
-                <th scope="col">Name</th>
-                <th scope="col">ErrorMessage</th>
-                <th scope="col">ErrorDate</th>
-                <th scope="col">IsCompleted</th>
-                <th scope="col">Change</th>
-            </tr>
-        </thead>
-        <tbody id="table-body">
-            @foreach (var item in Model)
-            {
+    @if (Model != null)
+    {
+        <table class="table">
+            <thead style="background-color:green; color:white">
                 <tr>
-                    <td id="errorId" style="display:none">@item.Id</td>
-                    <td>@item.ServiceName</td>
-                    <td>@item.ErrorMessage</td>
-                    <td>@item.ErrorDate</td>
-                    <td id="isCompleted">@item.IsCompleted</td>
-                    @if (item.IsCompleted == false)
-                    {
-                        <td><button type="button" id="btnIsCompleted" onclick="errorFunction('@item.Id', '@item.IsCompleted')" class="btn btn-success">Complete</button></td>
-                    }
-                    else
-                    {
-                        <td><button type="button" id="btnIsCompleted" class="btn btn-secondary">Completed</button></td>
-                    }
+                    <th scope="col">Name</th>
+                    <th scope="col">ErrorMessage</th>
+                    <th scope="col">ErrorDate</th>
+                    <th scope="col">IsCompleted</th>
+                    <th scope="col">Change</th>
                 </tr>
-            }
-        </tbody>
+            </thead>
+            <tbody id="table-body">
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td id="errorId" style="display:none">@item.Id</td>
+                        <td>@item.ServiceName</td>
+                        <td>@item.ErrorMessage</td>
+                        <td>@item.ErrorDate</td>
+                        <td id="isCompleted">@item.IsCompleted</td>
+                        @if (item.IsCompleted == false)
+                        {
+                            <td><button type="button" id="btnIsCompleted" onclick="errorFunction('@item.Id', '@item.IsCompleted')" class="btn btn-success">Complete</button></td>
+                        }
+                        else
+                        {
+                            <td><button type="button" id="btnIsCompleted" class="btn btn-secondary">Completed</button></td>
+                        }
+                    </tr>
+                }
+            </tbody>
 
-        <tfoot>
-            <tr>
-                <td colspan="5">
-                    <button type="button" class="btn btn-danger" onclick="deleteCompletedErrors()">Delete All Completed Errors</button>
-                </td>
-            </tr>
-        </tfoot>
-    </table>
+            <tfoot>
+                <tr>
+                    <td colspan="5">
+                        <button type="button" class="btn btn-danger" onclick="deleteCompletedErrors()">Delete All Completed Errors</button>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    }
+    else
+    {
+        //No data
+        <div class="alert alert-warning" role="alert">
+            No data found.
+        </div>
+    }
 
     <script>
         function errorFunction(id, isCompleted) {

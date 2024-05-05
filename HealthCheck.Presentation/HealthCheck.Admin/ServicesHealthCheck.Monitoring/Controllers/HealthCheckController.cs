@@ -24,7 +24,28 @@ namespace ServicesHealthCheck.Monitoring.Controllers
         public async Task<IActionResult> ErrorMessages()
         {
             var result = await _mediatr.Send(new GetListServiceErrorLogQuery());
-            return View(result);
+            if (result.Errors.Any() || result.ErrorList.Any())
+            {
+                if (result.ErrorList.Any())
+                {
+                    return View(result.ErrorList);
+                }
+
+                if (result.Errors.Any())
+                {
+                    var updatedErrors = await _mediatr.Send(new CreatedServiceErrorLogCommand()
+                    { Errors = result.Errors });
+                    if (updatedErrors.Any())
+                    {
+                        updatedErrors.ForEach(async x =>
+                        {
+                            await _mediatr.Send(new UpdatedServiceErrorLogCommand()
+                            { Id = x.Id, IsCompleted = x.IsCompleted });
+                        });
+                    }
+                }
+            }
+            return View();
         }
 
         [HttpPost("HealthCheck/ChangeErrorLogStatus")]

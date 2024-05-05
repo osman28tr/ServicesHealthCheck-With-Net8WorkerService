@@ -8,10 +8,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ServicesHealthCheck.Dtos.ServiceErrorLogDtos;
 
 namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handlers.CommandHandlers
 {
-    public class UpdatedServiceHealthCheckCommandHandler : IRequestHandler<UpdatedServiceHealthCheckCommand>
+    public class UpdatedServiceHealthCheckCommandHandler : IRequestHandler<UpdatedServiceHealthCheckCommand,List< CreatedServiceErrorLogDto>>
     {
         private readonly IServiceHealthCheckRepository _serviceHealthCheckRepository;
         private readonly IMapper _mapper;
@@ -20,19 +21,32 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
             _serviceHealthCheckRepository = serviceHealthCheckRepository;
             _mapper = mapper;
         }
-        public async Task Handle(UpdatedServiceHealthCheckCommand request, CancellationToken cancellationToken)
+        public async Task<List<CreatedServiceErrorLogDto>> Handle(UpdatedServiceHealthCheckCommand request, CancellationToken cancellationToken)
         {
-            foreach (var serviceHealthCheckDto in request.ServiceHealthCheckDtos)
+            var errorLogs = new List<CreatedServiceErrorLogDto>();
+            var serviceName = "";
+            try
             {
-                var serviceHealthCheck = _mapper.Map<ServiceHealthCheck>(serviceHealthCheckDto);
+                foreach (var serviceHealthCheckDto in request.ServiceHealthCheckDtos)
+                {
+                    serviceName = serviceHealthCheckDto.ServiceName;
 
-                var findHealthCheck =
-                    await _serviceHealthCheckRepository.GetByServiceNameAsync(serviceHealthCheck.ServiceName);
+                    var serviceHealthCheck = _mapper.Map<ServiceHealthCheck>(serviceHealthCheckDto);
 
-                serviceHealthCheck.Id = findHealthCheck.Id;
+                    var findHealthCheck =
+                        await _serviceHealthCheckRepository.GetByServiceNameAsync(serviceHealthCheck.ServiceName);
 
-                await _serviceHealthCheckRepository.UpdateAsync(serviceHealthCheck);
+                    serviceHealthCheck.Id = findHealthCheck.Id;
+
+                    await _serviceHealthCheckRepository.UpdateAsync(serviceHealthCheck);
+                }
             }
+            catch (Exception exception)
+            {
+                errorLogs.Add(new CreatedServiceErrorLogDto()
+                    {ServiceName = serviceName, ErrorMessage = exception.Message, IsCompleted = false, ErrorDate = DateTime.Now.AddHours(3) });
+            }
+            return errorLogs;
         }
     }
 }

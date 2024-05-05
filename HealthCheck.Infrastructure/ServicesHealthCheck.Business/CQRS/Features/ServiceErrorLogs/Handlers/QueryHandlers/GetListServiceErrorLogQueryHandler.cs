@@ -8,10 +8,11 @@ using MediatR;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceErrorLogs.Queries;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceErrorLogs.Results;
 using ServicesHealthCheck.DataAccess.Abstract;
+using ServicesHealthCheck.Dtos.ServiceErrorLogDtos;
 
 namespace ServicesHealthCheck.Business.CQRS.Features.ServiceErrorLogs.Handlers.QueryHandlers
 {
-    public class GetListServiceErrorLogQueryHandler : IRequestHandler<GetListServiceErrorLogQuery, List<GetListServiceErrorLogQueryResult>>
+    public class GetListServiceErrorLogQueryHandler : IRequestHandler<GetListServiceErrorLogQuery, GeneralGetListServiceErrorLogQueryResult>
     {
         private readonly IServiceErrorLogRepository _serviceErrorLogRepository;
         private readonly IMapper _mapper;
@@ -21,18 +22,24 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceErrorLogs.Handlers.Q
             _serviceErrorLogRepository = serviceErrorLogRepository;
         }
 
-        public async Task<List<GetListServiceErrorLogQueryResult>> Handle(GetListServiceErrorLogQuery request, CancellationToken cancellationToken)
+        public async Task<GeneralGetListServiceErrorLogQueryResult> Handle(GetListServiceErrorLogQuery request, CancellationToken cancellationToken)
         {
+            var generallistErrors = new GeneralGetListServiceErrorLogQueryResult();
             try
             {
                 var errors = await _serviceErrorLogRepository.GetAllAsync();
-                return _mapper.Map<List<GetListServiceErrorLogQueryResult>>(errors);
+                generallistErrors.ErrorList = _mapper.Map<List<GetListServiceErrorLogQueryResult>>(errors);
+                return generallistErrors;
             }
             catch (Exception exception)
             {
-                Console.WriteLine("An error occured:" + exception.Message);
-                return null;
+                generallistErrors.Errors.Add(new CreatedServiceErrorLogDto()
+                {
+                    ServiceName = "All services", ErrorMessage = exception.Message, IsCompleted = false,
+                    ErrorDate = DateTime.Now.AddHours(3)
+                });
             }
+            return generallistErrors;
         }
     }
 }

@@ -52,7 +52,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                     bool isHealthy = true;
                     bool isResourceUsageLimitExceeded = false;
                     ServiceController service = new ServiceController(serviceName);
-
+                    
                     Console.WriteLine($"{serviceName} is status: " + service.Status);
 
                     var IsExistServiceHealthCheck =
@@ -62,7 +62,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
 
                     if (service.Status != ServiceControllerStatus.Running) // If the service is not working or unhealthy
                     {
-                        // service.Start();
+                        service.Start();
                         isHealthy = false;
                         resourceModel.CpuUsage = 0;
 
@@ -236,7 +236,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
             PerformanceCounter diskCounter = new PerformanceCounter("PhysicalDisk", "% Disk Time", "_Total");
 
             // Gets current memory and CPU information
-
+            
             float workingSet = workingSetCounter.NextValue() / (1024 * 1024); // Converts the value received in bytes to MB
             float privateBytes = privateBytesCounter.NextValue() / (1024 * 1024); // Converts the value received in bytes to MB
 
@@ -244,11 +244,13 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
 
             float cpuUsage = cpuCounter.NextValue(); // Get cpu usage
 
+            float diskUsage = diskCounter.NextValue(); // Get disk usage
+
             Thread.Sleep(1000);
 
             cpuUsage = cpuCounter.NextValue();
 
-            float diskUsage = diskCounter.NextValue(); // Get disk usage
+            diskUsage = diskCounter.NextValue();
 
             ResourceUsageModel resourceUsageModel = new ResourceUsageModel()
             {

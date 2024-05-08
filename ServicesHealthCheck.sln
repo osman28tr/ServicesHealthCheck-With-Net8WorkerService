@@ -25,7 +25,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HealthCheck.Admin", "Health
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServicesHealthCheck.Monitoring", "HealthCheck.Presentation\HealthCheck.Admin\ServicesHealthCheck.Monitoring\ServicesHealthCheck.Monitoring.csproj", "{703E905C-DDC2-47C5-B8D0-10A68E662F5D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServicesHealthCheck.SignalR", "HealthCheck.Servis\ServicesHealthCheck.SignalR\ServicesHealthCheck.SignalR.csproj", "{D169B1E2-C2D6-4CAC-A218-4A7E6D78DA4E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServicesHealthCheck.SignalR", "HealthCheck.Servis\ServicesHealthCheck.SignalR\ServicesHealthCheck.SignalR.csproj", "{D169B1E2-C2D6-4CAC-A218-4A7E6D78DA4E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HealthCheck.Setup", "HealthCheck.Setup", "{D5DB2CC2-8075-43C3-8C34-C44FEEB8CF99}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Setup", "HealthCheck.Setup\Setup\Setup.csproj", "{714B42B2-C1F4-433F-A832-17F0CD8DA692}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -65,6 +69,10 @@ Global
 		{D169B1E2-C2D6-4CAC-A218-4A7E6D78DA4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D169B1E2-C2D6-4CAC-A218-4A7E6D78DA4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D169B1E2-C2D6-4CAC-A218-4A7E6D78DA4E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{714B42B2-C1F4-433F-A832-17F0CD8DA692}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{714B42B2-C1F4-433F-A832-17F0CD8DA692}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{714B42B2-C1F4-433F-A832-17F0CD8DA692}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{714B42B2-C1F4-433F-A832-17F0CD8DA692}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -79,6 +87,7 @@ Global
 		{11B3CCA9-2FF8-4854-ADE8-61D9FCC27348} = {F2415B28-B2DB-4928-92F1-AA796D6F0FD5}
 		{703E905C-DDC2-47C5-B8D0-10A68E662F5D} = {11B3CCA9-2FF8-4854-ADE8-61D9FCC27348}
 		{D169B1E2-C2D6-4CAC-A218-4A7E6D78DA4E} = {7E3CC866-38EB-4359-BC2F-35014B1CF985}
+		{714B42B2-C1F4-433F-A832-17F0CD8DA692} = {D5DB2CC2-8075-43C3-8C34-C44FEEB8CF99}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F52289B2-0A6E-4BD5-A3D4-675A400AC148}

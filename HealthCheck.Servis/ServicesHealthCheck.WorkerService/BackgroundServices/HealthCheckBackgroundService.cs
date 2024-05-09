@@ -38,10 +38,10 @@ namespace ServicesHealthCheck.WorkerService.BackgroundServices
                 var updateServiceHealthCheck = await _mediator.Send(new CreatedServiceHealthCheckCommand()
                     { Services = services, ServiceResourceUsageLimit = serviceResourceUsageLimit });
 
-                if (updateServiceHealthCheck.Any())
+                if (updateServiceHealthCheck.ServiceHealthCheckDtos.Any())
                 {
                     _mediator.Send(new UpdatedServiceHealthCheckCommand()
-                    { ServiceHealthCheckDtos = updateServiceHealthCheck });
+                    { ServiceHealthCheckDtos = updateServiceHealthCheck.ServiceHealthCheckDtos });
                 }
             }
             Console.ReadLine();

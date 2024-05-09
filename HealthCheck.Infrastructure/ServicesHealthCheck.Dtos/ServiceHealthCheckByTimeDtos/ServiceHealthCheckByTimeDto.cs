@@ -9,6 +9,6 @@ namespace ServicesHealthCheck.Dtos.ServiceHealthCheckByTimeDtos
 {
     public class ServiceHealthCheckByTimeDto : ServiceHealthCheckDto
     {
-        public string Date { get; set; }
+        public DateTime Date { get; set; }
     }
 }

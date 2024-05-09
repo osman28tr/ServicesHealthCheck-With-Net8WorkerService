@@ -9,6 +9,6 @@ namespace ServicesHealthCheck.Datas.NoSQL.MongoDb
 {
     public class ServiceHealthCheckByTime : ServiceHealthCheck, IEntity
     {
-        public string Date { get; set; }
+        public DateTime Date { get; set; }
     }
 }

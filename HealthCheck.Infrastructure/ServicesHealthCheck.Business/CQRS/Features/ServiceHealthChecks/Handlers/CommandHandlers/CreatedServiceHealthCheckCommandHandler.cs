@@ -128,10 +128,10 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                         serviceHealthCheckDto.PhysicalMemoryUsage = resourceModel.PhysicalMemoryUsage;
                         serviceHealthCheckDto.PrivateMemoryUsage = resourceModel.PrivateMemoryUsage;
                         serviceHealthCheckDto.VirtualMemoryUsage = resourceModel.VirtualMemoryUsage;
-                        serviceHealthCheckDto.DiskUsage = resourceModel.DiskUsage;
                         serviceHealthCheckDto.IsResourceUsageLimitExceeded = isResourceUsageLimitExceeded;
 
                         var serviceHealthCheckSignalRDto = _mapper.Map<ServicesHealthCheckSignalRDto>(serviceHealthCheckDto);
+                        serviceHealthCheckSignalRDto.DiskUsage = resourceModel.DiskUsage;
                         var serviceResourceUsageVisualizationSignalRDto = _mapper.Map<ServiceResourceUsageVisualizationSignalRDto>(serviceHealthCheckSignalRDto);
 
                         await _signalRService.SendMessageAsync(serviceHealthCheckSignalRDto); // Send service related information to signalR
@@ -149,10 +149,10 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                             PhysicalMemoryUsage = resourceModel.PhysicalMemoryUsage,
                             PrivateMemoryUsage = resourceModel.PrivateMemoryUsage,
                             VirtualMemoryUsage = resourceModel.VirtualMemoryUsage,
-                            DiskUsage = resourceModel.DiskUsage,
                             IsResourceUsageLimitExceeded = isResourceUsageLimitExceeded
                         };
                         var serviceHealthCheckSignalRDto = _mapper.Map<ServicesHealthCheckSignalRDto>(serviceHealthCheck);
+                        serviceHealthCheckSignalRDto.DiskUsage = resourceModel.DiskUsage;
                         var serviceResourceUsageVisualizationSignalRDto = _mapper.Map<ServiceResourceUsageVisualizationSignalRDto>(serviceHealthCheckSignalRDto);
 
                         await _signalRService.SendMessageAsync(serviceHealthCheckSignalRDto); // Send service related information to signalR

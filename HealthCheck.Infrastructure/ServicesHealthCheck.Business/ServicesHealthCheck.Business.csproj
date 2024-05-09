@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="CQRS\Features\ServiceErrorLogs\Models\**" />
+    <EmbeddedResource Remove="CQRS\Features\ServiceErrorLogs\Models\**" />
+    <None Remove="CQRS\Features\ServiceErrorLogs\Models\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="MailKit" Version="4.4.0" />
     <PackageReference Include="MediatR" Version="12.2.0" />
@@ -22,13 +28,6 @@
     <ProjectReference Include="..\ServicesHealthCheck.Datas\ServicesHealthCheck.Datas.csproj" />
     <ProjectReference Include="..\ServicesHealthCheck.Dtos\ServicesHealthCheck.Dtos.csproj" />
     <ProjectReference Include="..\ServicesHealthCheck.Shared\ServicesHealthCheck.Shared.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="CQRS\Features\ServiceErrorLogs\Models\" />
-    <Folder Include="CQRS\Features\ServiceHealthCheckByTimes\Handlers\QueryHandlers\" />
-    <Folder Include="CQRS\Features\ServiceHealthCheckByTimes\Results\" />
-    <Folder Include="CQRS\Features\ServiceHealthCheckByTimes\Queries\" />
   </ItemGroup>
 
 </Project>

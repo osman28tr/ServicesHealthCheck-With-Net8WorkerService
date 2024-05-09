@@ -1,0 +1,139 @@
+﻿@{
+    ViewData["Title"] = "GetHealthCheckByFilter";
+    Layout = "~/Views/Shared/_HealthCheckLayout.cshtml";
+}
+@using ServicesHealthCheck.Business.CQRS.Features.ServiceHealthCheckByTimes.Results
+@model List<GetListHealthCheckByFilterQueryResult>
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/js/bootstrap-datetimepicker.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/css/bootstrap-datetimepicker.min.css">
+</head>
+<body>
+    <form action="/HealthCheck/GetHealthCheckByFilter" method="get">
+        <div class="container-fluid">
+            <div class="row">
+                <div class='col-md-5'>
+                    <div class="form-group">
+                        <label>Start Date: </label>
+                        <div class='input-group date' id='datetimepicker1' style="width:250px">
+                            <input type='text' class="form-control" name="startTime" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                        <br />
+                        <label>End Date: </label>
+                        <div class='input-group date' id='datetimepicker2' style="width:250px">
+                            <input type='text' class="form-control" name="endTime" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <label>Service Name: </label>
+                        <input type="text" class="form-control" id="txtServiceName" name="serviceName" />
+                        <br />
+                        <button type="submit" class="btn btn-primary" id="btnSearch">Search</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <table class="table">
+        <thead style="background-color:green; color:white">
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Status</th>
+                <th scope="col">CpuUsage</th>
+                <th scope="col">PhysicalMemoryUsage</th>
+                <th scope="col">VirtualMemoryUsage</th>
+                <th scope="col">PrivateMemoryUsage</th>
+                <th scope="col">IsHealthy</th>
+                <th scope="col">IsResourceUsageLimitExceeded</th>
+                <th scope="col">Date</th>
+            </tr>
+        </thead>
+        @if (Model.Count == 0)
+        {
+            <tbody id="table-body">
+                <tr>
+                    <td colspan="9">Herhangi bir veri yok.</td>
+                </tr>
+            </tbody>
+        }
+        else
+        {
+            <tbody id="table-body">
+            @foreach(var item in Model)
+            {
+                <tr>
+                    <td>@item.ServiceName</td>
+                    <td>@item.Status</td>
+                        <td>@item.CpuUsage</td>
+                        <td>@item.PhysicalMemoryUsage</td>
+                        <td>@item.VirtualMemoryUsage</td>
+                        <td>@item.PrivateMemoryUsage</td>
+                        <td>@item.IsHealthy</td>
+                        <td>@item.IsResourceUsageLimitExceeded</td>
+                        <td>@item.Date</td>
+                </tr>
+            }
+            </tbody>
+        }
+    </table>
+    <script type="text/javascript">
+        $(function () {
+            $('#datetimepicker1').datetimepicker();
+            $('#datetimepicker2').datetimepicker();
+        });
+        // $("#btnSearch").click(function () {
+        //     //ajax request
+        //     var url = '/HealthCheck/GetHealthCheckByFilter';
+        //     var startDateInput = $('#datetimepicker1').find('input').val();
+        //     var endDateInput = $('#datetimepicker2').find('input').val();
+        //     var serviceNameInput = $('#txtServiceName').val();
+        //     //partial view render
+        //     $.ajax({
+        //         type: 'GET',
+        //         url: url,
+        //         data: { serviceName: serviceNameInput, startTime: startDateInput, endTime: endDateInput },
+        //         success: function (data) {
+        //             alert('Success');
+
+        //             $('#table-body').empty(); // Tablo içeriğini temizle
+        //             console.log(data);
+
+
+        //             // $.each(data, function (index, item) {
+        //             //     var row = '<tr>';
+        //             //     row += '<td>' + item.name + '</td>';
+        //             //     row += '<td>' + item.health + '</td>';
+        //             //     row += '<td>' + item.cpuUsage + '</td>';
+        //             //     row += '<td>' + item.physicalMemoryUsage + '</td>';
+        //             //     row += '<td>' + item.virtualMemoryUsage + '</td>';
+        //             //     row += '<td>' + item.privateMemoryUsage + '</td>';
+        //             //     row += '<td>' + item.isHealthy + '</td>';
+        //             //     row += '<td>' + item.isResourceUsageLimitExceeded + '</td>';
+        //             //     row += '<td>' + item.date + '</td>';
+        //             //     row += '</tr>';
+        //             //     $('#table-body').append(row);
+        //             // });
+
+        //         },
+        //         error: function (data) {
+        //             alert('Error');
+        //         }
+        //     });
+        // })
+    </script>
+</body>
+

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MediatR;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceErrorLogs.Commands;
+using ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Commands;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Commands;
 using ServicesHealthCheck.Shared.Models;
 
@@ -73,6 +74,9 @@ namespace ServicesHealthCheck.Monitoring.BackgroundServices
                         }
                     }
                 }
+
+                //EventViewer Logs
+                await _mediator.Send(new CreatedServiceEventViewerLogCommand { Services = services });
             }
             Console.ReadLine();
             return null;

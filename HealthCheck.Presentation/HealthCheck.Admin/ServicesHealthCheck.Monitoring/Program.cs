@@ -14,6 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddHostedService<HealthCheckBackgroundService>();
 builder.Services.AddHostedService<HealthCheckByTimeBackgroundService>();
+//builder.Services.AddHostedService<ServiceEventViewerLogBackgroundService>();
 builder.Services.AddWindowsService();
 builder.Services.AddSignalR();
 

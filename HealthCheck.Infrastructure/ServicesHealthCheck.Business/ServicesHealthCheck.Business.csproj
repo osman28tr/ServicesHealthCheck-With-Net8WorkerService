@@ -30,4 +30,9 @@
     <ProjectReference Include="..\ServicesHealthCheck.Shared\ServicesHealthCheck.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="CQRS\Features\ServiceEventViewerLogs\Results\" />
+    <Folder Include="CQRS\Features\ServiceEventViewerLogs\Queries\" />
+  </ItemGroup>
+
 </Project>

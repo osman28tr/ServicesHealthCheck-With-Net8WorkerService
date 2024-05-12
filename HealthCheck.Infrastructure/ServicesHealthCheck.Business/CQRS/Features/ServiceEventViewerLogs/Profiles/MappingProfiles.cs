@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Models;
+using ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Results;
 using ServicesHealthCheck.Datas.NoSQL.MongoDb;
 
 namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Profiles
@@ -14,6 +15,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Prof
         public MappingProfiles()
         {
             CreateMap<ServiceEventViewerLog, EventViewerLogModel>().ReverseMap();
+            CreateMap<ServiceEventViewerLog, GetEventViewerLogByFilterQueryResult>().ReverseMap();
         }
     }
 }

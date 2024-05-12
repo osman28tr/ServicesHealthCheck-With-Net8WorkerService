@@ -33,6 +33,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
                 {
                     EventLog eventLog = new EventLog();
                     eventLog.Source = service;
+                    eventLog.Log = "Application";
                     if (EventLog.SourceExists(service))
                     {
                         foreach (EventLogEntry log in eventLog.Entries)
@@ -56,9 +57,8 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
 
                         var serviceNotEventLog = await _serviceEventViewerLogRepository.FindAsync(x => x.ServiceName == service);
 
-                        if (!serviceNotEventLog.Select(x => x.EventMessage).Contains(message))
+                        if (serviceNotEventLog == null)
                         {
-                            Console.WriteLine(message);
                             await _serviceEventViewerLogRepository.AddAsync(new ServiceEventViewerLog()
                             {
                                 ServiceName = service,
@@ -67,7 +67,22 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
                                 EventMessage = message,
                                 EventDate = DateTime.Now.AddHours(3)
                             });
-                            serviceNotEventLog = await _serviceEventViewerLogRepository.FindAsync(x => x.ServiceName == service);
+                        }
+                        else
+                        {
+                            if (!serviceNotEventLog.Select(x => x.EventMessage).Contains(message))
+                            {
+                                Console.WriteLine(message);
+                                await _serviceEventViewerLogRepository.AddAsync(new ServiceEventViewerLog()
+                                {
+                                    ServiceName = service,
+                                    EventId = 0,
+                                    EventType = EventLogEntryType.Warning.ToString(),
+                                    EventMessage = message,
+                                    EventDate = DateTime.Now.AddHours(3)
+                                });
+                                serviceNotEventLog = await _serviceEventViewerLogRepository.FindAsync(x => x.ServiceName == service);
+                            }
                         }
                     }
                 }

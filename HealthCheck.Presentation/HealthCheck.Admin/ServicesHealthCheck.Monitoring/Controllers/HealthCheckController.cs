@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceErrorLogs.Commands;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceErrorLogs.Queries;
+using ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Queries;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceHealthCheckByTimes.Queries;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Queries;
 using ServicesHealthCheck.Monitoring.Models;
@@ -57,6 +58,20 @@ namespace ServicesHealthCheck.Monitoring.Controllers
                 ServiceName = healthCheckByFilter.ServiceName,
                 StartTime = healthCheckByFilter.StartTime,
                 EndTime = healthCheckByFilter.EndTime
+            });
+            return View(result);
+        }
+
+        [HttpGet("HealthCheck/GetEventViewerLogsByFilter")]
+        public async Task<IActionResult> GetEventViewerLogsByFilter(
+            GetEventViewerLogByFilterViewModel eventViewerLogByFilter)
+        {
+            var result = await _mediatr.Send(new GetEventViewerLogByFilterQuery()
+            {
+                ServiceName = eventViewerLogByFilter.ServiceName,
+                EventType = eventViewerLogByFilter.EventType,
+                EventStartDate = eventViewerLogByFilter.EventStartDate,
+                EventEndDate = eventViewerLogByFilter.EventEndDate
             });
             return View(result);
         }

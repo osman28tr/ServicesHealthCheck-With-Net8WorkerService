@@ -76,7 +76,7 @@ namespace ServicesHealthCheck.Monitoring.BackgroundServices
                 }
 
                 //EventViewer Logs
-                await _mediator.Send(new CreatedServiceEventViewerLogCommand { Services = services });
+                //await _mediator.Send(new CreatedServiceEventViewerLogCommand { Services = services });
             }
             Console.ReadLine();
             return null;

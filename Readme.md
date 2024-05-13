@@ -71,7 +71,7 @@ It is the layer that allows data coming from the Worker service to be received v
 <img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/servicefilter.PNG">
 
 <p>Service Event Viewer Log By Filter</p>
-<img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/eventviewerlogfiltering.PNG">
+<img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/eventviewerlogfilter.PNG">
 
 <h3>7. Video Impression</h3>
 <p align="justify">
@@ -90,5 +90,8 @@ HealthCheck.Presentation -> HealthCheck.Admin -> ServicesHealthCheck.Monitoring 
 Finally, click on the down arrow icon next to the start button. Click on the section that says "Configure startup projects". Select the "Multiple startup projects" option. Bring the "ServicesHealthCheck.WorkerService", "ServicesHealthCheck.SignalR", "ServicesHealthCheck.Monitoring" projects to their start status, respectively. Then press the "apply" and "ok" buttons at the bottom right. Then start the project from the start button.
     </li>
 </ul>
+<h3>9.Installation of the project by plug-and play method.
+</h3>
+<p align="justify"></p>
 <br><br>
 <footer><b>Supported by CTS Yazılım as an intern project.</b></footer>

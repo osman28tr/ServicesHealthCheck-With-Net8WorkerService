@@ -90,7 +90,7 @@ HealthCheck.Presentation -> HealthCheck.Admin -> ServicesHealthCheck.Monitoring 
 Finally, click on the down arrow icon next to the start button. Click on the section that says "Configure startup projects". Select the "Multiple startup projects" option. Bring the "ServicesHealthCheck.WorkerService", "ServicesHealthCheck.SignalR", "ServicesHealthCheck.Monitoring" projects to their start status, respectively. Then press the "apply" and "ok" buttons at the bottom right. Then start the project from the start button.
     </li>
 </ul>
-<h3>9.Installation of the project by plug-and play method.
+<h3>9.Setup of the project by plug-and run method.
 </h3>
 <p align="justify"></p>
 <br><br>

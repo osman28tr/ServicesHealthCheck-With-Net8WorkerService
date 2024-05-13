@@ -100,5 +100,7 @@ Finally, click on the down arrow icon next to the start button. Click on the sec
 <p>https://www.mongodb.com/try/download/community</p>
 <p align="justify">Then, go to the setup project in the solution and go to bin->debug->net8.0. Run Setup.exe as an administrator. After the application is successfully installed, go to localhost:5181 from the browser.</p>
 <b>Note:</b> To see that the application runs as a Windows service, type "services" in the Windows search section. Find the HealthCheckProject service name in the window that opens and you can see that it is running successfully.
+<h4>Working logic of the project as a windows service</h4>
+<img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/healthcheckplugin.PNG">
 <br><br>
 <footer><b>Supported by CTS Yazılım as an intern project.</b></footer>

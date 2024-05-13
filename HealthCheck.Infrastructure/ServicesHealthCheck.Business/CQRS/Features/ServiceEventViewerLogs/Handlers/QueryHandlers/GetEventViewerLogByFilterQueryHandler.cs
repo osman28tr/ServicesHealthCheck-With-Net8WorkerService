@@ -34,12 +34,12 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
             {
                 serviceEventViewerLogs = serviceEventViewerLogs.Where(x => x.EventType == request.EventType).ToList();
             }
-            if (request.EventStartDate != DateTime.MinValue || request.EventEndDate != DateTime.MinValue)
+            if (request.EventEndDate == DateTime.MinValue)
             {
-                serviceEventViewerLogs = serviceEventViewerLogs.Where(x =>
-                    x.EventDate >= request.EventStartDate && x.EventDate <= request.EventEndDate).ToList();
+                request.EventEndDate = DateTime.MaxValue;
             }
-            serviceEventViewerLogs = serviceEventViewerLogs.Take(10).ToList();
+            serviceEventViewerLogs = serviceEventViewerLogs.Where(x =>
+                x.EventDate >= request.EventStartDate && x.EventDate <= request.EventEndDate).ToList();
             var result = _mapper.Map<List<GetEventViewerLogByFilterQueryResult>>(serviceEventViewerLogs);
             return result;
         }

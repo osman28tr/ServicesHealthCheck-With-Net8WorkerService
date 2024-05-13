@@ -62,7 +62,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
 
                     if (service.Status != ServiceControllerStatus.Running) // If the service is not working or unhealthy
                     {
-                        //service.Start();
+                        service.Start();
                         isHealthy = false;
                         resourceModel.CpuUsage = 0;
 

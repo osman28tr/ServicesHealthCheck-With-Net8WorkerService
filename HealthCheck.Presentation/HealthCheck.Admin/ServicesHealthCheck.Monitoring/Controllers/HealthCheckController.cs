@@ -51,7 +51,7 @@ namespace ServicesHealthCheck.Monitoring.Controllers
         }
 
         [HttpGet("HealthCheck/GetHealthCheckByFilter")]
-        public async Task<IActionResult> GetHealthCheckByFilter(HealthCheckByFilterViewModel healthCheckByFilter)
+        public async Task<IActionResult> GetHealthCheckByFilter(HealthCheckByFilterModel healthCheckByFilter)
         {
             var result = await _mediatr.Send(new GetListHealthCheckByFilterQuery()
             {
@@ -64,7 +64,7 @@ namespace ServicesHealthCheck.Monitoring.Controllers
 
         [HttpGet("HealthCheck/GetEventViewerLogsByFilter")]
         public async Task<IActionResult> GetEventViewerLogsByFilter(
-            GetEventViewerLogByFilterViewModel eventViewerLogByFilter)
+            GetEventViewerLogByFilterModel eventViewerLogByFilter)
         {
             var result = await _mediatr.Send(new GetEventViewerLogByFilterQuery()
             {
@@ -77,7 +77,7 @@ namespace ServicesHealthCheck.Monitoring.Controllers
         }
 
         [HttpPost("HealthCheck/ChangeErrorLogStatus")]
-        public async Task ChangeErrorLogStatus(ChangeErrorLogViewModel changeErrorLogViewModel)
+        public async Task ChangeErrorLogStatus(ChangeErrorLogModel changeErrorLogViewModel)
         {
             await _mediatr.Send(new UpdatedServiceErrorLogCommand()
                 { Id = changeErrorLogViewModel.Id, IsCompleted = changeErrorLogViewModel.IsCompleted });

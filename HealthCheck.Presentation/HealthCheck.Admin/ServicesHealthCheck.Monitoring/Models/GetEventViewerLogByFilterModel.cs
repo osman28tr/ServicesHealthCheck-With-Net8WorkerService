@@ -1,6 +1,6 @@
 ﻿namespace ServicesHealthCheck.Monitoring.Models
 {
-    public class GetEventViewerLogByFilterViewModel
+    public class GetEventViewerLogByFilterModel
     {
         public string ServiceName { get; set; }
         public string EventType { get; set; }

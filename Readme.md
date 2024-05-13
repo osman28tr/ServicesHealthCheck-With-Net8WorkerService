@@ -64,8 +64,14 @@ It is the layer that allows data coming from the Worker service to be received v
 <h3>5. Language and Development Environment Used: C# - .Net 8.0</h3>
 
 <h3>6. ScreenShots</h3>
-
+<p>Service Health Check</p>
 <img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/screenshot.PNG">
+
+<p>Service Health Check By Filter</p>
+<img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/servicefiltering.PNG">
+
+<p>Service Event Viewer Log By Filter</p>
+<img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/eventviewerlogfiltering.PNG">
 
 <h3>7. Video Impression</h3>
 <p align="justify">

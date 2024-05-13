@@ -90,8 +90,15 @@ HealthCheck.Presentation -> HealthCheck.Admin -> ServicesHealthCheck.Monitoring 
 Finally, click on the down arrow icon next to the start button. Click on the section that says "Configure startup projects". Select the "Multiple startup projects" option. Bring the "ServicesHealthCheck.WorkerService", "ServicesHealthCheck.SignalR", "ServicesHealthCheck.Monitoring" projects to their start status, respectively. Then press the "apply" and "ok" buttons at the bottom right. Then start the project from the start button.
     </li>
 </ul>
-<h3>9.Setup of the project by plug-and run method.
+<h3>9. Setup of the project by plug-and run method.
 </h3>
-<p align="justify"></p>
+<p align="justify">The project was discussed as a Windows service in the future. Accordingly, background services from the worker service were added to the monitoring section, which was implemented with Asp.Net Core MVC, and the necessary hubs were added from the SignalR section, which was implemented with Asp.Net Core API. Then, the necessary configuration settings were made in the program.cs file. The following code blocks were added to program.cs to set the project as a windows service.</p>
+<img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/windowsserviceprogramcs.PNG">
+<p align="justify">You can use the following command to run the project as a windows service.</p>
+<img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/windowsservicekomut.PNG">
+<p align="justify">A setup project was created to install the project with its database components. First of all, create Items->MongoDb folders in the solution where the project is located. Then download the mongodb file from the link below and put it into the mongodb folder you created.</p>
+<p>https://www.mongodb.com/try/download/community</p>
+<p align="justify">Then, go to the setup project in the solution and go to bin->debug->net8.0. Run Setup.exe as an administrator. After the application is successfully installed, go to localhost:5181 from the browser.</p>
+<b>Note:</b> To see that the application runs as a Windows service, type "services" in the Windows search section. Find the HealthCheckProject service name in the window that opens and you can see that it is running successfully.
 <br><br>
 <footer><b>Supported by CTS Yazılım as an intern project.</b></footer>

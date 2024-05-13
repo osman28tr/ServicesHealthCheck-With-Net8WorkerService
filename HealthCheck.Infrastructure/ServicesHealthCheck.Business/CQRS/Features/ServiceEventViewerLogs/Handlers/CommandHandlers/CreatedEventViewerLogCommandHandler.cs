@@ -32,22 +32,42 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
                 try
                 {
                     EventLog eventLog = new EventLog();
-                    eventLog.Source = service;
                     eventLog.Log = "Application";
                     if (EventLog.SourceExists(service))
                     {
                         foreach (EventLogEntry log in eventLog.Entries)
                         {
-                            if (log.EntryType == EventLogEntryType.Error || log.EntryType == EventLogEntryType.Warning)
+                            if (log.Source.ToLower() == service.ToLower())
                             {
-                                await _serviceEventViewerLogRepository.AddAsync(new ServiceEventViewerLog()
+                                if (log.EntryType == EventLogEntryType.Error || log.EntryType == EventLogEntryType.Warning)
                                 {
-                                    ServiceName = service,
-                                    EventId = log.EventID,
-                                    EventType = EventLogEntryType.Error.ToString(),
-                                    EventMessage = log.Message,
-                                    EventDate = log.TimeGenerated
-                                });
+                                    var serviceEventLog = await _serviceEventViewerLogRepository.FindAsync(x => x.ServiceName == service);
+                                    if (serviceEventLog == null)
+                                    {
+                                        await _serviceEventViewerLogRepository.AddAsync(new ServiceEventViewerLog()
+                                        {
+                                            ServiceName = service,
+                                            EventId = log.EventID,
+                                            EventType = log.EntryType.ToString(),
+                                            EventMessage = log.Message,
+                                            EventDate = log.TimeGenerated
+                                        });
+                                    }
+                                    else
+                                    {
+                                        if (!(serviceEventLog.Select(x => x.EventMessage).Contains(log.Message) && serviceEventLog.Select(y => y.ServiceName).Contains(service) && serviceEventLog.Select(z => z.EventId).Contains(log.EventID)))
+                                        {
+                                            await _serviceEventViewerLogRepository.AddAsync(new ServiceEventViewerLog()
+                                            {
+                                                ServiceName = service,
+                                                EventId = log.EventID,
+                                                EventType = log.EntryType.ToString(),
+                                                EventMessage = log.Message,
+                                                EventDate = log.TimeGenerated
+                                            });
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

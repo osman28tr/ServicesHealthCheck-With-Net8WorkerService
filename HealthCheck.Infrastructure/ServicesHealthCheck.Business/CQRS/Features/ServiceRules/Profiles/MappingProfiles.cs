@@ -7,6 +7,7 @@ using AutoMapper;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceRules.Commands;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceRules.Results;
 using ServicesHealthCheck.Datas.NoSQL.MongoDb;
+using ServicesHealthCheck.Dtos.ServiceRuleDtos;
 
 namespace ServicesHealthCheck.Business.CQRS.Features.ServiceRules.Profiles
 {
@@ -17,6 +18,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceRules.Profiles
             CreateMap<ServiceRule, GetListServiceRuleQueryResult>().ReverseMap();
 
             CreateMap<ServiceRule, CreatedServiceRuleCommand>().ReverseMap();
+            CreateMap<ServiceRule, UpdatedServiceRuleDto>().ReverseMap();
         }
     }
 }

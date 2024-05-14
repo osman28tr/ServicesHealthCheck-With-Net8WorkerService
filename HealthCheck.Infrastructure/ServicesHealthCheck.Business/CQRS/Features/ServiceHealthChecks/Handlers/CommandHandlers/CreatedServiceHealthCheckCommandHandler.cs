@@ -52,7 +52,6 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                     bool isHealthy = true;
                     bool isResourceUsageLimitExceeded = false;
                     ServiceController service = new ServiceController(serviceName);
-                    
                     Console.WriteLine($"{serviceName} is status: " + service.Status);
 
                     var IsExistServiceHealthCheck =

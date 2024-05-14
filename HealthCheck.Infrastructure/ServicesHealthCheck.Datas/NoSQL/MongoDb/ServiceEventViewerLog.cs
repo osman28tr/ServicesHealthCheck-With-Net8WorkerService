@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MongoDB.Bson.Serialization.Attributes;
+using ServicesHealthCheck.Shared.Entities;
 
 namespace ServicesHealthCheck.Datas.NoSQL.MongoDb
 {
-    public class ServiceEventViewerLog
+    public class ServiceEventViewerLog : IEntity
     {
         [BsonId]
         [BsonRepresentation(MongoDB.Bson.BsonType.ObjectId)]

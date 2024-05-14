@@ -1,0 +1,56 @@
+﻿@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_HealthCheckLayout.cshtml";
+}
+<head>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        $('document').ready(function(){
+            console.log($('#EventType').val());
+            if($('#EventType').val() == 'Error'){
+                $('.card-body').addClass('table-danger');
+            }
+            else{
+                $('.card-body').addClass('table-warning');
+            }
+        })
+        function cardBodyChange(){
+            if($('#EventType').val() == 'Error'){
+                $('.card-body').removeClass('table-warning');
+                $('.card-body').addClass('table-danger');
+            }
+            else{
+                $('.card-body').removeClass('table-danger');
+                $('.card-body').addClass('table-warning');
+            }
+        }
+    </script>
+</head>
+<br />
+@using (Html.BeginForm("Create", "Rule", FormMethod.Post))
+{
+    <div class="card">
+        <div class="card-header" style="background-color:#d4edda">
+            Create Rule
+        </div>
+        <div class="card-body">
+            <div class="form-group">
+                <label for="ServiceName">Service Name</label>
+                <input type="text" class="form-control" id="ServiceName" name="serviceName" placeholder="Service Name">
+            </div>
+            <div class="form-group">
+                <label for="EventMessage">Event Message</label>
+                <input type="text" class="form-control" id="EventMessage" name="eventMessage" placeholder="Event Message">
+            </div>
+            <div class="form-group">
+                <label for="EventType">Event Type</label>
+                <select class="form-control" id="EventType" onchange="cardBodyChange()" name="eventType">
+                    <option value="Error">Error</option>
+                    <option value="Warning">Warning</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Create</button>
+        </div>
+    </div>
+}
+

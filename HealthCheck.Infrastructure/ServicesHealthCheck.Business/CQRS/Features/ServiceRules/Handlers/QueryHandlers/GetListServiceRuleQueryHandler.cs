@@ -23,9 +23,17 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceRules.Handlers.Query
 
         public async Task<List<GetListServiceRuleQueryResult>> Handle(GetListServiceRuleQuery request, CancellationToken cancellationToken)
         {
-            var serviceRules = await _serviceRuleRepository.GetAllAsync();
-            var result = _mapper.Map<List<GetListServiceRuleQueryResult>>(serviceRules);
-            return result;
+            try
+            {
+                var serviceRules = await _serviceRuleRepository.GetAllAsync();
+                var result = _mapper.Map<List<GetListServiceRuleQueryResult>>(serviceRules);
+                return result;
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine("an error occured. " + exception.Message);
+                return new List<GetListServiceRuleQueryResult>();
+            }
         }
     }
 }

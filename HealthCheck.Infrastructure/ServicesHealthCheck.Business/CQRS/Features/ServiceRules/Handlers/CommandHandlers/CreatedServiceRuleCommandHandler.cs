@@ -23,9 +23,16 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceRules.Handlers.Comma
 
         public async Task Handle(CreatedServiceRuleCommand request, CancellationToken cancellationToken)
         {
-            var serviceRule = _mapper.Map<ServiceRule>(request);
-            serviceRule.CreatedDate = DateTime.Now.AddHours(3);
-            await _serviceRuleRepository.AddAsync(serviceRule);
+            try
+            {
+                var serviceRule = _mapper.Map<ServiceRule>(request);
+                serviceRule.CreatedDate = DateTime.Now.AddHours(3);
+                await _serviceRuleRepository.AddAsync(serviceRule);
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine("an error occured. " + exception.Message);
+            }
         }
     }
 }

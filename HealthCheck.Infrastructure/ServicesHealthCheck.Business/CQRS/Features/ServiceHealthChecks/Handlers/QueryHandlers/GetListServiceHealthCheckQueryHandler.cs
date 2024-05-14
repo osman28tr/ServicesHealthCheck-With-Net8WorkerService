@@ -25,8 +25,16 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
         }
         public async Task<List<GetListServiceHealthCheckResult>> Handle(GetListServiceHealthCheckQuery request, CancellationToken cancellationToken)
         {
-            var serviceHealthChecks = await _serviceHealthCheckRepository.GetAllAsync();
-            return _mapper.Map<List<GetListServiceHealthCheckResult>>(serviceHealthChecks);
+            try
+            {
+                var serviceHealthChecks = await _serviceHealthCheckRepository.GetAllAsync();
+                return _mapper.Map<List<GetListServiceHealthCheckResult>>(serviceHealthChecks);
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine("an error occured. " + exception.Message);
+                return null;
+            }
         }
     }
 }

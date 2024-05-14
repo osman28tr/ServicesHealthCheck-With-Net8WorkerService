@@ -43,170 +43,172 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
         {
             //List<ServiceHealthCheckDto> updateServiceHealthCheckDtos = new List<ServiceHealthCheckDto>();
             GeneralServiceHealthCheckDto generalServiceHealthCheckDto = new GeneralServiceHealthCheckDto();
-
-            foreach (var serviceName in request.Services)
+            if (request.Services != null)
             {
-                var serviceHealthCheckDto = new ServiceHealthCheckDto();
-                try
+                foreach (var serviceName in request.Services)
                 {
-                    bool isHealthy = true;
-                    bool isResourceUsageLimitExceeded = false;
-                    ServiceController service = new ServiceController(serviceName);
-                    Console.WriteLine($"{serviceName} is status: " + service.Status);
-
-                    var IsExistServiceHealthCheck =
-                        await _serviceHealthCheckRepository.GetByServiceNameAsync(serviceName); //Checking whether the service is in the database
-
-                    var resourceModel = CheckResourceUsage(serviceName);
-
-                    if (service.Status != ServiceControllerStatus.Running) // If the service is not working or unhealthy
+                    var serviceHealthCheckDto = new ServiceHealthCheckDto();
+                    try
                     {
-                        service.Start();
-                        isHealthy = false;
-                        resourceModel.CpuUsage = 0;
+                        bool isHealthy = true;
+                        bool isResourceUsageLimitExceeded = false;
+                        ServiceController service = new ServiceController(serviceName);
+                        Console.WriteLine($"{serviceName} is status: " + service.Status);
 
-                        generalServiceHealthCheckDto.Errors.Add(new CreatedServiceErrorLogDto()
-                        {
-                            ServiceName = serviceName,
-                            ErrorMessage = $"{serviceName} is stopped.",
-                            ErrorDate = DateTime.Now.AddHours(3),
-                            IsCompleted = false
-                        });
+                        var IsExistServiceHealthCheck =
+                            await _serviceHealthCheckRepository.GetByServiceNameAsync(serviceName); //Checking whether the service is in the database
 
-                        if (IsExistServiceHealthCheck != null && IsExistServiceHealthCheck.IsHealthy == true) // If the current service has become unhealthy while it was healthy (a new situation has occurred, it prevents sending unnecessary e-mails).
+                        var resourceModel = CheckResourceUsage(serviceName);
+
+                        if (service.Status != ServiceControllerStatus.Running) // If the service is not working or unhealthy
                         {
-                            foreach (var mail in _mailSetting.ToMail)
+                            // service.Start();
+                            isHealthy = false;
+                            resourceModel.CpuUsage = 0;
+
+                            generalServiceHealthCheckDto.Errors.Add(new CreatedServiceErrorLogDto()
                             {
-                                await _mailService.SendEmailAsync(new MailDto
+                                ServiceName = serviceName,
+                                ErrorMessage = $"{serviceName} is stopped.",
+                                ErrorDate = DateTime.Now.AddHours(3),
+                                IsCompleted = false
+                            });
+
+                            if (IsExistServiceHealthCheck != null && IsExistServiceHealthCheck.IsHealthy == true) // If the current service has become unhealthy while it was healthy (a new situation has occurred, it prevents sending unnecessary e-mails).
+                            {
+                                foreach (var mail in _mailSetting.ToMail)
                                 {
-                                    FromMail = _mailSetting.FromMail,
-                                    ToEmail = mail,
-                                    Subject = "Servis Durumu",
-                                    Body = $"{serviceName} servisi durduruldu, ardından tekrar çalıştırıldı."
-                                }, CancellationToken.None);
+                                    await _mailService.SendEmailAsync(new MailDto
+                                    {
+                                        FromMail = _mailSetting.FromMail,
+                                        ToEmail = mail,
+                                        Subject = "Servis Durumu",
+                                        Body = $"{serviceName} servisi durduruldu, ardından tekrar çalıştırıldı."
+                                    }, CancellationToken.None);
+                                }
                             }
                         }
-                    }
 
-                    if (resourceModel.CpuUsage >
-                        request.ServiceResourceUsageLimit
-                            .CpuMaxUsage) // If the service's CPU usage exceeds the limit, send an e-mail
-                    {
-                        isResourceUsageLimitExceeded = true;
-                        isHealthy = false;
-
-                        generalServiceHealthCheckDto.Errors.Add(new CreatedServiceErrorLogDto()
+                        if (resourceModel.CpuUsage >
+                            request.ServiceResourceUsageLimit
+                                .CpuMaxUsage) // If the service's CPU usage exceeds the limit, send an e-mail
                         {
-                            ServiceName = serviceName,
-                            ErrorMessage = $"{serviceName} service's CPU usage limit has been exceeded.",
-                            ErrorDate = DateTime.Now.AddHours(3),
-                            IsCompleted = false
-                        });
+                            isResourceUsageLimitExceeded = true;
+                            isHealthy = false;
 
-                        if (IsExistServiceHealthCheck.IsResourceUsageLimitExceeded == false)
-                        {
-                            foreach (var mail in _mailSetting.ToMail)
+                            generalServiceHealthCheckDto.Errors.Add(new CreatedServiceErrorLogDto()
                             {
-                                await _mailService.SendEmailAsync(new MailDto
+                                ServiceName = serviceName,
+                                ErrorMessage = $"{serviceName} service's CPU usage limit has been exceeded.",
+                                ErrorDate = DateTime.Now.AddHours(3),
+                                IsCompleted = false
+                            });
+
+                            if (IsExistServiceHealthCheck.IsResourceUsageLimitExceeded == false)
+                            {
+                                foreach (var mail in _mailSetting.ToMail)
                                 {
-                                    FromMail = _mailSetting.FromMail,
-                                    ToEmail = mail,
-                                    Subject = "Servis Durumu",
-                                    Body = $"{serviceName} servisinin CPU kullanım limiti aşıldı."
-                                }, CancellationToken.None);
+                                    await _mailService.SendEmailAsync(new MailDto
+                                    {
+                                        FromMail = _mailSetting.FromMail,
+                                        ToEmail = mail,
+                                        Subject = "Servis Durumu",
+                                        Body = $"{serviceName} servisinin CPU kullanım limiti aşıldı."
+                                    }, CancellationToken.None);
+                                }
                             }
                         }
-                    }
-                    if (IsExistServiceHealthCheck != null) //If there is an existing service, if it is not a new service, update it
-                    {
-                        // get resource usages
-                        serviceHealthCheckDto.ServiceName = serviceName;
-                        serviceHealthCheckDto.Status = service.Status.ToString();
-                        serviceHealthCheckDto.IsHealthy = isHealthy;
-                        serviceHealthCheckDto.CpuUsage = resourceModel.CpuUsage;
-                        serviceHealthCheckDto.PhysicalMemoryUsage = resourceModel.PhysicalMemoryUsage;
-                        serviceHealthCheckDto.PrivateMemoryUsage = resourceModel.PrivateMemoryUsage;
-                        serviceHealthCheckDto.VirtualMemoryUsage = resourceModel.VirtualMemoryUsage;
-                        serviceHealthCheckDto.IsResourceUsageLimitExceeded = isResourceUsageLimitExceeded;
-
-                        var serviceHealthCheckSignalRDto = _mapper.Map<ServicesHealthCheckSignalRDto>(serviceHealthCheckDto);
-                        serviceHealthCheckSignalRDto.DiskUsage = resourceModel.DiskUsage;
-                        var serviceResourceUsageVisualizationSignalRDto = _mapper.Map<ServiceResourceUsageVisualizationSignalRDto>(serviceHealthCheckSignalRDto);
-
-                        await _signalRService.SendMessageAsync(serviceHealthCheckSignalRDto); // Send service related information to signalR
-                        await _signalRService.SendVisualizationMessageAsync(serviceResourceUsageVisualizationSignalRDto);
-                        generalServiceHealthCheckDto.ServiceHealthCheckDtos.Add(serviceHealthCheckDto); // add to dto and rotate to update service
-                    }
-                    else //The service is not in the database, add a new service to the database
-                    {
-                        var serviceHealthCheck = new ServiceHealthCheck()
+                        if (IsExistServiceHealthCheck != null) //If there is an existing service, if it is not a new service, update it
                         {
-                            ServiceName = serviceName,
-                            Status = service.Status.ToString(),
-                            IsHealthy = isHealthy,
-                            CpuUsage = resourceModel.CpuUsage,
-                            PhysicalMemoryUsage = resourceModel.PhysicalMemoryUsage,
-                            PrivateMemoryUsage = resourceModel.PrivateMemoryUsage,
-                            VirtualMemoryUsage = resourceModel.VirtualMemoryUsage,
-                            IsResourceUsageLimitExceeded = isResourceUsageLimitExceeded
-                        };
-                        var serviceHealthCheckSignalRDto = _mapper.Map<ServicesHealthCheckSignalRDto>(serviceHealthCheck);
-                        serviceHealthCheckSignalRDto.DiskUsage = resourceModel.DiskUsage;
-                        var serviceResourceUsageVisualizationSignalRDto = _mapper.Map<ServiceResourceUsageVisualizationSignalRDto>(serviceHealthCheckSignalRDto);
+                            // get resource usages
+                            serviceHealthCheckDto.ServiceName = serviceName;
+                            serviceHealthCheckDto.Status = service.Status.ToString();
+                            serviceHealthCheckDto.IsHealthy = isHealthy;
+                            serviceHealthCheckDto.CpuUsage = resourceModel.CpuUsage;
+                            serviceHealthCheckDto.PhysicalMemoryUsage = resourceModel.PhysicalMemoryUsage;
+                            serviceHealthCheckDto.PrivateMemoryUsage = resourceModel.PrivateMemoryUsage;
+                            serviceHealthCheckDto.VirtualMemoryUsage = resourceModel.VirtualMemoryUsage;
+                            serviceHealthCheckDto.IsResourceUsageLimitExceeded = isResourceUsageLimitExceeded;
 
-                        await _signalRService.SendMessageAsync(serviceHealthCheckSignalRDto); // Send service related information to signalR
-                        await _signalRService.SendVisualizationMessageAsync(serviceResourceUsageVisualizationSignalRDto);
-                        await _serviceHealthCheckRepository.AddAsync(serviceHealthCheck);
+                            var serviceHealthCheckSignalRDto = _mapper.Map<ServicesHealthCheckSignalRDto>(serviceHealthCheckDto);
+                            serviceHealthCheckSignalRDto.DiskUsage = resourceModel.DiskUsage;
+                            var serviceResourceUsageVisualizationSignalRDto = _mapper.Map<ServiceResourceUsageVisualizationSignalRDto>(serviceHealthCheckSignalRDto);
+
+                            await _signalRService.SendMessageAsync(serviceHealthCheckSignalRDto); // Send service related information to signalR
+                            await _signalRService.SendVisualizationMessageAsync(serviceResourceUsageVisualizationSignalRDto);
+                            generalServiceHealthCheckDto.ServiceHealthCheckDtos.Add(serviceHealthCheckDto); // add to dto and rotate to update service
+                        }
+                        else //The service is not in the database, add a new service to the database
+                        {
+                            var serviceHealthCheck = new ServiceHealthCheck()
+                            {
+                                ServiceName = serviceName,
+                                Status = service.Status.ToString(),
+                                IsHealthy = isHealthy,
+                                CpuUsage = resourceModel.CpuUsage,
+                                PhysicalMemoryUsage = resourceModel.PhysicalMemoryUsage,
+                                PrivateMemoryUsage = resourceModel.PrivateMemoryUsage,
+                                VirtualMemoryUsage = resourceModel.VirtualMemoryUsage,
+                                IsResourceUsageLimitExceeded = isResourceUsageLimitExceeded
+                            };
+                            var serviceHealthCheckSignalRDto = _mapper.Map<ServicesHealthCheckSignalRDto>(serviceHealthCheck);
+                            serviceHealthCheckSignalRDto.DiskUsage = resourceModel.DiskUsage;
+                            var serviceResourceUsageVisualizationSignalRDto = _mapper.Map<ServiceResourceUsageVisualizationSignalRDto>(serviceHealthCheckSignalRDto);
+
+                            await _signalRService.SendMessageAsync(serviceHealthCheckSignalRDto); // Send service related information to signalR
+                            await _signalRService.SendVisualizationMessageAsync(serviceResourceUsageVisualizationSignalRDto);
+                            await _serviceHealthCheckRepository.AddAsync(serviceHealthCheck);
+                        }
                     }
-                }
-                catch (Exception exception)
-                {
-                    // If you get a service not found error
-                    if (exception.Message.Contains($"Service '{serviceName}' was not found on computer"))
+                    catch (Exception exception)
                     {
-                        Console.WriteLine($"An error occurred: {serviceName} is not found.");
-                        var serviceHealthCheckSignalRDto = new ServicesHealthCheckSignalRDto()
+                        // If you get a service not found error
+                        if (exception.Message.Contains($"Service '{serviceName}' was not found on computer"))
                         {
-                            ServiceName = "Undefined",
-                            Status = "-",
-                            IsHealthy = false,
-                            CpuUsage = 0,
-                            PhysicalMemoryUsage = 0,
-                            PrivateMemoryUsage = 0,
-                            VirtualMemoryUsage = 0
-                        };
-                        generalServiceHealthCheckDto.Errors.Add(new CreatedServiceErrorLogDto()
+                            Console.WriteLine($"An error occurred: {serviceName} is not found.");
+                            var serviceHealthCheckSignalRDto = new ServicesHealthCheckSignalRDto()
+                            {
+                                ServiceName = "Undefined",
+                                Status = "-",
+                                IsHealthy = false,
+                                CpuUsage = 0,
+                                PhysicalMemoryUsage = 0,
+                                PrivateMemoryUsage = 0,
+                                VirtualMemoryUsage = 0
+                            };
+                            generalServiceHealthCheckDto.Errors.Add(new CreatedServiceErrorLogDto()
+                            {
+                                ServiceName = serviceName,
+                                ErrorMessage = exception.Message,
+                                ErrorDate = DateTime.Now.AddHours(3),
+                                IsCompleted = false
+                            });
+
+                            await _signalRService.SendMessageAsync(serviceHealthCheckSignalRDto);
+
+                            //generalServiceHealthCheckDto.Errors.Add(new CreatedServiceErrorLogDto()
+                            //{
+                            //    ServiceName = serviceName,
+                            //    ErrorMessage = exception.Message,
+                            //    ErrorDate = DateTime.Now,
+                            //    IsCompleted = false
+                            //});
+                        }
+                        else
                         {
-                            ServiceName = serviceName,
-                            ErrorMessage = exception.Message,
-                            ErrorDate = DateTime.Now.AddHours(3),
-                            IsCompleted = false
-                        });
+                            //mongoya log atabilirsin, erroMessage prop'u olsun. Oraya mesajları atsın.
+                            generalServiceHealthCheckDto.Errors.Add(new CreatedServiceErrorLogDto()
+                            {
+                                ServiceName = serviceName,
+                                ErrorMessage = exception.Message,
+                                ErrorDate = DateTime.Now.AddHours(3),
+                                IsCompleted = false
+                            });
 
-                        await _signalRService.SendMessageAsync(serviceHealthCheckSignalRDto);
-
-                        //generalServiceHealthCheckDto.Errors.Add(new CreatedServiceErrorLogDto()
-                        //{
-                        //    ServiceName = serviceName,
-                        //    ErrorMessage = exception.Message,
-                        //    ErrorDate = DateTime.Now,
-                        //    IsCompleted = false
-                        //});
+                            Console.WriteLine("An error occurred: " + exception.Message);
+                        }
+                        continue;
                     }
-                    else
-                    {
-                        //mongoya log atabilirsin, erroMessage prop'u olsun. Oraya mesajları atsın.
-                        generalServiceHealthCheckDto.Errors.Add(new CreatedServiceErrorLogDto()
-                        {
-                            ServiceName = serviceName,
-                            ErrorMessage = exception.Message,
-                            ErrorDate = DateTime.Now.AddHours(3),
-                            IsCompleted = false
-                        });
-
-                        Console.WriteLine("An error occurred: " + exception.Message);
-                    }
-                    continue;
                 }
             }
             return generalServiceHealthCheckDto;

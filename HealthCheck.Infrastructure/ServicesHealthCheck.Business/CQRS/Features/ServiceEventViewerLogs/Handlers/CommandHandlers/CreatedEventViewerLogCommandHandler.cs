@@ -31,11 +31,11 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
         public async Task<List<UpdatedServiceRuleDto>> Handle(CreatedServiceEventViewerLogCommand request, CancellationToken cancellationToken)
         {
             List<UpdatedServiceRuleDto> updatedServiceRules = new List<UpdatedServiceRuleDto>();
-            try
+            var rules = await _serviceRuleRepository.GetAllAsync();
+            RestartServiceByRule(rules);
+            foreach (var service in request.Services)
             {
-                var rules = await _serviceRuleRepository.GetAllAsync();
-                RestartServiceByRule(rules);
-                foreach (var service in request.Services)
+                try
                 {
                     EventLog eventLog = new EventLog();
                     eventLog.Log = "Application";
@@ -133,70 +133,70 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
                         }
                     }
                 }
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine("an error occured. " + exception.Message);
+                catch (Exception exception)
+                {
+                    Console.WriteLine("an error occured. " + exception.Message);
+                }
             }
             return updatedServiceRules;
         }
-        public void RestartServiceByRule(List<ServiceRule> rules)
+    public void RestartServiceByRule(List<ServiceRule> rules)
+    {
+        try
         {
-            try
+            rules.ForEach(x =>
             {
-                rules.ForEach(x =>
+                ServiceController serviceController = new ServiceController(x.ServiceName);
+                var lastDate = DateTime.Now - x.CreatedDate;
+                if (x.RestartTime != null)
                 {
-                    ServiceController serviceController = new ServiceController(x.ServiceName);
-                    var lastDate = DateTime.Now - x.CreatedDate;
-                    if (x.RestartTime != null)
+                    if (x.RestartTime.Day != 0)
                     {
-                        if (x.RestartTime.Day != 0)
+                        if (lastDate.Days == x.RestartTime.Day)
                         {
-                            if (lastDate.Days == x.RestartTime.Day)
+                            if (serviceController.Status == ServiceControllerStatus.Running)
                             {
-                                if (serviceController.Status == ServiceControllerStatus.Running)
-                                {
-                                    serviceController.Stop();
-                                    serviceController.WaitForStatus(ServiceControllerStatus.Stopped);
-                                }
-                                serviceController.Start();
-                                serviceController.WaitForStatus(ServiceControllerStatus.Running);
+                                serviceController.Stop();
+                                serviceController.WaitForStatus(ServiceControllerStatus.Stopped);
                             }
-                        }
-                        else if (x.RestartTime.Week != 0)
-                        {
-                            if (lastDate.Days == x.RestartTime.Week * 7)
-                            {
-                                if (serviceController.Status == ServiceControllerStatus.Running)
-                                {
-                                    serviceController.Stop();
-                                    serviceController.WaitForStatus(ServiceControllerStatus.Stopped);
-                                }
-                                serviceController.Start();
-                                serviceController.WaitForStatus(ServiceControllerStatus.Running);
-                            }
-                        }
-                        else
-                        {
-                            if (lastDate.Days == x.RestartTime.Month * 30)
-                            {
-                                if (serviceController.Status == ServiceControllerStatus.Running)
-                                {
-                                    serviceController.Stop();
-                                    serviceController.WaitForStatus(ServiceControllerStatus.Stopped);
-                                }
-                                serviceController.Start();
-                                serviceController.WaitForStatus(ServiceControllerStatus.Running);
-                            }
+                            serviceController.Start();
+                            serviceController.WaitForStatus(ServiceControllerStatus.Running);
                         }
                     }
+                    else if (x.RestartTime.Week != 0)
+                    {
+                        if (lastDate.Days == x.RestartTime.Week * 7)
+                        {
+                            if (serviceController.Status == ServiceControllerStatus.Running)
+                            {
+                                serviceController.Stop();
+                                serviceController.WaitForStatus(ServiceControllerStatus.Stopped);
+                            }
+                            serviceController.Start();
+                            serviceController.WaitForStatus(ServiceControllerStatus.Running);
+                        }
+                    }
+                    else
+                    {
+                        if (lastDate.Days == x.RestartTime.Month * 30)
+                        {
+                            if (serviceController.Status == ServiceControllerStatus.Running)
+                            {
+                                serviceController.Stop();
+                                serviceController.WaitForStatus(ServiceControllerStatus.Stopped);
+                            }
+                            serviceController.Start();
+                            serviceController.WaitForStatus(ServiceControllerStatus.Running);
+                        }
+                    }
+                }
 
-                });
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine("an error occured. " + exception.Message);
-            }
+            });
+        }
+        catch (Exception exception)
+        {
+            Console.WriteLine("an error occured. " + exception.Message);
         }
     }
+}
 }

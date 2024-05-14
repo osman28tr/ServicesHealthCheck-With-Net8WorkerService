@@ -30,4 +30,8 @@
     <ProjectReference Include="..\ServicesHealthCheck.Shared\ServicesHealthCheck.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="CQRS\Features\ServiceRules\Models\" />
+  </ItemGroup>
+
 </Project>

@@ -7,7 +7,7 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>_HealthCheckLayout</title>
+    <title>HealthCheckApp</title>
     <style>
         .navbar-nav .nav-link {
             color: white;
@@ -32,6 +32,9 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" asp-controller="HealthCheck" asp-action="GetEventViewerLogsByFilter">EventViewer</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Rule" asp-action="Index">Rules</a>
                     </li>
                 </ul>
             </div>

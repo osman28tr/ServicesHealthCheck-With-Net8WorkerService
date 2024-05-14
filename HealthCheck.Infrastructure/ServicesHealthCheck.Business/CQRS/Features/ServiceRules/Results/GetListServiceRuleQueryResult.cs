@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ServicesHealthCheck.Datas.NoSQL.MongoDb;
 
 namespace ServicesHealthCheck.Business.CQRS.Features.ServiceRules.Results
 {
@@ -13,5 +14,6 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceRules.Results
         public string EventType { get; set; }
         public string EventMessage { get; set; }
         public DateTime CreatedDate { get; set; }
+        public RestartTime RestartTime { get; set; }
     }
 }

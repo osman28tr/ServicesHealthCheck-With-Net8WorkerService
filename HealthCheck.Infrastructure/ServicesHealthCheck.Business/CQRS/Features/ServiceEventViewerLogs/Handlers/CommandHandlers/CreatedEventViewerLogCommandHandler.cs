@@ -16,7 +16,7 @@ using ServicesHealthCheck.Dtos.ServiceRuleDtos;
 
 namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Handlers.CommandHandlers
 {
-    public class CreatedEventViewerLogCommandHandler : IRequestHandler<CreatedServiceEventViewerLogCommand,List<UpdatedServiceRuleDto>>
+    public class CreatedEventViewerLogCommandHandler : IRequestHandler<CreatedServiceEventViewerLogCommand, List<UpdatedServiceRuleDto>>
     {
         private readonly IServiceEventViewerLogRepository _serviceEventViewerLogRepository;
         private readonly IServiceRuleRepository _serviceRuleRepository;
@@ -30,11 +30,12 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
 
         public async Task<List<UpdatedServiceRuleDto>> Handle(CreatedServiceEventViewerLogCommand request, CancellationToken cancellationToken)
         {
-            var rules = await _serviceRuleRepository.GetAllAsync();
             List<UpdatedServiceRuleDto> updatedServiceRules = new List<UpdatedServiceRuleDto>();
-            foreach (var service in request.Services)
+            try
             {
-                try
+                var rules = await _serviceRuleRepository.GetAllAsync();
+                RestartServiceByRule(rules);
+                foreach (var service in request.Services)
                 {
                     EventLog eventLog = new EventLog();
                     eventLog.Log = "Application";
@@ -132,13 +133,70 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
                         }
                     }
                 }
-                catch (Exception exception)
-                {
-                    Console.WriteLine("an a error occured. " + exception.Message);
-                    continue;
-                }
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine("an error occured. " + exception.Message);
             }
             return updatedServiceRules;
+        }
+        public void RestartServiceByRule(List<ServiceRule> rules)
+        {
+            try
+            {
+                rules.ForEach(x =>
+                {
+                    ServiceController serviceController = new ServiceController(x.ServiceName);
+                    var lastDate = DateTime.Now - x.CreatedDate;
+                    if (x.RestartTime != null)
+                    {
+                        if (x.RestartTime.Day != 0)
+                        {
+                            if (lastDate.Days == x.RestartTime.Day)
+                            {
+                                if (serviceController.Status == ServiceControllerStatus.Running)
+                                {
+                                    serviceController.Stop();
+                                    serviceController.WaitForStatus(ServiceControllerStatus.Stopped);
+                                }
+                                serviceController.Start();
+                                serviceController.WaitForStatus(ServiceControllerStatus.Running);
+                            }
+                        }
+                        else if (x.RestartTime.Week != 0)
+                        {
+                            if (lastDate.Days == x.RestartTime.Week * 7)
+                            {
+                                if (serviceController.Status == ServiceControllerStatus.Running)
+                                {
+                                    serviceController.Stop();
+                                    serviceController.WaitForStatus(ServiceControllerStatus.Stopped);
+                                }
+                                serviceController.Start();
+                                serviceController.WaitForStatus(ServiceControllerStatus.Running);
+                            }
+                        }
+                        else
+                        {
+                            if (lastDate.Days == x.RestartTime.Month * 30)
+                            {
+                                if (serviceController.Status == ServiceControllerStatus.Running)
+                                {
+                                    serviceController.Stop();
+                                    serviceController.WaitForStatus(ServiceControllerStatus.Stopped);
+                                }
+                                serviceController.Start();
+                                serviceController.WaitForStatus(ServiceControllerStatus.Running);
+                            }
+                        }
+                    }
+
+                });
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine("an error occured. " + exception.Message);
+            }
         }
     }
 }

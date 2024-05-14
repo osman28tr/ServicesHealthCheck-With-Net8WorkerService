@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceRules.Commands;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceRules.Queries;
+using ServicesHealthCheck.Monitoring.Models;
 
 namespace ServicesHealthCheck.Monitoring.Controllers
 {
@@ -24,9 +25,26 @@ namespace ServicesHealthCheck.Monitoring.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Create(CreatedServiceRuleCommand createdServiceRuleCommand)
+        public async Task<IActionResult> Create(CreateServiceRuleModel serviceRuleModel)
         {
-            await _mediatr.Send(createdServiceRuleCommand);
+            var serviceRuleCommand = new CreatedServiceRuleCommand()
+            {
+                ServiceName = serviceRuleModel.ServiceName, EventMessage = serviceRuleModel.EventMessage,
+                EventType = serviceRuleModel.EventType
+            };
+            if (serviceRuleModel.Period != null)
+            {
+                if (serviceRuleModel.Time == "Day")
+                    serviceRuleCommand.RestartTime.Day = int.Parse(serviceRuleModel.Period);
+                else if (serviceRuleModel.Time == "Week")
+                    serviceRuleCommand.RestartTime.Week = int.Parse(serviceRuleModel.Period);
+                else
+                    serviceRuleCommand.RestartTime.Month = int.Parse(serviceRuleModel.Period);
+            }
+            else
+                serviceRuleCommand.RestartTime = null;
+            
+            await _mediatr.Send(serviceRuleCommand);
             return RedirectToAction("Index");
         }
     }

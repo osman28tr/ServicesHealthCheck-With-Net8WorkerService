@@ -18,5 +18,12 @@ namespace ServicesHealthCheck.Datas.NoSQL.MongoDb
         public string EventType { get; set; }
         public bool IsRestarted { get; set; }
         public DateTime CreatedDate { get; set; }
+        public RestartTime RestartTime { get; set; }
+    }
+    public class RestartTime
+    {
+        public int Week { get; set; }
+        public int Day { get; set; }
+        public int Month { get; set; }
     }
 }

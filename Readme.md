@@ -73,6 +73,12 @@ It is the layer that allows data coming from the Worker service to be received v
 <p>Service Event Viewer Log By Filter</p>
 <img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/eventviewerlogfilter.PNG">
 
+<p>List Rule</p>
+<img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/listrule.PNG">
+
+<p>Create Rule</p>
+<img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/createrule.PNG">
+
 <h3>7. Video Impression</h3>
 <p align="justify">
 For the video demonstration of the project, change the place that says "github.com" in your URL to "github.dev". Then you can follow this path and access the video.<br>

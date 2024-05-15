@@ -7,6 +7,7 @@ using MediatR;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceErrorLogs.Commands;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Commands;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Commands;
+using ServicesHealthCheck.Business.CQRS.Features.ServiceRules.Commands;
 using ServicesHealthCheck.Shared.Models;
 
 namespace ServicesHealthCheck.Monitoring.BackgroundServices
@@ -76,7 +77,9 @@ namespace ServicesHealthCheck.Monitoring.BackgroundServices
                 }
 
                 //EventViewer Logs
-                await _mediator.Send(new CreatedServiceEventViewerLogCommand { Services = services });
+                var updateServiceRules = await _mediator.Send(new CreatedServiceEventViewerLogCommand { Services = services });
+                if (updateServiceRules.Count != 0)
+                    await _mediator.Send(new UpdatedServiceRuleCommand { UpdateServiceRuleDtos = updateServiceRules });
             }
             Console.ReadLine();
             return null;

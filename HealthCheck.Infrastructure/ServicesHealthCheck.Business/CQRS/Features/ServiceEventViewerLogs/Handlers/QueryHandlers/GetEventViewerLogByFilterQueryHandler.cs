@@ -26,22 +26,26 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
         {
             //dinamik filtering mekanizması
             var serviceEventViewerLogs = await _serviceEventViewerLogRepository.GetAllAsync();
-            if (!string.IsNullOrEmpty(request.ServiceName))
+            if (serviceEventViewerLogs != null)
             {
-                serviceEventViewerLogs = serviceEventViewerLogs.Where(x => x.ServiceName == request.ServiceName).ToList();
+                if (!string.IsNullOrEmpty(request.ServiceName))
+                {
+                    serviceEventViewerLogs = serviceEventViewerLogs.Where(x => x.ServiceName == request.ServiceName).ToList();
+                }
+                if (!string.IsNullOrEmpty(request.EventType))
+                {
+                    serviceEventViewerLogs = serviceEventViewerLogs.Where(x => x.EventType == request.EventType).ToList();
+                }
+                if (request.EventEndDate == DateTime.MinValue)
+                {
+                    request.EventEndDate = DateTime.MaxValue;
+                }
+                serviceEventViewerLogs = serviceEventViewerLogs.Where(x =>
+                    x.EventDate >= request.EventStartDate && x.EventDate <= request.EventEndDate).ToList();
+                var result = _mapper.Map<List<GetEventViewerLogByFilterQueryResult>>(serviceEventViewerLogs);
+                return result;
             }
-            if (!string.IsNullOrEmpty(request.EventType))
-            {
-                serviceEventViewerLogs = serviceEventViewerLogs.Where(x => x.EventType == request.EventType).ToList();
-            }
-            if (request.EventEndDate == DateTime.MinValue)
-            {
-                request.EventEndDate = DateTime.MaxValue;
-            }
-            serviceEventViewerLogs = serviceEventViewerLogs.Where(x =>
-                x.EventDate >= request.EventStartDate && x.EventDate <= request.EventEndDate).ToList();
-            var result = _mapper.Map<List<GetEventViewerLogByFilterQueryResult>>(serviceEventViewerLogs);
-            return result;
+            return new List<GetEventViewerLogByFilterQueryResult>();
         }
     }
 }

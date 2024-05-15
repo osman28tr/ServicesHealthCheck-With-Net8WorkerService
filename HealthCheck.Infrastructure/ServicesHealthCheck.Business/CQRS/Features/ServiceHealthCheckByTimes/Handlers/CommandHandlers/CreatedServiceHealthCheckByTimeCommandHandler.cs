@@ -31,42 +31,45 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthCheckByTimes.H
 
         public async Task Handle(CreatedServiceHealthCheckByTimeCommand request, CancellationToken cancellationToken)
         {
-            foreach (var serviceName in request.Services)
+            if (request.Services != null)
             {
-                try
+                foreach (var serviceName in request.Services)
                 {
-                    bool isHealthy = true;
-                    bool isResourceUsageLimitExceeded = false;
-
-                    ServiceController service = new ServiceController(serviceName);
-
-                    Console.WriteLine($"{serviceName} is status in servicehealthcheckbytime: " + service.Status);
-
-                    var resourceModel = CheckResourceUsage(serviceName);
-
-                    if (service.Status != ServiceControllerStatus.Running)
+                    try
                     {
-                        isHealthy = false;
-                        resourceModel.CpuUsage = 0;
-                    }
+                        bool isHealthy = true;
+                        bool isResourceUsageLimitExceeded = false;
 
-                    if (request.ServiceResourceUsageLimit.CpuMaxUsage < resourceModel.CpuUsage)
+                        ServiceController service = new ServiceController(serviceName);
+
+                        Console.WriteLine($"{serviceName} is status in servicehealthcheckbytime: " + service.Status);
+
+                        var resourceModel = CheckResourceUsage(serviceName);
+
+                        if (service.Status != ServiceControllerStatus.Running)
+                        {
+                            isHealthy = false;
+                            resourceModel.CpuUsage = 0;
+                        }
+
+                        if (request.ServiceResourceUsageLimit.CpuMaxUsage < resourceModel.CpuUsage)
+                        {
+                            isHealthy = false;
+                            isResourceUsageLimitExceeded = true;
+                        }
+                        var serviceHealthCheckByTime = _mapper.Map<ServiceHealthCheckByTime>(resourceModel);
+                        serviceHealthCheckByTime.ServiceName = serviceName;
+                        serviceHealthCheckByTime.IsHealthy = isHealthy;
+                        serviceHealthCheckByTime.IsResourceUsageLimitExceeded = isResourceUsageLimitExceeded;
+                        serviceHealthCheckByTime.Status = service.Status.ToString();
+
+                        serviceHealthCheckByTime.Date = DateTime.Now.AddHours(3);
+                        await _serviceHealthCheckByTimeRepository.AddAsync(serviceHealthCheckByTime);
+                    }
+                    catch (Exception exception)
                     {
-                        isHealthy = false;
-                        isResourceUsageLimitExceeded = true;
+                        Console.WriteLine("An error occured in servicehealthcheckbytime." + exception);
                     }
-                    var serviceHealthCheckByTime = _mapper.Map<ServiceHealthCheckByTime>(resourceModel);
-                    serviceHealthCheckByTime.ServiceName = serviceName;
-                    serviceHealthCheckByTime.IsHealthy = isHealthy;
-                    serviceHealthCheckByTime.IsResourceUsageLimitExceeded = isResourceUsageLimitExceeded;
-                    serviceHealthCheckByTime.Status = service.Status.ToString();
-
-                    serviceHealthCheckByTime.Date = DateTime.Now.AddHours(3);
-                    await _serviceHealthCheckByTimeRepository.AddAsync(serviceHealthCheckByTime);
-                }
-                catch (Exception exception)
-                {
-                    Console.WriteLine("An error occured in servicehealthcheckbytime." + exception);
                 }
             }
         }

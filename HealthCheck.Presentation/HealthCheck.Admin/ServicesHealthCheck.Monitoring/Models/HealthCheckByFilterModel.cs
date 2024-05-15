@@ -1,6 +1,6 @@
 ﻿namespace ServicesHealthCheck.Monitoring.Models
 {
-    public class HealthCheckByFilterViewModel
+    public class HealthCheckByFilterModel
     {
         public string? ServiceName { get; set; }
         public DateTime StartTime { get; set; }

@@ -1,0 +1,125 @@
+﻿@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_HealthCheckLayout.cshtml";
+}
+<head>
+    <style>
+        #rstcardhead {
+            cursor: pointer;
+        }
+
+        #rstcardbody {
+            display: none;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out;
+        }
+
+        #rstcard {
+            overflow: hidden;
+            border: 3px solid #d4edda;
+            border-radius: 5px;
+        }
+    </style>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        $('document').ready(function () {
+            console.log($('#EventType').val());
+            
+            if ($('#EventType').val() == 'Error') {
+                $('.card-body').addClass('table-danger');
+            }
+            else {
+                $('.card-body').addClass('table-warning');
+            }
+        })
+        function cardBodyChange() {
+            if ($('#EventType').val() == 'Error') {
+                $('.card-body').removeClass('table-warning');
+                $('.card-body').addClass('table-danger');
+            }
+            else {
+                $('.card-body').removeClass('table-danger');
+                $('.card-body').addClass('table-warning');
+            }
+        }
+        //time dropdown day click
+        function cardTimeChange() {    
+                if ($('#Time').val() == 'Day') {
+                    console.log('time changed');
+                    $('#period').empty();
+                    @foreach (var item in Enumerable.Range(1, 7))
+                        {
+                        <text>$('#period').append('<option value="@item">@item</option>'); </text>
+                    }
+                            }
+                else if ($('#Time').val() == 'Week') {
+                    $('#period').empty();
+                    @foreach (var item in Enumerable.Range(1, 4))
+                        {
+                        <text>$('#period').append('<option value="@item">@item</option>'); </text>
+                    }
+                }
+                else {
+                    $('#period').empty();
+                    @foreach (var item in Enumerable.Range(1, 12))
+                        {
+                        <text>$('#period').append('<option value="@item">@item</option>'); </text>
+                    }
+                }
+        }
+        function toggleCardBody() {
+            var cardBody = document.getElementById('rstcardbody');
+            if (cardBody.style.display === 'none') {
+                cardBody.style.display = 'block';
+            } else {
+                cardBody.style.display = 'none';
+            }
+        }
+    </script>
+</head>
+<br />
+@using (Html.BeginForm("Create", "Rule", FormMethod.Post))
+{
+    <div class="card">
+        <div class="card-header" style="background-color:#d4edda">
+            Create Rule
+        </div>
+        <div class="card-body">
+            <div class="form-group">
+                <label for="ServiceName">Service Name</label>
+                <input type="text" class="form-control" id="ServiceName" name="serviceName" placeholder="Service Name">
+            </div>
+            <div class="form-group">
+                <label for="EventMessage">Event Message</label>
+                <input type="text" class="form-control" id="EventMessage" name="eventMessage" placeholder="Event Message">
+            </div>
+            <div class="form-group">
+                <label for="EventType">Event Type</label>
+                <select class="form-control" id="EventType" onchange="cardBodyChange()" name="eventType">
+                    <option value="Error">Error</option>
+                    <option value="Warning">Warning</option>
+                </select>
+            </div>
+            <div class="card" id="rstcard">
+                <div class="card-header" id="rstcardhead" onclick="toggleCardBody()">Create Service Restart Rule as Periodically by Time</div>
+                <div class="card-body" id="rstcardbody">
+                    <div class="form-group">
+                        <label for="Time">Time</label>
+                        <select class="form-control" id="Time" onchange="cardTimeChange()" name="time">
+                            <option value="Day">Day</option>
+                            <option value="Week">Week</option>
+                            <option value="Month">Month</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="Period">Period</label>
+                        <select class="form-control" id="period" name="period">
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" style="margin-top:8px;" class="btn btn-primary">Create</button>
+        </div>
+    </div>
+}
+

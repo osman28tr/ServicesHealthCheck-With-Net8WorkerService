@@ -22,7 +22,7 @@ namespace Setup.Services
                     mongoDbPath = Directory.GetParent(mongoDbPath).FullName;
                 }
                 //setup project'ini içinden çıkar
-                string mongoDbServerFile = "mongodb-windows-x86_64-4.4.29-signed.msi";
+                string mongoDbServerFile = "mongodb-windows-x86_64-*-signed.msi";
                 //string mongoDbCompassFile = "mongodb-windows-x86_64-6.0.15-signed.msi";
                 //mongodb dosyasını bul
 
@@ -38,12 +38,13 @@ namespace Setup.Services
                 }
 
                 string mongoDbFile = mongoDbServerFiles[0];
+                mongoDbFile = Path.GetFileName(mongoDbFile);
                 //string mongoDbCompass = mongoDbCompassFiles[0];
 
                 Console.WriteLine("Mongodb dosyası bulundu. Kurulum işlemi başlatılıyor.");
 
                 //string mongodbKomut = $"msiexec.exe /l*v mdbinstall.log  /qb /i mongodb-windows-x86_64-4.4.29-signed.msi ^\r\n            ADDLOCAL=\"ServerService,Client\" ^\r\n            SHOULD_INSTALL_COMPASS=\"0\"";
-                string arguments = $@"msiexec.exe /l*v mdbinstall.log /qb /i {mongoDbServerFile} ADDLOCAL=""ServerService,Client"" SHOULD_INSTALL_COMPASS=""0""";
+                string arguments = $@"msiexec.exe /l*v mdbinstall.log /qb /i {mongoDbFile} ADDLOCAL=""ServerService,Client"" SHOULD_INSTALL_COMPASS=""0""";
                 ProcessStartInfo startMongo = new ProcessStartInfo
                 {
                     FileName = "cmd.exe",

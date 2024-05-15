@@ -100,7 +100,8 @@ Finally, click on the down arrow icon next to the start button. Click on the sec
 </h3>
 <p align="justify">The project was discussed as a Windows service in the future. Accordingly, background services from the worker service were added to the monitoring section, which was implemented with Asp.Net Core MVC, and the necessary hubs were added from the SignalR section, which was implemented with Asp.Net Core API. Then, the necessary configuration settings were made in the program.cs file. The following code blocks were added to program.cs to set the project as a windows service.</p>
 <img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/windowsserviceprogramcs.PNG">
-<p align="justify">You can use the following command to run the project as a windows service.</p>
+<p align="justify">
+Publish the monitoring project. You can use the following command to run the project as a windows service.</p>
 <img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/windowsservicekomut.PNG">
 <p align="justify">A setup project was created to install the project with its database components. First of all, create Items->MongoDb folders in the solution where the project is located. Then download the mongodb file from the link below and put it into the mongodb folder you created.</p>
 <p>https://www.mongodb.com/try/download/community</p>

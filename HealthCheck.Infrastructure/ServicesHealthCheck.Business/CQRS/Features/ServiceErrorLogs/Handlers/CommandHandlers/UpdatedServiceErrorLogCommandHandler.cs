@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MediatR;
+using Serilog;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceErrorLogs.Commands;
 using ServicesHealthCheck.DataAccess.Abstract;
 
@@ -31,7 +32,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceErrorLogs.Handlers.C
             }
             catch (Exception exception)
             {
-                Console.WriteLine("An error occured. Error completion status not changed: " + exception.Message);
+                Log.Error("An error occured. Error completion status not changed: " + exception.Message);
             }
         }
     }

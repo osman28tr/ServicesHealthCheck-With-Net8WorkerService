@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
+using Serilog;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceRules.Queries;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceRules.Results;
 using ServicesHealthCheck.DataAccess.Abstract;
@@ -31,7 +32,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceRules.Handlers.Query
             }
             catch (Exception exception)
             {
-                Console.WriteLine("an error occured. " + exception.Message);
+                Log.Error("an error occured listing the rules for eventviewer logs. " + exception.Message);
                 return new List<GetListServiceRuleQueryResult>();
             }
         }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MediatR;
+using Serilog;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceErrorLogs.Commands;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Commands;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Commands;
@@ -29,63 +30,70 @@ namespace ServicesHealthCheck.Monitoring.BackgroundServices
         protected override async Task<List<Dictionary<string, string>>> ExecuteAsync(CancellationToken stoppingToken)
         {
             Console.WriteLine("HealthCheck Service executing...");
-            while (!stoppingToken.IsCancellationRequested)
+            try
             {
-                var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
-                var services = configuration.GetSection("Services").Get<List<string>>();
-                var serviceCpuUsageLimit = configuration.GetSection("ResourceLimits:MaxCpuUsage").Value;
-
-                var serviceResourceUsageLimit = new ServiceResourceUsageLimit() { CpuMaxUsage = Convert.ToInt16(serviceCpuUsageLimit) };
-
-                // await _healthCheck.CheckServicesHealth(services);
-                var generalServiceHealthCheckDto = await _mediator.Send(new CreatedServiceHealthCheckCommand()
-                { Services = services, ServiceResourceUsageLimit = serviceResourceUsageLimit });
-
-                if (generalServiceHealthCheckDto.ServiceHealthCheckDtos.Any() || generalServiceHealthCheckDto.Errors.Any())
+                while (!stoppingToken.IsCancellationRequested)
                 {
-                    if (generalServiceHealthCheckDto.ServiceHealthCheckDtos.Any()) // güncellenecek servis varsa güncelle
+                    var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+                    var services = configuration.GetSection("Services").Get<List<string>>();
+                    var serviceCpuUsageLimit = configuration.GetSection("ResourceLimits:MaxCpuUsage").Value;
+
+                    var serviceResourceUsageLimit = new ServiceResourceUsageLimit() { CpuMaxUsage = Convert.ToInt16(serviceCpuUsageLimit) };
+
+                    // await _healthCheck.CheckServicesHealth(services);
+                    var generalServiceHealthCheckDto = await _mediator.Send(new CreatedServiceHealthCheckCommand()
+                        { Services = services, ServiceResourceUsageLimit = serviceResourceUsageLimit });
+
+                    if (generalServiceHealthCheckDto.ServiceHealthCheckDtos.Any() || generalServiceHealthCheckDto.Errors.Any())
                     {
-                        var updatedServiceHealthCheckErrors = await _mediator.Send(new UpdatedServiceHealthCheckCommand()
-                        { ServiceHealthCheckDtos = generalServiceHealthCheckDto.ServiceHealthCheckDtos }); // servisleri güncelle, hata varsa al
-                        if (updatedServiceHealthCheckErrors.Any()) // servisleri güncelleme sırasında hata varsa logla
+                        if (generalServiceHealthCheckDto.ServiceHealthCheckDtos.Any()) // güncellenecek servis varsa güncelle
                         {
-                            var updatedServiceErrorLogsByUpdateHealthCheck = await _mediator.Send(new CreatedServiceErrorLogCommand()
-                            { Errors = updatedServiceHealthCheckErrors });
-                            if (updatedServiceErrorLogsByUpdateHealthCheck.Any()) // loglanan hatalarda aynıları varsa güncelle
+                            var updatedServiceHealthCheckErrors = await _mediator.Send(new UpdatedServiceHealthCheckCommand()
+                                { ServiceHealthCheckDtos = generalServiceHealthCheckDto.ServiceHealthCheckDtos }); // servisleri güncelle, hata varsa al
+                            if (updatedServiceHealthCheckErrors.Any()) // servisleri güncelleme sırasında hata varsa logla
                             {
-                                updatedServiceErrorLogsByUpdateHealthCheck.ForEach(async x =>
+                                var updatedServiceErrorLogsByUpdateHealthCheck = await _mediator.Send(new CreatedServiceErrorLogCommand()
+                                    { Errors = updatedServiceHealthCheckErrors });
+                                if (updatedServiceErrorLogsByUpdateHealthCheck.Any()) // loglanan hatalarda aynıları varsa güncelle
+                                {
+                                    updatedServiceErrorLogsByUpdateHealthCheck.ForEach(async x =>
+                                    {
+                                        await _mediator.Send(new UpdatedServiceErrorLogCommand()
+                                            { Id = x.Id, IsCompleted = x.IsCompleted });
+                                    });
+                                }
+                            }
+                        }
+                        if (generalServiceHealthCheckDto.Errors.Any())
+                        {
+                            var updatedServiceErrorLogs = await _mediator.Send(new CreatedServiceErrorLogCommand()
+                                { Errors = generalServiceHealthCheckDto.Errors });
+                            if (updatedServiceErrorLogs.Any())
+                            {
+                                updatedServiceErrorLogs.ForEach(async x =>
                                 {
                                     await _mediator.Send(new UpdatedServiceErrorLogCommand()
-                                    { Id = x.Id, IsCompleted = x.IsCompleted });
+                                        { Id = x.Id, IsCompleted = x.IsCompleted });
                                 });
                             }
                         }
                     }
-                    if (generalServiceHealthCheckDto.Errors.Any())
-                    {
-                        var updatedServiceErrorLogs = await _mediator.Send(new CreatedServiceErrorLogCommand()
-                        { Errors = generalServiceHealthCheckDto.Errors });
-                        if (updatedServiceErrorLogs.Any())
-                        {
-                            updatedServiceErrorLogs.ForEach(async x =>
-                            {
-                                await _mediator.Send(new UpdatedServiceErrorLogCommand()
-                                { Id = x.Id, IsCompleted = x.IsCompleted });
-                            });
-                        }
-                    }
-                }
 
-                //EventViewer Logs
-                Task.Run(async () =>
-                {
-                    var updateServiceRules = await _mediator.Send(new CreatedServiceEventViewerLogCommand
-                    { Services = services });
-                    if (updateServiceRules.Count != 0)
+                    //EventViewer Logs
+                    Task.Run(async () =>
                     {
-                        await _mediator.Send(new UpdatedServiceRuleCommand { UpdateServiceRuleDtos = updateServiceRules });
-                    }
-                });
+                        var updateServiceRules = await _mediator.Send(new CreatedServiceEventViewerLogCommand
+                            { Services = services });
+                        if (updateServiceRules.Count != 0)
+                        {
+                            await _mediator.Send(new UpdatedServiceRuleCommand { UpdateServiceRuleDtos = updateServiceRules });
+                        }
+                    });
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.Error(exception, "An error occured in HealthCheckBackgroundService.");
             }
             Console.ReadLine();
             return null;

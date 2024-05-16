@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
+using Serilog;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceHealthCheckByTimes.Commands;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceHealthCheckByTimes.Models;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Models;
@@ -68,7 +69,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthCheckByTimes.H
                     }
                     catch (Exception exception)
                     {
-                        Console.WriteLine("An error occured in servicehealthcheckbytime." + exception);
+                        Log.Error("An error occurred while logging service statuses by time." + exception);
                     }
                 }
             }

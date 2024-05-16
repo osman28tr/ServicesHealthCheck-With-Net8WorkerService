@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
+using Serilog;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceErrorLogs.Commands;
 using ServicesHealthCheck.DataAccess.Abstract;
 using ServicesHealthCheck.Datas.NoSQL.MongoDb;
@@ -49,7 +50,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceErrorLogs.Handlers.C
             }
             catch (Exception exception)
             {
-                Console.WriteLine("An error occured: Error status related to services could not be added." +
+                Log.Error("An error occured: Error status related to services could not be added." +
                                   exception.Message);
                 return null;
             }

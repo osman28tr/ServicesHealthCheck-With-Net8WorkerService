@@ -77,9 +77,15 @@ namespace ServicesHealthCheck.Monitoring.BackgroundServices
                 }
 
                 //EventViewer Logs
-                var updateServiceRules = await _mediator.Send(new CreatedServiceEventViewerLogCommand { Services = services });
-                if (updateServiceRules.Count != 0)
-                    await _mediator.Send(new UpdatedServiceRuleCommand { UpdateServiceRuleDtos = updateServiceRules });
+                Task.Run(async () =>
+                {
+                    var updateServiceRules = await _mediator.Send(new CreatedServiceEventViewerLogCommand
+                    { Services = services });
+                    if (updateServiceRules.Count != 0)
+                    {
+                        await _mediator.Send(new UpdatedServiceRuleCommand { UpdateServiceRuleDtos = updateServiceRules });
+                    }
+                });
             }
             Console.ReadLine();
             return null;

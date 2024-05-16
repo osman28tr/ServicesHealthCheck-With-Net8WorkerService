@@ -40,10 +40,10 @@ builder.Services.Configure<MailSetting>(option);
 builder.Host.UseSerilog((hostContext, services, configuration) => {
     configuration
         .MinimumLevel.Debug()
-        .WriteTo.File("Logs/info.log", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information)
-        .WriteTo.File("Logs/warn.log", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Warning)
-        .WriteTo.File("Logs/error.log", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error)
-        .WriteTo.File("Logs/fatal.log", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Fatal);
+        .WriteTo.File("Logs/minlevelinfo.log", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information)
+        .WriteTo.File("Logs/minlevelwarning.log", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Warning)
+        .WriteTo.File("Logs/minlevelerror.log", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error)
+        .WriteTo.File("Logs/minlevelfatal.log", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Fatal);
 });
 
 builder.Services.AddSingleton<HealthCheckContext>();

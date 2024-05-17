@@ -5,9 +5,11 @@ using System.Linq;
 using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
+using Amazon.Auth.AccessControlPolicy;
 using AutoMapper;
 using MediatR;
 using MongoDB.Driver.Linq;
+using Serilog;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Commands;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Models;
 using ServicesHealthCheck.DataAccess.Abstract;
@@ -32,18 +34,21 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
         {
             List<UpdatedServiceRuleDto> updatedServiceRules = new List<UpdatedServiceRuleDto>();
             var rules = await _serviceRuleRepository.GetAllAsync();
-            RestartServiceByRule(rules);
-            foreach (var service in request.Services)
+            if (rules != null)
+                RestartServiceByRule(rules);
+            if (request.Services != null)
             {
-                try
+                foreach (var service in request.Services)
                 {
-                    EventLog eventLog = new EventLog();
-                    eventLog.Log = "Application";
-                    if (EventLog.SourceExists(service))
+                    try
                     {
-                        foreach (EventLogEntry log in eventLog.Entries)
+                        EventLog eventLog = new EventLog();
+                        eventLog.Log = "Application";
+                        if (EventLog.SourceExists(service))
                         {
-                            if (log.Source.ToLower() == service.ToLower())
+                            var entries = eventLog.Entries.Cast<EventLogEntry>().Where(x =>
+                                x.Source == service);
+                            foreach (EventLogEntry log in entries)
                             {
                                 if (log.EntryType == EventLogEntryType.Error || log.EntryType == EventLogEntryType.Warning)
                                 {
@@ -97,29 +102,14 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
                                 }
                             }
                         }
-                    }
-                    else
-                    {
-                        string message = $"{service} isimli servis'e ait event viewer'da log kayıtları bulunamadı.";
-
-                        var serviceNotEventLog = await _serviceEventViewerLogRepository.FindAsync(x => x.ServiceName == service);
-
-                        if (serviceNotEventLog == null)
-                        {
-                            await _serviceEventViewerLogRepository.AddAsync(new ServiceEventViewerLog()
-                            {
-                                ServiceName = service,
-                                EventId = 0,
-                                EventType = EventLogEntryType.Warning.ToString(),
-                                EventMessage = message,
-                                EventDate = DateTime.Now.AddHours(3)
-                            });
-                        }
                         else
                         {
-                            if (!serviceNotEventLog.Select(x => x.EventMessage).Contains(message))
+                            string message = $"{service} isimli servis'e ait event viewer'da log kayıtları bulunamadı.";
+
+                            var serviceNotEventLog = await _serviceEventViewerLogRepository.FindAsync(x => x.ServiceName == service);
+
+                            if (serviceNotEventLog == null)
                             {
-                                Console.WriteLine(message);
                                 await _serviceEventViewerLogRepository.AddAsync(new ServiceEventViewerLog()
                                 {
                                     ServiceName = service,
@@ -128,75 +118,90 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
                                     EventMessage = message,
                                     EventDate = DateTime.Now.AddHours(3)
                                 });
-                                serviceNotEventLog = await _serviceEventViewerLogRepository.FindAsync(x => x.ServiceName == service);
+                            }
+                            else
+                            {
+                                if (!serviceNotEventLog.Select(x => x.EventMessage).Contains(message))
+                                {
+                                    Console.WriteLine(message);
+                                    await _serviceEventViewerLogRepository.AddAsync(new ServiceEventViewerLog()
+                                    {
+                                        ServiceName = service,
+                                        EventId = 0,
+                                        EventType = EventLogEntryType.Warning.ToString(),
+                                        EventMessage = message,
+                                        EventDate = DateTime.Now.AddHours(3)
+                                    });
+                                    serviceNotEventLog = await _serviceEventViewerLogRepository.FindAsync(x => x.ServiceName == service);
+                                }
                             }
                         }
                     }
-                }
-                catch (Exception exception)
-                {
-                    Console.WriteLine("an error occured. " + exception.Message);
+                    catch (Exception exception)
+                    {
+                        Log.Error("an error occured. " + exception.Message);
+                    }
                 }
             }
             return updatedServiceRules;
         }
-    public void RestartServiceByRule(List<ServiceRule> rules)
-    {
-        try
+        public void RestartServiceByRule(List<ServiceRule> rules)
         {
-            rules.ForEach(x =>
+            try
             {
-                ServiceController serviceController = new ServiceController(x.ServiceName);
-                var lastDate = DateTime.Now - x.CreatedDate;
-                if (x.RestartTime != null)
+                rules.ForEach(x =>
                 {
-                    if (x.RestartTime.Day != 0)
+                    ServiceController serviceController = new ServiceController(x.ServiceName);
+                    var lastDate = DateTime.Now - x.CreatedDate;
+                    if (x.RestartTime != null)
                     {
-                        if (lastDate.Days == x.RestartTime.Day)
+                        if (x.RestartTime.Day != 0)
                         {
-                            if (serviceController.Status == ServiceControllerStatus.Running)
+                            if (lastDate.Days == x.RestartTime.Day)
                             {
-                                serviceController.Stop();
-                                serviceController.WaitForStatus(ServiceControllerStatus.Stopped);
+                                if (serviceController.Status == ServiceControllerStatus.Running)
+                                {
+                                    serviceController.Stop();
+                                    serviceController.WaitForStatus(ServiceControllerStatus.Stopped);
+                                }
+                                serviceController.Start();
+                                serviceController.WaitForStatus(ServiceControllerStatus.Running);
                             }
-                            serviceController.Start();
-                            serviceController.WaitForStatus(ServiceControllerStatus.Running);
+                        }
+                        else if (x.RestartTime.Week != 0)
+                        {
+                            if (lastDate.Days == x.RestartTime.Week * 7)
+                            {
+                                if (serviceController.Status == ServiceControllerStatus.Running)
+                                {
+                                    serviceController.Stop();
+                                    serviceController.WaitForStatus(ServiceControllerStatus.Stopped);
+                                }
+                                serviceController.Start();
+                                serviceController.WaitForStatus(ServiceControllerStatus.Running);
+                            }
+                        }
+                        else
+                        {
+                            if (lastDate.Days == x.RestartTime.Month * 30)
+                            {
+                                if (serviceController.Status == ServiceControllerStatus.Running)
+                                {
+                                    serviceController.Stop();
+                                    serviceController.WaitForStatus(ServiceControllerStatus.Stopped);
+                                }
+                                serviceController.Start();
+                                serviceController.WaitForStatus(ServiceControllerStatus.Running);
+                            }
                         }
                     }
-                    else if (x.RestartTime.Week != 0)
-                    {
-                        if (lastDate.Days == x.RestartTime.Week * 7)
-                        {
-                            if (serviceController.Status == ServiceControllerStatus.Running)
-                            {
-                                serviceController.Stop();
-                                serviceController.WaitForStatus(ServiceControllerStatus.Stopped);
-                            }
-                            serviceController.Start();
-                            serviceController.WaitForStatus(ServiceControllerStatus.Running);
-                        }
-                    }
-                    else
-                    {
-                        if (lastDate.Days == x.RestartTime.Month * 30)
-                        {
-                            if (serviceController.Status == ServiceControllerStatus.Running)
-                            {
-                                serviceController.Stop();
-                                serviceController.WaitForStatus(ServiceControllerStatus.Stopped);
-                            }
-                            serviceController.Start();
-                            serviceController.WaitForStatus(ServiceControllerStatus.Running);
-                        }
-                    }
-                }
 
-            });
-        }
-        catch (Exception exception)
-        {
-            Console.WriteLine("an error occured. " + exception.Message);
+                });
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine("an error occured. " + exception.Message);
+            }
         }
     }
-}
 }

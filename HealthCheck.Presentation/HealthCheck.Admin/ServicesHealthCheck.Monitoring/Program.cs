@@ -1,5 +1,6 @@
 using System.Reflection;
 using Microsoft.Extensions.Hosting.WindowsServices;
+using Serilog;
 using ServicesHealthCheck.Business;
 using ServicesHealthCheck.DataAccess;
 using ServicesHealthCheck.DataAccess.Concrete.NoSQL.MongoDb.Contexts;
@@ -16,7 +17,17 @@ builder.Services.AddHostedService<HealthCheckBackgroundService>();
 builder.Services.AddHostedService<HealthCheckByTimeBackgroundService>();
 //builder.Services.AddHostedService<ServiceEventViewerLogBackgroundService>();
 builder.Services.AddWindowsService();
+
 builder.Services.AddSignalR();
+
+// Log configuration
+var logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .CreateLogger();
+builder.Logging.ClearProviders();
+// Add Serilog Library
+builder.Logging.AddSerilog(logger);
 
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
@@ -25,6 +36,15 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 
 var option = builder.Configuration.GetSection("Notifications:Email");
 builder.Services.Configure<MailSetting>(option);
+
+builder.Host.UseSerilog((hostContext, services, configuration) => {
+    configuration
+        .MinimumLevel.Debug()
+        .WriteTo.File("Logs/minlevelinfo.log", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information)
+        .WriteTo.File("Logs/minlevelwarning.log", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Warning)
+        .WriteTo.File("Logs/minlevelerror.log", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error)
+        .WriteTo.File("Logs/minlevelfatal.log", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Fatal);
+});
 
 builder.Services.AddSingleton<HealthCheckContext>();
 builder.Services.AddSharedServices();

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Options;
+using Serilog;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Commands;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Models;
 using ServicesHealthCheck.Business.Notifications.EMailService.Abstract;
@@ -165,7 +166,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                         // If you get a service not found error
                         if (exception.Message.Contains($"Service '{serviceName}' was not found on computer"))
                         {
-                            Console.WriteLine($"An error occurred: {serviceName} is not found.");
+                            Log.Error($"An error occurred: {serviceName} is not found.");
                             var serviceHealthCheckSignalRDto = new ServicesHealthCheckSignalRDto()
                             {
                                 ServiceName = "Undefined",

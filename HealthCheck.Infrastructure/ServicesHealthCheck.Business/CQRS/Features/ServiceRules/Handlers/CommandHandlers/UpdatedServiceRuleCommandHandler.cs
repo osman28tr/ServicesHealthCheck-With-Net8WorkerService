@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
+using Serilog;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceRules.Commands;
 using ServicesHealthCheck.DataAccess.Abstract;
 using ServicesHealthCheck.Datas.NoSQL.MongoDb;
@@ -33,14 +34,10 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceRules.Handlers.Comma
                         await _serviceRuleRepository.UpdateAsync(serviceRule);
                     }
                 }
-                else
-                {
-                    throw new Exception("UpdateServiceRuleDtos is null");
-                }
             }
             catch (Exception exception)
             {
-                Console.WriteLine("An error occured. " + exception.Message);
+                Log.Error("An error occurred while updating the rule for eventviewer logs. " + exception.Message);
             }
         }
     }

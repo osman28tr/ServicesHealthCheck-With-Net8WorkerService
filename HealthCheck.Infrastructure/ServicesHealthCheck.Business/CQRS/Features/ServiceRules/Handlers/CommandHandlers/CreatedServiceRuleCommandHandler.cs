@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
+using Serilog;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceRules.Commands;
 using ServicesHealthCheck.DataAccess.Abstract;
 using ServicesHealthCheck.Datas.NoSQL.MongoDb;
@@ -31,7 +32,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceRules.Handlers.Comma
             }
             catch (Exception exception)
             {
-                Console.WriteLine("an error occured. " + exception.Message);
+                Log.Error("An error occurred while adding rules for eventviewer logs. " + exception.Message);
             }
         }
     }

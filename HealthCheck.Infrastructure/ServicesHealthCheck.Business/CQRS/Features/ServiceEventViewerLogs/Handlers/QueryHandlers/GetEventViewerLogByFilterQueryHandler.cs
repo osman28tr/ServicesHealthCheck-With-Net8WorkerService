@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
+using Serilog;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Queries;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Results;
 using ServicesHealthCheck.DataAccess.Abstract;
@@ -28,22 +29,29 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
             var serviceEventViewerLogs = await _serviceEventViewerLogRepository.GetAllAsync();
             if (serviceEventViewerLogs != null)
             {
-                if (!string.IsNullOrEmpty(request.ServiceName))
+                try
                 {
-                    serviceEventViewerLogs = serviceEventViewerLogs.Where(x => x.ServiceName == request.ServiceName).ToList();
+                    if (!string.IsNullOrEmpty(request.ServiceName))
+                    {
+                        serviceEventViewerLogs = serviceEventViewerLogs.Where(x => x.ServiceName == request.ServiceName).ToList();
+                    }
+                    if (!string.IsNullOrEmpty(request.EventType))
+                    {
+                        serviceEventViewerLogs = serviceEventViewerLogs.Where(x => x.EventType == request.EventType).ToList();
+                    }
+                    if (request.EventEndDate == DateTime.MinValue)
+                    {
+                        request.EventEndDate = DateTime.MaxValue;
+                    }
+                    serviceEventViewerLogs = serviceEventViewerLogs.Where(x =>
+                        x.EventDate >= request.EventStartDate && x.EventDate <= request.EventEndDate).ToList();
+                    var result = _mapper.Map<List<GetEventViewerLogByFilterQueryResult>>(serviceEventViewerLogs);
+                    return result;
                 }
-                if (!string.IsNullOrEmpty(request.EventType))
+                catch (Exception exception)
                 {
-                    serviceEventViewerLogs = serviceEventViewerLogs.Where(x => x.EventType == request.EventType).ToList();
+                    Log.Error("There was an error filtering eventivewer logs. " + exception.Message);
                 }
-                if (request.EventEndDate == DateTime.MinValue)
-                {
-                    request.EventEndDate = DateTime.MaxValue;
-                }
-                serviceEventViewerLogs = serviceEventViewerLogs.Where(x =>
-                    x.EventDate >= request.EventStartDate && x.EventDate <= request.EventEndDate).ToList();
-                var result = _mapper.Map<List<GetEventViewerLogByFilterQueryResult>>(serviceEventViewerLogs);
-                return result;
             }
             return new List<GetEventViewerLogByFilterQueryResult>();
         }

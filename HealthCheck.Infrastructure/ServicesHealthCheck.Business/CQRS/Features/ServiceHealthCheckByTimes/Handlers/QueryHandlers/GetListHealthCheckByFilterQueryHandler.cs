@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using Org.BouncyCastle.Math.EC.Rfc7748;
+using Serilog;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceHealthCheckByTimes.Queries;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceHealthCheckByTimes.Results;
 using ServicesHealthCheck.DataAccess.Abstract;
@@ -58,10 +59,10 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthCheckByTimes.H
                     return result;
                 }
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
-                Console.WriteLine(e);
-                throw;
+                Log.Error("An error occurred while filtering logs by time. " + exception.Message);
+                return null;
             }
         }
     }

@@ -71,7 +71,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                             {
                                 ServiceName = serviceName,
                                 ErrorMessage = $"{serviceName} is stopped.",
-                                ErrorDate = DateTime.Now.AddHours(3),
+                                ErrorDate = DateTime.UtcNow.ToLocalTime(),
                                 IsCompleted = false
                             });
 
@@ -101,7 +101,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                             {
                                 ServiceName = serviceName,
                                 ErrorMessage = $"{serviceName} service's CPU usage limit has been exceeded.",
-                                ErrorDate = DateTime.Now.AddHours(3),
+                                ErrorDate = DateTime.UtcNow.ToLocalTime(),
                                 IsCompleted = false
                             });
 
@@ -181,7 +181,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                             {
                                 ServiceName = serviceName,
                                 ErrorMessage = exception.Message,
-                                ErrorDate = DateTime.Now.AddHours(3),
+                                ErrorDate = DateTime.UtcNow.ToLocalTime(),
                                 IsCompleted = false
                             });
 
@@ -202,7 +202,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                             {
                                 ServiceName = serviceName,
                                 ErrorMessage = exception.Message,
-                                ErrorDate = DateTime.Now.AddHours(3),
+                                ErrorDate = DateTime.UtcNow.ToLocalTime(),
                                 IsCompleted = false
                             });
 

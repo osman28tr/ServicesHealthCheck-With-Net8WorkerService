@@ -116,7 +116,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
                                     EventId = 0,
                                     EventType = EventLogEntryType.Warning.ToString(),
                                     EventMessage = message,
-                                    EventDate = DateTime.Now.AddHours(3)
+                                    EventDate = DateTime.UtcNow.ToLocalTime()
                                 });
                             }
                             else
@@ -130,7 +130,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
                                         EventId = 0,
                                         EventType = EventLogEntryType.Warning.ToString(),
                                         EventMessage = message,
-                                        EventDate = DateTime.Now.AddHours(3)
+                                        EventDate = DateTime.UtcNow.ToLocalTime()
                                     });
                                     serviceNotEventLog = await _serviceEventViewerLogRepository.FindAsync(x => x.ServiceName == service);
                                 }

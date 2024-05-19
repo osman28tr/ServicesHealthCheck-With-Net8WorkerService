@@ -42,7 +42,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                     catch (Exception exception)
                     {
                         errorLogs.Add(new CreatedServiceErrorLogDto()
-                            { ServiceName = serviceHealthCheckDto.ServiceName, ErrorMessage = exception.Message, IsCompleted = false, ErrorDate = DateTime.Now.AddHours(3) });
+                            { ServiceName = serviceHealthCheckDto.ServiceName, ErrorMessage = exception.Message, IsCompleted = false, ErrorDate = DateTime.UtcNow.ToLocalTime() });
                     }
                 }
             }

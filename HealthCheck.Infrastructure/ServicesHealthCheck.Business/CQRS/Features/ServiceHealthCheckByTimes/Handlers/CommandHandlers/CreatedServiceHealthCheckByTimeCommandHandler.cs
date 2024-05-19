@@ -64,7 +64,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthCheckByTimes.H
                         serviceHealthCheckByTime.IsResourceUsageLimitExceeded = isResourceUsageLimitExceeded;
                         serviceHealthCheckByTime.Status = service.Status.ToString();
 
-                        serviceHealthCheckByTime.Date = DateTime.Now.AddHours(3);
+                        serviceHealthCheckByTime.Date = DateTime.UtcNow.ToLocalTime();
                         await _serviceHealthCheckByTimeRepository.AddAsync(serviceHealthCheckByTime);
                     }
                     catch (Exception exception)

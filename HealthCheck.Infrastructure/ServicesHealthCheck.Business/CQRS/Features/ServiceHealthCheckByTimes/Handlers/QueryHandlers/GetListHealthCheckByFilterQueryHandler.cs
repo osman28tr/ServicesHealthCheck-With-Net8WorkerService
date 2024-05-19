@@ -29,11 +29,11 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthCheckByTimes.H
             {
                 if (request.ServiceName == null)
                 {
-                    request.StartTime = request.StartTime.ToUniversalTime().AddHours(3);
+                    request.StartTime = request.StartTime.ToUniversalTime();
                     if (request.EndTime == DateTime.MinValue)
-                        request.EndTime = DateTime.MaxValue.ToUniversalTime().AddHours(3);
+                        request.EndTime = DateTime.MaxValue.ToUniversalTime();
                     else
-                        request.EndTime = request.EndTime.ToUniversalTime().AddHours(3);
+                        request.EndTime = request.EndTime.ToUniversalTime();
 
                     var serviceHealthCheckListByFilterTime =
                         await _serviceHealthCheckByTimeRepository.FindAsync(x =>
@@ -45,11 +45,11 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthCheckByTimes.H
                 }
                 else
                 {
-                    request.StartTime = request.StartTime.ToUniversalTime().AddHours(3);
+                    request.StartTime = request.StartTime.ToUniversalTime();
                     if (request.EndTime == DateTime.MinValue)
-                        request.EndTime = DateTime.MaxValue.ToUniversalTime().AddHours(3);
+                        request.EndTime = DateTime.MaxValue.ToUniversalTime();
                     else
-                        request.EndTime = request.EndTime.ToUniversalTime().AddHours(3);
+                        request.EndTime = request.EndTime.ToUniversalTime();
 
                     var serviceHealthCheckListByFilter = await _serviceHealthCheckByTimeRepository.FindAsync(x =>
                         x.ServiceName == request.ServiceName && (x.Date >= request.StartTime && x.Date <= request.EndTime));

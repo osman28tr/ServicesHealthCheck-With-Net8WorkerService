@@ -27,7 +27,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceRules.Handlers.Comma
             try
             {
                 var serviceRule = _mapper.Map<ServiceRule>(request);
-                serviceRule.CreatedDate = DateTime.Now.AddHours(3);
+                serviceRule.CreatedDate = DateTime.UtcNow.ToLocalTime();
                 await _serviceRuleRepository.AddAsync(serviceRule);
             }
             catch (Exception exception)

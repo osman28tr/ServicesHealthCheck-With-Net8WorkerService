@@ -36,7 +36,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceErrorLogs.Handlers.Q
                 generallistErrors.Errors.Add(new CreatedServiceErrorLogDto()
                 {
                     ServiceName = "All services", ErrorMessage = exception.Message, IsCompleted = false,
-                    ErrorDate = DateTime.Now.AddHours(3)
+                    ErrorDate = DateTime.UtcNow.ToLocalTime()
                 });
             }
             return generallistErrors;

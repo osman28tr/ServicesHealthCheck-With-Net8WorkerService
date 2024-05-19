@@ -50,7 +50,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
                 }
                 catch (Exception exception)
                 {
-                    Log.Error("There was an error filtering eventivewer logs. " + exception.Message);
+                    Log.Error(exception.StackTrace + " " + exception.Message);
                 }
             }
             return new List<GetEventViewerLogByFilterQueryResult>();

@@ -166,7 +166,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
                         // If you get a service not found error
                         if (exception.Message.Contains($"Service '{serviceName}' was not found on computer"))
                         {
-                            Log.Error($"An error occurred: {serviceName} is not found.");
+                            Log.Error(exception.StackTrace + " " + exception.Message);
                             var serviceHealthCheckSignalRDto = new ServicesHealthCheckSignalRDto()
                             {
                                 ServiceName = "Undefined",

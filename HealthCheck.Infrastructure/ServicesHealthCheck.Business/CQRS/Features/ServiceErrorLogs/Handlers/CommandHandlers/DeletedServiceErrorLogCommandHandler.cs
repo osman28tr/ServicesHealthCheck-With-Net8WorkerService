@@ -31,7 +31,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceErrorLogs.Handlers.C
             }
             catch (Exception exception)
             {
-                Log.Error("An error occured. Completed errors not deleted: " + exception.Message);
+                Log.Error(exception.StackTrace + " " + exception.Message);
             }
         }
     }

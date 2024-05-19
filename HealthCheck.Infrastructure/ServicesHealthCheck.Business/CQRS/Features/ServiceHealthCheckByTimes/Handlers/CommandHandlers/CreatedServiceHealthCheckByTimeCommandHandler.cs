@@ -69,7 +69,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthCheckByTimes.H
                     }
                     catch (Exception exception)
                     {
-                        Log.Error("An error occurred while logging service statuses by time." + exception);
+                        Log.Error(exception.StackTrace + " " + exception);
                     }
                 }
             }

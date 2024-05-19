@@ -32,7 +32,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceRules.Handlers.Comma
             }
             catch (Exception exception)
             {
-                Log.Error("An error occurred while adding rules for eventviewer logs. " + exception.Message);
+                Log.Error(exception.StackTrace + " " + exception.Message);
             }
         }
     }

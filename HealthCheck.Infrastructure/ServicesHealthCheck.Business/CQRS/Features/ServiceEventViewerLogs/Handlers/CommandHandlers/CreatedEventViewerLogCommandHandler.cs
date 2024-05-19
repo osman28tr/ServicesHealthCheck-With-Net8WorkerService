@@ -139,7 +139,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
                     }
                     catch (Exception exception)
                     {
-                        Log.Error("an error occured. " + exception.Message);
+                        Log.Error(exception.StackTrace + " " + exception.Message);
                     }
                 }
             }

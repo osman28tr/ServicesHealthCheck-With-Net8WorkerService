@@ -32,7 +32,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceErrorLogs.Handlers.C
             }
             catch (Exception exception)
             {
-                Log.Error("An error occured. Error completion status not changed: " + exception.Message);
+                Log.Error(exception.StackTrace + " " + exception.Message);
             }
         }
     }

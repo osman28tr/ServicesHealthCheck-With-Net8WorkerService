@@ -61,7 +61,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthCheckByTimes.H
             }
             catch (Exception exception)
             {
-                Log.Error("An error occurred while filtering logs by time. " + exception.Message);
+                Log.Error(exception.StackTrace + " " + exception.Message);
                 return null;
             }
         }

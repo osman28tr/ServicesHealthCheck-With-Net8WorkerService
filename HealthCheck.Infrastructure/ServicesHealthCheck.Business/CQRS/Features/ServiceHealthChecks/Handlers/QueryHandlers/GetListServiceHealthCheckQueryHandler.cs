@@ -32,7 +32,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Handler
             }
             catch (Exception exception)
             {
-                Console.WriteLine("an error occured. " + exception.Message);
+                Console.WriteLine(exception.StackTrace + " " + exception.Message);
                 return null;
             }
         }

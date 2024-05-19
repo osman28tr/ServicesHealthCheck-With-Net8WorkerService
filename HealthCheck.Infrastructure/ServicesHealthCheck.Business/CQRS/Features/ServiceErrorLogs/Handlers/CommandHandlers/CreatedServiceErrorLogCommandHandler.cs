@@ -13,7 +13,7 @@ using ServicesHealthCheck.Dtos.ServiceErrorLogDtos;
 
 namespace ServicesHealthCheck.Business.CQRS.Features.ServiceErrorLogs.Handlers.CommandHandlers
 {
-    public class CreatedServiceErrorLogCommandHandler : IRequestHandler<CreatedServiceErrorLogCommand,List<UpdatedServiceErrorLogDto>>
+    public class CreatedServiceErrorLogCommandHandler : IRequestHandler<CreatedServiceErrorLogCommand, List<UpdatedServiceErrorLogDto>>
     {
         private readonly IServiceErrorLogRepository _serviceErrorLogRepository;
         private readonly IMapper _mapper;
@@ -42,7 +42,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceErrorLogs.Handlers.C
                         if (errorLog.IsCompleted == true)
                         {
                             updatedErrorLogs.Add(new UpdatedServiceErrorLogDto()
-                                { Id = errorLog.Id, IsCompleted = errorLog.IsCompleted });
+                            { Id = errorLog.Id, IsCompleted = errorLog.IsCompleted });
                         }
                     }
                 });
@@ -50,8 +50,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceErrorLogs.Handlers.C
             }
             catch (Exception exception)
             {
-                Log.Error("An error occured: Error status related to services could not be added." +
-                                  exception.Message);
+                Log.Error(exception.StackTrace + " " + exception.Message);
                 return null;
             }
         }

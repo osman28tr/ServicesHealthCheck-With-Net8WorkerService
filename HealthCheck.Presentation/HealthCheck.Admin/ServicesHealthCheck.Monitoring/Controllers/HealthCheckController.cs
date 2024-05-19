@@ -53,7 +53,7 @@ namespace ServicesHealthCheck.Monitoring.Controllers
             }
             catch (Exception exception)
             {
-                Log.Error("an error occured in get ErrorMessages actionresult" + exception.Message);
+                Log.Error(exception.StackTrace + " " + exception.Message);
             }
             return View();
         }
@@ -73,7 +73,7 @@ namespace ServicesHealthCheck.Monitoring.Controllers
             }
             catch (Exception exception)
             {
-                Log.Error("An error occured in GetHealthCheckByFilter actionresult" + exception.Message);
+                Log.Error(exception.StackTrace + " " + exception.Message);
                 return View();
             }
         }
@@ -95,7 +95,7 @@ namespace ServicesHealthCheck.Monitoring.Controllers
             }
             catch (Exception exception)
             {
-                Log.Error("An error occured in GetEventViewerLogsByFilter actionresult" + exception.Message);
+                Log.Error(exception.StackTrace + " " + exception.Message);
                 return View();
             }
         }
@@ -110,7 +110,7 @@ namespace ServicesHealthCheck.Monitoring.Controllers
             }
             catch (Exception exception)
             {
-                Log.Error("An error occured in ChangeErrorLogStatus actionresult" + exception.Message);
+                Log.Error(exception.StackTrace + " " + exception.Message);
             }
         }
 
@@ -123,7 +123,7 @@ namespace ServicesHealthCheck.Monitoring.Controllers
             }
             catch (Exception exception)
             {
-                Log.Error("An error occured in DeleteCompletedErrors actionresult" + exception.Message);
+                Log.Error(exception.Message + exception.StackTrace);
             }
         }
     }

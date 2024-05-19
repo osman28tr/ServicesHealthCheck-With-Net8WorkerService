@@ -24,7 +24,7 @@ namespace ServicesHealthCheck.Monitoring.Controllers
             }
             catch (Exception exception)
             {
-                Log.Error("An error occurred while listing the rules for eventviewer logs. " + exception.Message);
+                Log.Error(exception.StackTrace + " " + exception.Message);
                 return View();
             }
         }
@@ -60,7 +60,7 @@ namespace ServicesHealthCheck.Monitoring.Controllers
             }
             catch (Exception exception)
             {
-                Log.Error("An error occurred while adding rules for eventviewer logs. " + exception.Message);
+                Log.Error(exception.StackTrace + " " + exception.Message);
                 return View();
             }
         }

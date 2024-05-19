@@ -32,7 +32,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceRules.Handlers.Query
             }
             catch (Exception exception)
             {
-                Log.Error("an error occured listing the rules for eventviewer logs. " + exception.Message);
+                Log.Error(exception.StackTrace + " " + exception.Message);
                 return new List<GetListServiceRuleQueryResult>();
             }
         }

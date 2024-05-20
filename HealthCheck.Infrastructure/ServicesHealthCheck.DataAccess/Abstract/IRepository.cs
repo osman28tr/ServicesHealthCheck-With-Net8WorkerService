@@ -11,6 +11,7 @@ namespace ServicesHealthCheck.DataAccess.Abstract
     public interface IRepository<T> where T : class, IEntity
     {
         Task<List<T>> GetAllAsync();
+        Task<T> GetAsync(Expression<Func<T, bool>> filterExpression);
         Task<T> GetByIdAsync(string id);
         Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> filterExpression);
         Task AddAsync(T entity);

@@ -8,14 +8,8 @@ using ServicesHealthCheck.Datas.NoSQL.MongoDb;
 
 namespace ServicesHealthCheck.DataAccess.Abstract
 {
-    public interface IServiceHealthCheckRepository
+    public interface IServiceHealthCheckRepository : IRepository<ServiceHealthCheck>
     {
-        Task<List<ServiceHealthCheck>> GetAllAsync();
-        Task<ServiceHealthCheck> GetByIdAsync(string id);
         Task<ServiceHealthCheck> GetByServiceNameAsync(string id);
-        Task<IEnumerable<ServiceHealthCheck>> FindAsync(Expression<Func<ServiceHealthCheck, bool>> filterExpression);
-        Task AddAsync(ServiceHealthCheck entity);
-        Task UpdateAsync(ServiceHealthCheck entity);
-        Task DeleteAsync(string id);
     }
 }

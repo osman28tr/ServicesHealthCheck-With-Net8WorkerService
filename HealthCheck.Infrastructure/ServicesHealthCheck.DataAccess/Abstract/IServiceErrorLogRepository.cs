@@ -8,14 +8,8 @@ using System.Threading.Tasks;
 
 namespace ServicesHealthCheck.DataAccess.Abstract
 {
-    public interface IServiceErrorLogRepository
+    public interface IServiceErrorLogRepository : IRepository<ServiceErrorLog>
     {
-        Task<List<ServiceErrorLog>> GetAllAsync();
-        Task<ServiceErrorLog> GetByIdAsync(string id);
         Task<ServiceErrorLog> GetByServiceNameAsync(string id);
-        Task<IEnumerable<ServiceErrorLog>> FindAsync(Expression<Func<ServiceErrorLog, bool>> filterExpression);
-        Task AddAsync(ServiceErrorLog entity);
-        Task UpdateAsync(ServiceErrorLog entity);
-        Task DeleteAsync(string id);
     }
 }

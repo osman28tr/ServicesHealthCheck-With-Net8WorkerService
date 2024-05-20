@@ -25,6 +25,12 @@ namespace ServicesHealthCheck.DataAccess.Concrete.NoSQL.MongoDb.Repositories
             return await result.ToListAsync();
         }
 
+        public async Task<ServiceHealthCheckByTime> GetAsync(Expression<Func<ServiceHealthCheckByTime, bool>> filterExpression)
+        {
+            var result = await _context.ServiceHealthCheckByTime.FindAsync(filterExpression);
+            return await result.FirstOrDefaultAsync();
+        }
+
         public async Task<ServiceHealthCheckByTime> GetByIdAsync(string id)
         {
             var filter = MongoDB.Driver.Builders<ServiceHealthCheckByTime>.Filter.Eq(x => x.Id, id);

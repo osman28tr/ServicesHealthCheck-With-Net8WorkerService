@@ -8,14 +8,8 @@ using System.Threading.Tasks;
 
 namespace ServicesHealthCheck.DataAccess.Abstract
 {
-    public interface IServiceEventViewerLogRepository
+    public interface IServiceEventViewerLogRepository : IRepository<ServiceEventViewerLog>
     {
-        Task<List<ServiceEventViewerLog>> GetAllAsync();
-        Task<ServiceEventViewerLog> GetByIdAsync(string id);
         Task<ServiceEventViewerLog> GetByServiceNameAsync(string serviceName);
-        Task<IEnumerable<ServiceEventViewerLog>> FindAsync(Expression<Func<ServiceEventViewerLog, bool>> filterExpression);
-        Task AddAsync(ServiceEventViewerLog entity);
-        Task UpdateAsync(ServiceEventViewerLog entity);
-        Task DeleteAsync(string id);
     }
 }

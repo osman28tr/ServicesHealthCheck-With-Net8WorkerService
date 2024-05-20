@@ -25,6 +25,12 @@ namespace ServicesHealthCheck.DataAccess.Concrete.NoSQL.MongoDb.Repositories
             return await result.ToListAsync();
         }
 
+        public async Task<ServiceRule> GetAsync(Expression<Func<ServiceRule, bool>> filterExpression)
+        {
+            var result = await _context.ServiceRules.FindAsync(filterExpression);
+            return await result.FirstOrDefaultAsync();
+        }
+
         public async Task<ServiceRule> GetByIdAsync(string id)
         {
             var filter = Builders<ServiceRule>.Filter.Eq(x => x.Id, id);

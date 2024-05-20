@@ -24,6 +24,12 @@ namespace ServicesHealthCheck.DataAccess.Concrete.NoSQL.MongoDb.Repositories
             return await result.ToListAsync();
         }
 
+        public async Task<ServiceEventViewerLog> GetAsync(Expression<Func<ServiceEventViewerLog, bool>> filterExpression)
+        {
+            var result = await _context.ServiceEventViewerLogs.FindAsync(filterExpression);
+            return await result.FirstOrDefaultAsync();
+        }
+
         public async Task<ServiceEventViewerLog> GetByIdAsync(string id)
         {
             var filter = Builders<ServiceEventViewerLog>.Filter.Eq(x => x.Id, id);

@@ -84,7 +84,7 @@ namespace ServicesHealthCheck.Business.EventViewerCustomViews
                 Log.Error(ex.StackTrace + ex.Message);
             }
 
-            return null;
+            return Task.CompletedTask;
         }
 
         private void ExecuteCustomViewCommand(string command)

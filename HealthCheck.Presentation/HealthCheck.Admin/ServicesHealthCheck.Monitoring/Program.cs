@@ -37,13 +37,15 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 var option = builder.Configuration.GetSection("Notifications:Email");
 builder.Services.Configure<MailSetting>(option);
 
-builder.Host.UseSerilog((hostContext, services, configuration) => {
+builder.Host.UseSerilog((hostContext, services, configuration) =>
+{
+    string date = DateTime.Now.ToString("yyyyMMdd");
     configuration
-        .MinimumLevel.Debug()
-        .WriteTo.File("Logs/minlevelinfo.log", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information)
-        .WriteTo.File("Logs/minlevelwarning.log", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Warning)
-        .WriteTo.File("Logs/minlevelerror.log", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error)
-        .WriteTo.File("Logs/minlevelfatal.log", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Fatal);
+        .MinimumLevel.Debug().
+    WriteTo.File($"Logs/minlevelinfo{date}log.txt", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information)
+    .WriteTo.File($"Logs/minlevelwarning{date}log.txt", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Warning)
+    .WriteTo.File($"Logs/minlevelerror{date}log.txt", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error)
+    .WriteTo.File($"Logs/minlevelfatal{date}log.txt", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Fatal);
 });
 
 builder.Services.AddSingleton<HealthCheckContext>();

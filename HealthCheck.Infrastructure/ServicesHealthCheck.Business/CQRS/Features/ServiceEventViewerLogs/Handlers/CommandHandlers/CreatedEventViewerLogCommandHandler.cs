@@ -12,6 +12,7 @@ using MongoDB.Driver.Linq;
 using Serilog;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Commands;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Models;
+using ServicesHealthCheck.Business.EventViewerCustomViews.Abstract;
 using ServicesHealthCheck.DataAccess.Abstract;
 using ServicesHealthCheck.Datas.NoSQL.MongoDb;
 using ServicesHealthCheck.Dtos.ServiceRuleDtos;
@@ -22,12 +23,14 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
     {
         private readonly IServiceEventViewerLogRepository _serviceEventViewerLogRepository;
         private readonly IServiceRuleRepository _serviceRuleRepository;
+        private readonly IEvCustomView _evCustomView;
         private readonly IMapper _mapper;
-        public CreatedEventViewerLogCommandHandler(IServiceEventViewerLogRepository serviceEventViewerLogRepository, IMapper mapper, IServiceRuleRepository serviceRuleRepository)
+        public CreatedEventViewerLogCommandHandler(IServiceEventViewerLogRepository serviceEventViewerLogRepository, IMapper mapper, IServiceRuleRepository serviceRuleRepository,IEvCustomView customView)
         {
             _serviceEventViewerLogRepository = serviceEventViewerLogRepository;
             _mapper = mapper;
             _serviceRuleRepository = serviceRuleRepository;
+            _evCustomView = customView;
         }
 
         public async Task<List<UpdatedServiceRuleDto>> Handle(CreatedServiceEventViewerLogCommand request, CancellationToken cancellationToken)
@@ -38,6 +41,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
                 RestartServiceByRule(rules);
             if (request.Services != null)
             {
+                await _evCustomView.CreateCustomViewAsync(request.Services); // custom view oluşması
                 foreach (var service in request.Services)
                 {
                     try

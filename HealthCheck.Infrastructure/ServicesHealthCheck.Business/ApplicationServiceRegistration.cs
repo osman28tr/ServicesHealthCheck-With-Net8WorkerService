@@ -5,6 +5,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using ServicesHealthCheck.Business.EventViewerCustomViews;
+using ServicesHealthCheck.Business.EventViewerCustomViews.Abstract;
 using ServicesHealthCheck.Business.Notifications.EMailService;
 using ServicesHealthCheck.Business.Notifications.EMailService.Abstract;
 using ServicesHealthCheck.Business.RealTimes.SignalR;
@@ -18,6 +20,7 @@ namespace ServicesHealthCheck.Business
         {
             services.AddSingleton<IMailService, MailService>();
             services.AddSingleton<ISignalRService, SignalRService>();
+            services.AddSingleton<IEvCustomView, EvCustomView>();
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             return services;

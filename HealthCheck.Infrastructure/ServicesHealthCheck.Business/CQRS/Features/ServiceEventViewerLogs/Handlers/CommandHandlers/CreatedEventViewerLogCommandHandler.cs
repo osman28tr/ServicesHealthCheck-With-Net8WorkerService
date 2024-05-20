@@ -15,17 +15,18 @@ using ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Models;
 using ServicesHealthCheck.Business.EventViewerCustomViews.Abstract;
 using ServicesHealthCheck.DataAccess.Abstract;
 using ServicesHealthCheck.Datas.NoSQL.MongoDb;
+using ServicesHealthCheck.Dtos.ServiceEventViewerLogDtos;
 using ServicesHealthCheck.Dtos.ServiceRuleDtos;
 
 namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Handlers.CommandHandlers
 {
-    public class CreatedEventViewerLogCommandHandler : IRequestHandler<CreatedServiceEventViewerLogCommand, List<UpdatedServiceRuleDto>>
+    public class CreatedEventViewerLogCommandHandler : IRequestHandler<CreatedServiceEventViewerLogCommand, GeneralCreatedEventViewerLogDto>
     {
         private readonly IServiceEventViewerLogRepository _serviceEventViewerLogRepository;
         private readonly IServiceRuleRepository _serviceRuleRepository;
         private readonly IEvCustomView _evCustomView;
         private readonly IMapper _mapper;
-        public CreatedEventViewerLogCommandHandler(IServiceEventViewerLogRepository serviceEventViewerLogRepository, IMapper mapper, IServiceRuleRepository serviceRuleRepository,IEvCustomView customView)
+        public CreatedEventViewerLogCommandHandler(IServiceEventViewerLogRepository serviceEventViewerLogRepository, IMapper mapper, IServiceRuleRepository serviceRuleRepository, IEvCustomView customView)
         {
             _serviceEventViewerLogRepository = serviceEventViewerLogRepository;
             _mapper = mapper;
@@ -33,9 +34,12 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
             _evCustomView = customView;
         }
 
-        public async Task<List<UpdatedServiceRuleDto>> Handle(CreatedServiceEventViewerLogCommand request, CancellationToken cancellationToken)
+        public async Task<GeneralCreatedEventViewerLogDto> Handle(CreatedServiceEventViewerLogCommand request, CancellationToken cancellationToken)
         {
-            List<UpdatedServiceRuleDto> updatedServiceRules = new List<UpdatedServiceRuleDto>();
+            GeneralCreatedEventViewerLogDto generalCreatedEventViewerLogDto = new GeneralCreatedEventViewerLogDto();
+            //List<UpdatedServiceRuleDto> updatedServiceRules = new List<UpdatedServiceRuleDto>();
+            //List<UpdatedServiceEventViewerLogDto> updatedServiceEventViewerLogDtos = new List<UpdatedServiceEventViewerLogDto>();
+
             var rules = await _serviceRuleRepository.GetAllAsync();
             if (rules != null)
                 RestartServiceByRule(rules);
@@ -56,24 +60,27 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
                             {
                                 if (log.EntryType == EventLogEntryType.Error || log.EntryType == EventLogEntryType.Warning)
                                 {
-                                    foreach (var rule in rules)
+                                    if (rules != null)
                                     {
-                                        if (rule.ServiceName == service && rule.EventType == log.EntryType.ToString() && log.Message.Contains(rule.EventMessage))
+                                        foreach (var rule in rules)
                                         {
-                                            if (rule.IsRestarted == false)
+                                            if (rule.ServiceName == service && rule.EventType == log.EntryType.ToString() && log.Message.Contains(rule.EventMessage))
                                             {
-                                                ServiceController serviceController = new ServiceController(service);
-                                                if (serviceController.Status == ServiceControllerStatus.Running)
+                                                if (rule.IsRestarted == false)
                                                 {
-                                                    serviceController.Stop();
-                                                    serviceController.WaitForStatus(ServiceControllerStatus.Stopped);
+                                                    ServiceController serviceController = new ServiceController(service);
+                                                    if (serviceController.Status == ServiceControllerStatus.Running)
+                                                    {
+                                                        serviceController.Stop();
+                                                        serviceController.WaitForStatus(ServiceControllerStatus.Stopped);
+                                                    }
+                                                    serviceController.Start();
+                                                    serviceController.WaitForStatus(ServiceControllerStatus.Running);
+                                                    rule.IsRestarted = true;
+                                                    var mappedServiceRuleDto = _mapper.Map<UpdatedServiceRuleDto>(rule);
+                                                    mappedServiceRuleDto.IsRestarted = true;
+                                                    generalCreatedEventViewerLogDto.UpdatedServiceRules.Add(mappedServiceRuleDto);
                                                 }
-                                                serviceController.Start();
-                                                serviceController.WaitForStatus(ServiceControllerStatus.Running);
-                                                rule.IsRestarted = true;
-                                                var mappedServiceRuleDto = _mapper.Map<UpdatedServiceRuleDto>(rule);
-                                                mappedServiceRuleDto.IsRestarted = true;
-                                                updatedServiceRules.Add(mappedServiceRuleDto);
                                             }
                                         }
                                     }
@@ -86,7 +93,8 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
                                             EventId = log.EventID,
                                             EventType = log.EntryType.ToString(),
                                             EventMessage = log.Message,
-                                            EventDate = log.TimeGenerated
+                                            EventDate = log.TimeGenerated,
+                                            EventCurrentDate = log.TimeGenerated
                                         });
                                     }
                                     else
@@ -99,7 +107,20 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
                                                 EventId = log.EventID,
                                                 EventType = log.EntryType.ToString(),
                                                 EventMessage = log.Message,
-                                                EventDate = log.TimeGenerated
+                                                EventDate = log.TimeGenerated,
+                                                EventCurrentDate = log.TimeGenerated
+                                            });
+                                        }
+                                        else
+                                        {
+                                            generalCreatedEventViewerLogDto.UpdatedServiceEventViewerLogDtos.Add(new UpdatedServiceEventViewerLogDto()
+                                            {
+                                                ServiceName = service,
+                                                EventId = log.EventID,
+                                                EventType = log.EntryType.ToString(),
+                                                EventMessage = log.Message,
+                                                EventDate = Convert.ToDateTime(serviceEventLog.First().EventDate),
+                                                EventCurrentDate = log.TimeGenerated
                                             });
                                         }
                                     }
@@ -120,7 +141,8 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
                                     EventId = 0,
                                     EventType = EventLogEntryType.Warning.ToString(),
                                     EventMessage = message,
-                                    EventDate = DateTime.UtcNow.ToLocalTime()
+                                    EventDate = DateTime.UtcNow.ToLocalTime(),
+                                    EventCurrentDate = DateTime.UtcNow.ToLocalTime()
                                 });
                             }
                             else
@@ -134,7 +156,8 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
                                         EventId = 0,
                                         EventType = EventLogEntryType.Warning.ToString(),
                                         EventMessage = message,
-                                        EventDate = DateTime.UtcNow.ToLocalTime()
+                                        EventDate = DateTime.UtcNow.ToLocalTime(),
+                                        EventCurrentDate = DateTime.UtcNow.ToLocalTime()
                                     });
                                     serviceNotEventLog = await _serviceEventViewerLogRepository.FindAsync(x => x.ServiceName == service);
                                 }
@@ -147,7 +170,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
                     }
                 }
             }
-            return updatedServiceRules;
+            return generalCreatedEventViewerLogDto;
         }
         public void RestartServiceByRule(List<ServiceRule> rules)
         {

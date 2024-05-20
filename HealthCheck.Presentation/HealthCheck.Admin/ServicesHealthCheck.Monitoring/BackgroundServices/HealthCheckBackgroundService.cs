@@ -85,12 +85,18 @@ namespace ServicesHealthCheck.Monitoring.BackgroundServices
                         var eventviewerLogRunState = configuration.GetSection("EventViewerLogRunState").Value;
                         if (Convert.ToBoolean(eventviewerLogRunState) == true)
                         {
-                            var updateServiceRules = await _mediator.Send(new CreatedServiceEventViewerLogCommand
+                            var generalCreatedEventViewerLog = await _mediator.Send(new CreatedServiceEventViewerLogCommand
                             { Services = services });
-                            if (updateServiceRules.Count != 0)
+                            if (generalCreatedEventViewerLog.UpdatedServiceRules.Count != 0)
                             {
                                 await _mediator.Send(new UpdatedServiceRuleCommand
-                                { UpdateServiceRuleDtos = updateServiceRules });
+                                { UpdateServiceRuleDtos = generalCreatedEventViewerLog.UpdatedServiceRules });
+                            }
+
+                            if (generalCreatedEventViewerLog.UpdatedServiceEventViewerLogDtos.Count != 0)
+                            {
+                                await _mediator.Send(new UpdatedEventViewerLogCommand
+                                { UpdatedServiceEventViewerLogDtos = generalCreatedEventViewerLog.UpdatedServiceEventViewerLogDtos });
                             }
                         }
                     });

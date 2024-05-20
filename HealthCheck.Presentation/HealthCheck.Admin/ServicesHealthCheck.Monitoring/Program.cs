@@ -41,7 +41,7 @@ builder.Host.UseSerilog((hostContext, services, configuration) =>
 {
     string date = DateTime.Now.ToString("yyyyMMdd");
     configuration
-        .MinimumLevel.Debug().
+        .MinimumLevel.Information().
     WriteTo.File($"Logs/minlevelinfo{date}log.txt", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information)
     .WriteTo.File($"Logs/minlevelwarning{date}log.txt", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Warning)
     .WriteTo.File($"Logs/minlevelerror{date}log.txt", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error)

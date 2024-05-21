@@ -31,6 +31,8 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
             {
                 try
                 {
+                    request.EventStartDate = request.EventStartDate.ToUniversalTime();
+                    request.EventEndDate = request.EventEndDate.ToUniversalTime();
                     if (!string.IsNullOrEmpty(request.ServiceName))
                     {
                         serviceEventViewerLogs = serviceEventViewerLogs.Where(x => x.ServiceName == request.ServiceName).ToList();
@@ -41,7 +43,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
                     }
                     if (request.EventEndDate == DateTime.MinValue)
                     {
-                        request.EventEndDate = DateTime.MaxValue;
+                        request.EventEndDate = DateTime.MaxValue.ToUniversalTime();
                     }
                     serviceEventViewerLogs = serviceEventViewerLogs.Where(x =>
                         x.EventDate >= request.EventStartDate && x.EventDate <= request.EventEndDate).ToList();

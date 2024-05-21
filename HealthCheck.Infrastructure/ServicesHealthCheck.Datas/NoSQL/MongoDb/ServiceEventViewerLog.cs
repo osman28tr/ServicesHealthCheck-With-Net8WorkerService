@@ -17,7 +17,7 @@ namespace ServicesHealthCheck.Datas.NoSQL.MongoDb
         public string ServiceName { get; set; }
         public string EventType { get; set; }
         public string EventMessage { get; set; }
-        public DateTime EventDate { get; set; }
-        public DateTime EventCurrentDate { get; set; }
+        public DateTime? EventDate { get; set; }
+        public DateTime? EventCurrentDate { get; set; }
     }
 }

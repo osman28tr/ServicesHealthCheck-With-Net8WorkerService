@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.ServiceProcess;
 using System.Text;
@@ -40,31 +41,32 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
             //List<UpdatedServiceRuleDto> updatedServiceRules = new List<UpdatedServiceRuleDto>();
             //List<UpdatedServiceEventViewerLogDto> updatedServiceEventViewerLogDtos = new List<UpdatedServiceEventViewerLogDto>();
 
+
             var rules = await _serviceRuleRepository.GetAllAsync();
             if (rules != null)
                 RestartServiceByRule(rules);
+
             if (request.Services != null)
             {
                 await _evCustomView.CreateCustomViewAsync(request.Services); // custom view oluşması
                 foreach (var service in request.Services)
                 {
+                    string xml = CreateDynamicXml(service);
+                    var query = new EventLogQuery("Application", PathType.LogName, xml);
+                    EventLogReader logReader = new EventLogReader(query);
                     try
                     {
-                        EventLog eventLog = new EventLog();
-                        eventLog.Log = "Application";
                         if (EventLog.SourceExists(service))
                         {
-                            var entries = eventLog.Entries.Cast<EventLogEntry>().Where(x =>
-                                x.Source == service);
-                            foreach (EventLogEntry log in entries)
+                            for (EventRecord eventDetail = logReader.ReadEvent(); eventDetail != null; eventDetail = logReader.ReadEvent())
                             {
-                                if (log.EntryType == EventLogEntryType.Error || log.EntryType == EventLogEntryType.Warning)
+                                if (eventDetail.LevelDisplayName == "Hata" || eventDetail.LevelDisplayName == "Bilgi")
                                 {
                                     if (rules != null)
                                     {
                                         foreach (var rule in rules)
                                         {
-                                            if (rule.ServiceName == service && rule.EventType == log.EntryType.ToString() && log.Message.Contains(rule.EventMessage))
+                                            if (rule.ServiceName == service && rule.EventType == eventDetail.LevelDisplayName && eventDetail.FormatDescription().Contains(rule.EventMessage))
                                             {
                                                 if (rule.IsRestarted == false)
                                                 {
@@ -85,30 +87,30 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
                                         }
                                     }
                                     var serviceEventLog = await _serviceEventViewerLogRepository.FindAsync(x => x.ServiceName == service);
-                                    if (serviceEventLog == null)
+                                    if (serviceEventLog.Count() == 0)
                                     {
                                         await _serviceEventViewerLogRepository.AddAsync(new ServiceEventViewerLog()
                                         {
                                             ServiceName = service,
-                                            EventId = log.EventID,
-                                            EventType = log.EntryType.ToString(),
-                                            EventMessage = log.Message,
-                                            EventDate = log.TimeGenerated,
-                                            EventCurrentDate = log.TimeGenerated
+                                            EventId = eventDetail.Id,
+                                            EventType = eventDetail.LevelDisplayName,
+                                            EventMessage = eventDetail.FormatDescription(),
+                                            EventDate = eventDetail.TimeCreated,
+                                            EventCurrentDate = eventDetail.TimeCreated
                                         });
                                     }
                                     else
                                     {
-                                        if (!(serviceEventLog.Select(x => x.EventMessage).Contains(log.Message) && serviceEventLog.Select(y => y.ServiceName).Contains(service) && serviceEventLog.Select(z => z.EventId).Contains(log.EventID)))
+                                        if (!(serviceEventLog.Select(x => x.EventMessage).Contains(eventDetail.FormatDescription()) && serviceEventLog.Select(y => y.ServiceName).Contains(service) && serviceEventLog.Select(z => z.EventId).Contains(eventDetail.Id)))
                                         {
                                             await _serviceEventViewerLogRepository.AddAsync(new ServiceEventViewerLog()
                                             {
                                                 ServiceName = service,
-                                                EventId = log.EventID,
-                                                EventType = log.EntryType.ToString(),
-                                                EventMessage = log.Message,
-                                                EventDate = log.TimeGenerated,
-                                                EventCurrentDate = log.TimeGenerated
+                                                EventId = eventDetail.Id,
+                                                EventType = eventDetail.LevelDisplayName,
+                                                EventMessage = eventDetail.FormatDescription(),
+                                                EventDate = eventDetail.TimeCreated,
+                                                EventCurrentDate = eventDetail.TimeCreated
                                             });
                                         }
                                         else
@@ -116,11 +118,11 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
                                             generalCreatedEventViewerLogDto.UpdatedServiceEventViewerLogDtos.Add(new UpdatedServiceEventViewerLogDto()
                                             {
                                                 ServiceName = service,
-                                                EventId = log.EventID,
-                                                EventType = log.EntryType.ToString(),
-                                                EventMessage = log.Message,
+                                                EventId = eventDetail.Id,
+                                                EventType = eventDetail.LevelDisplayName,
+                                                EventMessage = eventDetail.FormatDescription(),
                                                 EventDate = Convert.ToDateTime(serviceEventLog.First().EventDate),
-                                                EventCurrentDate = log.TimeGenerated
+                                                EventCurrentDate = eventDetail.TimeCreated
                                             });
                                         }
                                     }
@@ -229,6 +231,21 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
             {
                 Console.WriteLine("an error occured. " + exception.Message);
             }
+        }
+        static string CreateDynamicXml(string provider)
+        {
+            string xmlTemplate = @"
+                <QueryList>
+                    <Query Id='0' Path='Application'>
+                        <Select Path='Application'>
+                            *[System[Provider[@Name='{0}'] 
+                            and (Level=3 or Level=4) 
+                            and TimeCreated[timediff(@SystemTime) &lt;= 604800000]]]
+                        </Select>
+                    </Query>
+                </QueryList>";
+
+            return string.Format(xmlTemplate, provider);
         }
     }
 }

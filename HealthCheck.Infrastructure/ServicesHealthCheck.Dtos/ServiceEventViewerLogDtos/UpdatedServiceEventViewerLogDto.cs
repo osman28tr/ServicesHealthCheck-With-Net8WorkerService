@@ -13,6 +13,6 @@ namespace ServicesHealthCheck.Dtos.ServiceEventViewerLogDtos
         public string EventType { get; set; }
         public string EventMessage { get; set; }
         public DateTime EventDate { get; set; }
-        public DateTime EventCurrentDate { get; set; }
+        public DateTime? EventCurrentDate { get; set; }
     }
 }

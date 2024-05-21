@@ -25,7 +25,7 @@
         $('document').ready(function () {
             console.log($('#EventType').val());
             
-            if ($('#EventType').val() == 'Error') {
+            if ($('#EventType').val() == 'Hata') {
                 $('.card-body').addClass('table-danger');
             }
             else {
@@ -33,7 +33,7 @@
             }
         })
         function cardBodyChange() {
-            if ($('#EventType').val() == 'Error') {
+            if ($('#EventType').val() == 'Hata') {
                 $('.card-body').removeClass('table-warning');
                 $('.card-body').addClass('table-danger');
             }
@@ -96,8 +96,8 @@
             <div class="form-group">
                 <label for="EventType">Event Type</label>
                 <select class="form-control" id="EventType" onchange="cardBodyChange()" name="eventType">
-                    <option value="Error">Error</option>
-                    <option value="Warning">Warning</option>
+                    <option value="Hata">Error</option>
+                    <option value="Uyarı">Warning</option>
                 </select>
             </div>
             <div class="card" id="rstcard">

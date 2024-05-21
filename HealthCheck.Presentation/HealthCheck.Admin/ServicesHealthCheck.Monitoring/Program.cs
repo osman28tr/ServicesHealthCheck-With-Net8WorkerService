@@ -42,10 +42,10 @@ builder.Host.UseSerilog((hostContext, services, configuration) =>
     string date = DateTime.Now.ToString("yyyyMMdd");
     configuration
         .MinimumLevel.Information().
-    WriteTo.File($"Logs/minlevelinfo{date}log.txt", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information)
-    .WriteTo.File($"Logs/minlevelwarning{date}log.txt", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Warning)
-    .WriteTo.File($"Logs/minlevelerror{date}log.txt", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error)
-    .WriteTo.File($"Logs/minlevelfatal{date}log.txt", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Fatal);
+        WriteTo.File($"Logs/minlevelinfo{date}.log", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information)
+    .WriteTo.File($"Logs/minlevelwarning{date}.log", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Warning)
+    .WriteTo.File($"Logs/minlevelerror{date}.log", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error)
+    .WriteTo.File($"Logs/minlevelfatal{date}.log", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Fatal);
 });
 
 builder.Services.AddSingleton<HealthCheckContext>();

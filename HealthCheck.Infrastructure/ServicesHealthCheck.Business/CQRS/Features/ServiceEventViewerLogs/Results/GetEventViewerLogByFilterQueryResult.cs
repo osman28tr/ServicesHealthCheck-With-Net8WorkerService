@@ -14,5 +14,6 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Resu
         public string EventType { get; set; }
         public string EventMessage { get; set; }
         public DateTime EventDate { get; set; }
+        public DateTime EventCurrentDate { get; set; }
     }
 }

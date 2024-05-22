@@ -13,7 +13,6 @@ using MongoDB.Driver.Linq;
 using Serilog;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Commands;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Models;
-using ServicesHealthCheck.Business.EventViewerCustomViews.Abstract;
 using ServicesHealthCheck.DataAccess.Abstract;
 using ServicesHealthCheck.Datas.NoSQL.MongoDb;
 using ServicesHealthCheck.Dtos.ServiceEventViewerLogDtos;
@@ -25,14 +24,12 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
     {
         private readonly IServiceEventViewerLogRepository _serviceEventViewerLogRepository;
         private readonly IServiceRuleRepository _serviceRuleRepository;
-        private readonly IEvCustomView _evCustomView;
         private readonly IMapper _mapper;
-        public CreatedEventViewerLogCommandHandler(IServiceEventViewerLogRepository serviceEventViewerLogRepository, IMapper mapper, IServiceRuleRepository serviceRuleRepository, IEvCustomView customView)
+        public CreatedEventViewerLogCommandHandler(IServiceEventViewerLogRepository serviceEventViewerLogRepository, IMapper mapper, IServiceRuleRepository serviceRuleRepository)
         {
             _serviceEventViewerLogRepository = serviceEventViewerLogRepository;
             _mapper = mapper;
             _serviceRuleRepository = serviceRuleRepository;
-            _evCustomView = customView;
         }
 
         public async Task<GeneralCreatedEventViewerLogDto> Handle(CreatedServiceEventViewerLogCommand request, CancellationToken cancellationToken)
@@ -40,15 +37,12 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
             GeneralCreatedEventViewerLogDto generalCreatedEventViewerLogDto = new GeneralCreatedEventViewerLogDto();
             //List<UpdatedServiceRuleDto> updatedServiceRules = new List<UpdatedServiceRuleDto>();
             //List<UpdatedServiceEventViewerLogDto> updatedServiceEventViewerLogDtos = new List<UpdatedServiceEventViewerLogDto>();
-
-
             var rules = await _serviceRuleRepository.GetAllAsync();
             if (rules != null)
                 RestartServiceByRule(rules);
 
             if (request.Services != null)
             {
-                await _evCustomView.CreateCustomViewAsync(request.Services); // custom view oluşması
                 foreach (var service in request.Services)
                 {
                     string xml = CreateDynamicXml(service);
@@ -60,7 +54,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
                         {
                             for (EventRecord eventDetail = logReader.ReadEvent(); eventDetail != null; eventDetail = logReader.ReadEvent())
                             {
-                                if (eventDetail.LevelDisplayName == "Hata" || eventDetail.LevelDisplayName == "Bilgi")
+                                if (eventDetail.LevelDisplayName == "Hata" || eventDetail.LevelDisplayName == "Uyarı")
                                 {
                                     if (rules != null)
                                     {
@@ -132,16 +126,15 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
                         else
                         {
                             string message = $"{service} isimli servis'e ait event viewer'da log kayıtları bulunamadı.";
-
                             var serviceNotEventLog = await _serviceEventViewerLogRepository.FindAsync(x => x.ServiceName == service);
 
-                            if (serviceNotEventLog == null)
+                            if (serviceNotEventLog.Count() == 0)
                             {
                                 await _serviceEventViewerLogRepository.AddAsync(new ServiceEventViewerLog()
                                 {
                                     ServiceName = service,
                                     EventId = 0,
-                                    EventType = EventLogEntryType.Warning.ToString(),
+                                    EventType = "Uyarı",
                                     EventMessage = message,
                                     EventDate = DateTime.UtcNow.ToLocalTime(),
                                     EventCurrentDate = DateTime.UtcNow.ToLocalTime()
@@ -156,7 +149,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
                                     {
                                         ServiceName = service,
                                         EventId = 0,
-                                        EventType = EventLogEntryType.Warning.ToString(),
+                                        EventType = "Uyarı",
                                         EventMessage = message,
                                         EventDate = DateTime.UtcNow.ToLocalTime(),
                                         EventCurrentDate = DateTime.UtcNow.ToLocalTime()
@@ -239,7 +232,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
                     <Query Id='0' Path='Application'>
                         <Select Path='Application'>
                             *[System[Provider[@Name='{0}'] 
-                            and (Level=3 or Level=4) 
+                            and (Level=2 or Level=3) 
                             and TimeCreated[timediff(@SystemTime) &lt;= 604800000]]]
                         </Select>
                     </Query>

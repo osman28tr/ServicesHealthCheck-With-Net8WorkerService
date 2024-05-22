@@ -7,12 +7,14 @@ using ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Queries;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceHealthCheckByTimes.Queries;
 using ServicesHealthCheck.Business.CQRS.Features.ServiceHealthChecks.Queries;
 using ServicesHealthCheck.Monitoring.Models;
+using System;
 
 namespace ServicesHealthCheck.Monitoring.Controllers
 {
     public class HealthCheckController : Controller
     {
         private readonly IMediator _mediatr;
+        TimeZoneInfo localTimeZone = TimeZoneInfo.Local;
         public HealthCheckController(IMediator mediatr)
         {
             _mediatr = mediatr;
@@ -33,19 +35,24 @@ namespace ServicesHealthCheck.Monitoring.Controllers
                 {
                     if (result.ErrorList.Any())
                     {
+                        result.ErrorList.ForEach(x =>
+                        {
+                            DateTimeOffset localDateTime = TimeZoneInfo.ConvertTime(x.ErrorDate, localTimeZone);
+                            x.ErrorDate = localDateTime.DateTime;
+                        });
                         return View(result.ErrorList);
                     }
 
                     if (result.Errors.Any())
                     {
                         var updatedErrors = await _mediatr.Send(new CreatedServiceErrorLogCommand()
-                            { Errors = result.Errors });
+                        { Errors = result.Errors });
                         if (updatedErrors.Any())
                         {
                             updatedErrors.ForEach(async x =>
                             {
                                 await _mediatr.Send(new UpdatedServiceErrorLogCommand()
-                                    { Id = x.Id, IsCompleted = x.IsCompleted });
+                                { Id = x.Id, IsCompleted = x.IsCompleted });
                             });
                         }
                     }
@@ -69,6 +76,14 @@ namespace ServicesHealthCheck.Monitoring.Controllers
                     StartTime = healthCheckByFilter.StartTime,
                     EndTime = healthCheckByFilter.EndTime
                 });
+                if (result != null)
+                {
+                    result.ForEach(x =>
+                    {
+                        DateTimeOffset localDateTime = TimeZoneInfo.ConvertTime(x.Date, localTimeZone);
+                        x.Date = localDateTime.DateTime;
+                    });
+                }
                 return View(result);
             }
             catch (Exception exception)
@@ -91,6 +106,16 @@ namespace ServicesHealthCheck.Monitoring.Controllers
                     EventStartDate = eventViewerLogByFilter.EventStartDate,
                     EventEndDate = eventViewerLogByFilter.EventEndDate
                 });
+                if (result != null)
+                {
+                    result.ForEach(x =>
+                    {
+                        DateTimeOffset localEventCurrentDate = TimeZoneInfo.ConvertTime(x.EventCurrentDate, localTimeZone);
+                        DateTimeOffset localEventDate = TimeZoneInfo.ConvertTime(x.EventDate, localTimeZone);
+                        x.EventCurrentDate = localEventCurrentDate.DateTime;
+                        x.EventDate = localEventDate.DateTime;
+                    });
+                }
                 return View(result);
             }
             catch (Exception exception)
@@ -106,7 +131,7 @@ namespace ServicesHealthCheck.Monitoring.Controllers
             try
             {
                 await _mediatr.Send(new UpdatedServiceErrorLogCommand()
-                    { Id = changeErrorLogViewModel.Id, IsCompleted = changeErrorLogViewModel.IsCompleted });
+                { Id = changeErrorLogViewModel.Id, IsCompleted = changeErrorLogViewModel.IsCompleted });
             }
             catch (Exception exception)
             {

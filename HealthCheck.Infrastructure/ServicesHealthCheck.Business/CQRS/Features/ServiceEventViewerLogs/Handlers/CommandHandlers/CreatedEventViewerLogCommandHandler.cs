@@ -136,8 +136,8 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
                                     EventId = 0,
                                     EventType = "Uyarı",
                                     EventMessage = message,
-                                    EventDate = DateTime.UtcNow.ToLocalTime(),
-                                    EventCurrentDate = DateTime.UtcNow.ToLocalTime()
+                                    EventDate = DateTime.Now,
+                                    EventCurrentDate = DateTime.Now
                                 });
                             }
                             else

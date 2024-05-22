@@ -10,6 +10,7 @@ namespace ServicesHealthCheck.Monitoring.Controllers
     public class RuleController : Controller
     {
         private readonly IMediator _mediatr;
+        TimeZoneInfo localTimeZone = TimeZoneInfo.Local;
         public RuleController(IMediator mediatr)
         {
             _mediatr = mediatr;
@@ -20,6 +21,14 @@ namespace ServicesHealthCheck.Monitoring.Controllers
             try
             {
                 var result = await _mediatr.Send(new GetListServiceRuleQuery());
+                if (result != null)
+                {
+                    result.ForEach(x =>
+                    {
+                        DateTimeOffset localDateTime = TimeZoneInfo.ConvertTime(x.CreatedDate, localTimeZone);
+                        x.CreatedDate = localDateTime.DateTime;
+                    });
+                }
                 return View(result);
             }
             catch (Exception exception)

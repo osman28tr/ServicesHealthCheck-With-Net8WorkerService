@@ -38,7 +38,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthCheckByTimes.H
                     var serviceHealthCheckListByFilterTime =
                         await _serviceHealthCheckByTimeRepository.FindAsync(x =>
                             x.Date >= request.StartTime && x.Date <= request.EndTime);
-                    if (serviceHealthCheckListByFilterTime == null)
+                    if (serviceHealthCheckListByFilterTime.Count()==0)
                         return null;
                     var resultByTime = _mapper.Map<List<GetListHealthCheckByFilterQueryResult>>(serviceHealthCheckListByFilterTime);
                     return resultByTime;
@@ -53,7 +53,7 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceHealthCheckByTimes.H
 
                     var serviceHealthCheckListByFilter = await _serviceHealthCheckByTimeRepository.FindAsync(x =>
                         x.ServiceName == request.ServiceName && (x.Date >= request.StartTime && x.Date <= request.EndTime));
-                    if (serviceHealthCheckListByFilter == null)
+                    if (serviceHealthCheckListByFilter.Count()==0)
                         return null;
                     var result = _mapper.Map<List<GetListHealthCheckByFilterQueryResult>>(serviceHealthCheckListByFilter);
                     return result;

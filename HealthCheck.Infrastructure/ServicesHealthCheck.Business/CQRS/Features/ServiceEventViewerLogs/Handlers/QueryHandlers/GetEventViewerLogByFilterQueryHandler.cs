@@ -46,7 +46,9 @@ namespace ServicesHealthCheck.Business.CQRS.Features.ServiceEventViewerLogs.Hand
                         request.EventEndDate = DateTime.MaxValue.ToUniversalTime();
                     }
                     serviceEventViewerLogs = serviceEventViewerLogs.Where(x =>
-                        x.EventDate >= request.EventStartDate && x.EventDate <= request.EventEndDate).ToList();
+                        x.EventCurrentDate >= request.EventStartDate && x.EventCurrentDate <= request.EventEndDate).ToList();
+                    if (serviceEventViewerLogs.Count == 0)
+                        return null;
                     var result = _mapper.Map<List<GetEventViewerLogByFilterQueryResult>>(serviceEventViewerLogs);
                     return result;
                 }

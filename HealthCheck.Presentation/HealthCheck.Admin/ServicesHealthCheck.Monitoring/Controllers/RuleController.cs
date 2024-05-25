@@ -28,6 +28,7 @@ namespace ServicesHealthCheck.Monitoring.Controllers
                         DateTimeOffset localDateTime = TimeZoneInfo.ConvertTime(x.CreatedDate, localTimeZone);
                         x.CreatedDate = localDateTime.DateTime;
                     });
+                    result = result.OrderByDescending(x => x.CreatedDate).ToList();
                 }
                 return View(result);
             }

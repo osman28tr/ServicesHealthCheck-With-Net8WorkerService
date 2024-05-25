@@ -12,6 +12,11 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/css/bootstrap-datetimepicker.min.css">
+    <style>
+        tbody tr:nth-child(odd) {
+            background-color: lightgreen;
+        }
+    </style>
 </head>
 <body>
     <form action="/HealthCheck/GetHealthCheckByFilter" method="get">
@@ -53,16 +58,16 @@
             <tr>
                 <th scope="col">Name</th>
                 <th scope="col">Status</th>
-                <th scope="col">CpuUsage</th>
-                <th scope="col">PhysicalMemoryUsage</th>
-                <th scope="col">VirtualMemoryUsage</th>
-                <th scope="col">PrivateMemoryUsage</th>
+                <th scope="col">CpuUsage(%)</th>
+                <th scope="col">PhysicalMemoryUsage(MB)</th>
+                <th scope="col">VirtualMemoryUsage(MB)</th>
+                <th scope="col">PrivateMemoryUsage(MB)</th>
                 <th scope="col">IsHealthy</th>
                 <th scope="col">IsResourceUsageLimitExceeded</th>
                 <th scope="col">Date</th>
             </tr>
         </thead>
-        @if (Model==null)
+        @if (Model == null)
         {
             <tbody id="table-body">
                 <tr>
@@ -78,11 +83,20 @@
                     <tr>
                         <td>@item.ServiceName</td>
                         <td>@item.Status</td>
-                        <td>@item.CpuUsage</td>
-                        <td>@item.PhysicalMemoryUsage</td>
-                        <td>@item.VirtualMemoryUsage</td>
-                        <td>@item.PrivateMemoryUsage</td>
-                        <td>@item.IsHealthy</td>
+                        <td>@item.CpuUsage.ToString("F2")</td>
+                        <td>@item.PhysicalMemoryUsage.ToString("F2")</td>
+                        <td>@item.VirtualMemoryUsage.ToString("F2")</td>
+                        <td>@item.PrivateMemoryUsage.ToString("F2")</td>
+                        <td>
+                            @if (item.IsHealthy)
+                            {
+                                <img src="~/icons/servicehealthy.png" width="20px" height="20px" />
+                            }
+                            else
+                            {
+                                <img src="~/icons/serviceunhealthy.png" width="20px" height="20px" />
+                            }
+                        </td>
                         <td>@item.IsResourceUsageLimitExceeded</td>
                         <td>@item.Date</td>
                     </tr>

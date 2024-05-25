@@ -40,6 +40,7 @@ namespace ServicesHealthCheck.Monitoring.Controllers
                             DateTimeOffset localDateTime = TimeZoneInfo.ConvertTime(x.ErrorDate, localTimeZone);
                             x.ErrorDate = localDateTime.DateTime;
                         });
+                        result.ErrorList = result.ErrorList.OrderByDescending(x => x.ErrorDate).ToList();
                         return View(result.ErrorList);
                     }
 
@@ -83,6 +84,7 @@ namespace ServicesHealthCheck.Monitoring.Controllers
                         DateTimeOffset localDateTime = TimeZoneInfo.ConvertTime(x.Date, localTimeZone);
                         x.Date = localDateTime.DateTime;
                     });
+                    result = result.OrderByDescending(x => x.Date).ToList();
                 }
                 return View(result);
             }
@@ -115,6 +117,7 @@ namespace ServicesHealthCheck.Monitoring.Controllers
                         x.EventCurrentDate = localEventCurrentDate.DateTime;
                         x.EventDate = localEventDate.DateTime;
                     });
+                    result = result.OrderByDescending(x => x.EventDate).ToList();
                 }
                 return View(result);
             }

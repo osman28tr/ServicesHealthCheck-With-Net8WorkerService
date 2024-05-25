@@ -24,39 +24,49 @@
             }); // noktalı virgül eklenmeli
 
             function updateTable(serviceHealthCheckSignalRDto) {
+                var healthyIcon = '<img src="/icons/servicehealthy.png" alt="Healthy" width="25" height="25"/>';
+                var unhealthyIcon = '<img src="/icons/serviceunhealthy.png" alt="Unhealthy" width="25" height="25"/>';
+               
                 var existingRow = $('#table-body tr').filter(function () {
                     return $(this).find('td:nth-child(2)').text() === serviceHealthCheckSignalRDto.serviceName
                 });
 
                 if (existingRow.length > 0) {
                     existingRow.find('td:nth-child(3)').text(serviceHealthCheckSignalRDto.status);
-                    existingRow.find('td:nth-child(4)').text(serviceHealthCheckSignalRDto.cpuUsage + '%');
-                    existingRow.find('td:nth-child(5)').text(serviceHealthCheckSignalRDto.physicalMemoryUsage + 'MB');
-                    existingRow.find('td:nth-child(6)').text(serviceHealthCheckSignalRDto.virtualMemoryUsage + 'MB');
-                    existingRow.find('td:nth-child(7)').text(serviceHealthCheckSignalRDto.privateMemoryUsage + 'MB');
+                    existingRow.find('td:nth-child(4)').text(parseFloat(serviceHealthCheckSignalRDto.cpuUsage).toFixed(2) + '%');
+                    existingRow.find('td:nth-child(5)').text(parseFloat(serviceHealthCheckSignalRDto.physicalMemoryUsage).toFixed(2) + 'MB');
+                    existingRow.find('td:nth-child(6)').text(parseFloat(serviceHealthCheckSignalRDto.virtualMemoryUsage).toFixed(2) + 'MB');
+                    existingRow.find('td:nth-child(7)').text(parseFloat(serviceHealthCheckSignalRDto.privateMemoryUsage).toFixed(2) + 'MB');
                     
-                    existingRow.find('td:nth-child(8)').text(serviceHealthCheckSignalRDto.isHealthy);
+                    existingRow.find('td:nth-child(8)').html(serviceHealthCheckSignalRDto.isHealthy ? healthyIcon : unhealthyIcon);
                     existingRow.find('td:nth-child(9)').text(serviceHealthCheckSignalRDto.isResourceUsageLimitExceeded);
                 } else {
                     var row = `<tr>
                                                         <td></td>
                                                                                         <td>${serviceHealthCheckSignalRDto.serviceName}</td>
                                                                                         <td>${serviceHealthCheckSignalRDto.status}</td>
-                                                                                                <td>${serviceHealthCheckSignalRDto.cpuUsage + '%'}</td>
-                                                                                                <td>${serviceHealthCheckSignalRDto.physicalMemoryUsage + 'MB'}</td>
-                                                                                                <td>${serviceHealthCheckSignalRDto.virtualMemoryUsage + 'MB'}</td>
-                                                                                                <td>${serviceHealthCheckSignalRDto.privateMemoryUsage + 'MB'}</td>
+                                                                                                        <td>${parseFloat(serviceHealthCheckSignalRDto.cpuUsage).toFixed(2) + '%'}</td>
+                                                                                                        <td>${parseFloat(serviceHealthCheckSignalRDto.physicalMemoryUsage).toFixed(2) + 'MB'}</td>
+                                                                                                        <td>${parseFloat(serviceHealthCheckSignalRDto.virtualMemoryUsage).toFixed(2) + 'MB'}</td>
+                                                                                                        <td>${parseFloat(serviceHealthCheckSignalRDto.privateMemoryUsage).toFixed(2) + 'MB'}</td>
                                                                                                      
-                                                                                                <td>${serviceHealthCheckSignalRDto.isHealthy}</td>
-                                                                                                        <td>${serviceHealthCheckSignalRDto.isResourceUsageLimitExceeded}</td>
+                                                                                                <td>
+                                                                                                ${serviceHealthCheckSignalRDto.isHealthy ? healthyIcon : unhealthyIcon}                                                  
+                                                                                                </td>
+                                                                                                                        <td>${serviceHealthCheckSignalRDto.isResourceUsageLimitExceeded}</td>
                                                                                              
                                                    </tr>`;
                     $('#table-body').append(row);
                 }
-                $('#diskUsage').text(serviceHealthCheckSignalRDto.diskUsage + '%');
+                $('#diskUsage').text(parseFloat(serviceHealthCheckSignalRDto.diskUsage).toFixed(2) + '%');
             }
         });
     </script>
+    <style>
+        tbody tr:nth-child(odd) {
+            background-color: lightgreen;
+        }
+    </style>
 </head>
 <body>
     <br />

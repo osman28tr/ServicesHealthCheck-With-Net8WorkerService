@@ -97,7 +97,16 @@
                                 <img src="~/icons/serviceunhealthy.png" width="20px" height="20px" />
                             }
                         </td>
-                        <td>@item.IsResourceUsageLimitExceeded</td>
+                        <td>
+                            @if (item.IsResourceUsageLimitExceeded)
+                            {
+                                <img src="~/icons/checked.png" width="20px" height="20px" />
+                            }
+                            else
+                            {
+                                <img src="~/icons/unchecked.png" width="20px" height="20px" />
+                            }
+                        </td>
                         <td>@item.Date</td>
                     </tr>
                 }

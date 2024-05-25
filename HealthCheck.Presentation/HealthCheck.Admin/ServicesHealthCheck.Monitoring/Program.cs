@@ -37,15 +37,18 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 var option = builder.Configuration.GetSection("Notifications:Email");
 builder.Services.Configure<MailSetting>(option);
 
+var exePath = Assembly.GetEntryAssembly().Location.ToString();
+var directoryPath = Path.GetDirectoryName(exePath);
+
 builder.Host.UseSerilog((hostContext, services, configuration) =>
 {
     string date = DateTime.Now.ToString("yyyyMMdd");
     configuration
         .MinimumLevel.Information().
-        WriteTo.File($"Logs/minlevelinfo{date}.log", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information)
-    .WriteTo.File($"Logs/minlevelwarning{date}.log", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Warning)
-    .WriteTo.File($"Logs/minlevelerror{date}.log", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error)
-    .WriteTo.File($"Logs/minlevelfatal{date}.log", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Fatal);
+        WriteTo.File($"{directoryPath}/Logs/minlevelinfo{date}.log", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information)
+        .WriteTo.File($"{directoryPath}/Logs/minlevelwarning{date}.log", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Warning)
+        .WriteTo.File($"{directoryPath}/Logs/minlevelerror{date}.log", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error)
+        .WriteTo.File($"{directoryPath}/Logs/minlevelfatal{date}.log", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Fatal);
 });
 
 builder.Services.AddSingleton<HealthCheckContext>();

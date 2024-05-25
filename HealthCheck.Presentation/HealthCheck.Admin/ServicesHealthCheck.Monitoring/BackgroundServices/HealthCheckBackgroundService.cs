@@ -16,9 +16,11 @@ namespace ServicesHealthCheck.Monitoring.BackgroundServices
     public class HealthCheckBackgroundService : BackgroundService
     {
         private readonly IMediator _mediator;
+        private readonly IConfigurationRoot configuration;
         public HealthCheckBackgroundService(IMediator mediator)
         {
             _mediator = mediator;
+            configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
         }
         public override Task StartAsync(CancellationToken cancellationToken)
         {
@@ -34,7 +36,6 @@ namespace ServicesHealthCheck.Monitoring.BackgroundServices
             {
                 while (!stoppingToken.IsCancellationRequested)
                 {
-                    var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
                     var services = configuration.GetSection("Services").Get<List<string>>();
                     var serviceCpuUsageLimit = configuration.GetSection("ResourceLimits:MaxCpuUsage").Value;
 
@@ -100,6 +101,7 @@ namespace ServicesHealthCheck.Monitoring.BackgroundServices
                             }
                         }
                     });
+                    await Task.Delay(1000, stoppingToken);
                 }
             }
             catch (Exception exception)

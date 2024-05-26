@@ -70,8 +70,11 @@ It is the layer that allows data coming from the Worker service to be received v
 <p>Service Health Check By Filter</p>
 <img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/servicefiltering2.PNG">
 
+<p>Service Error Logs</p>
+<img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/healthcheckerrors2.PNG">
+
 <p>Service Event Viewer Log By Filter</p>
-<img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/eventviewerlogfiltering2.PNG">
+<img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/Eventviewerlogfiltering2.PNG">
 
 <p>List Rule</p>
 <img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/listrule2.PNG">

@@ -51,7 +51,7 @@ Veritabanı olarak Mongodb kullanıldı.
 
 <p align="justify">
 <b>ServicesHealthCheck.SignalR: </b> 
-Worker servisinden gelen verilerin direkt olarak alınması yerine SignalR teknolojisi üzerinden alınmasına olanak sağlayan katmandır. Websocket teknolojisine dayanmaktadır. Sürekli değişen verilerin ön uçta anında görüntülenmesini sağlar. SignalR aracılığıyla veri toplanmasının nedeni, uygulamayı daha yönetilebilir hale getirmek (örneğin istemci bazında filtreleme yapmak) ve oluşabilecek kod karmaşıklığını azaltmaktır. SignalR'ın merkezini oluşturan hub yapısı yer alır. Veri gönderme ve alma işlemleri hub yapısı üzerinden gerçekleştirilir. Bu katman Asp.Net Core API ile ayağa kaldırılmıştır.
+Worker servisinden gelen verilerin direkt olarak alınması yerine SignalR teknolojisi üzerinden alınmasına olanak sağlayan katmandır. Websocket teknolojisine dayanmaktadır. Sürekli değişen verilerin ön uçta anlık olarak görüntülenmesini sağlar. SignalR aracılığıyla veri toplanmasının nedeni, uygulamayı daha yönetilebilir hale getirmek (örneğin istemci bazında filtreleme yapmak) ve oluşabilecek kod karmaşıklığını azaltmaktır. SignalR'ın merkezini oluşturan hub yapısı yer alır. Veri gönderme ve alma işlemleri hub yapısı üzerinden gerçekleştirilir. Bu katman Asp.Net Core API ile ayağa kaldırılmıştır.
 </p>
 
 <h4>HealthCheck.Presentation -> HealthCheck.Admin - Katmanlar</h4>

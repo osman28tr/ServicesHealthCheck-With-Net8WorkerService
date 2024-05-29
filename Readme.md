@@ -113,4 +113,4 @@ Publish the ServicesHealthCheck.Monitoring project.</p>
 <h4>Working logic of the project as a windows service</h4>
 <img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/healthcheckplugin.PNG">
 <br><br>
-<footer><b>Supported by CTS Yazılım as an intern project.</b></footer>
+<footer><b>It was supported by CTS Yazılım as an intern project.</b></footer>

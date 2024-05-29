@@ -16,7 +16,7 @@
 
 <h3>3. General Outlines of the Architecture Used in the Project</h3>
 
-<img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/arhitecture4.1.PNG">
+<img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/arhitecture4.2.PNG">
 
 <h3>4. Technical Information</h3>
 <h4>HealthCheck.Infrastructure - Layers</h4>

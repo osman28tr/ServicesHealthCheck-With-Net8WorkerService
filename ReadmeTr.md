@@ -109,8 +109,8 @@ Monitoring projesini publish ediniz. Projeyi Windows servisi olarak çalıştır
 <p align="justify">Projeyi veritabanı bileşenleriyle birlikte kurmak için bir setup projesi oluşturuldu. Öncelikle projenin bulunduğu solution'da Items->MongoDb klasörlerini oluşturunuz. Daha sonra mongodb dosyasını oluşturduğunuz mongodb klasörüne yerleştiriniz. 
 ServicesHealthCheck.Monitoring projesini publish ediniz.</p>
 <p align="justify">Ardından solution'daki setup projesine gidiniz ve bin->debug->net8.0'a gidiniz. Setup.exe'yi yönetici olarak çalıştırınız. Uygulama başarıyla yüklendikten sonra tarayıcıdan localhost:5181 adresine gidiniz.</p>
-<b>Not:</b> Uygulamanın Windows hizmeti olarak çalıştığını görmek için Windows arama kısmına "services" yazınız. Açılan pencerede HealthCheckProject hizmet adını bulunuz ve çalışma durumunu kontrol ediniz.
+<b>Not:</b> Uygulamanın Windows hizmeti olarak çalıştığını görmek için Windows arama kısmına "hizmetler" yazınız. Açılan pencerede HealthCheckProject hizmet adını bulunuz ve çalışma durumunu kontrol ediniz.
 <h4>Projenin Windows servis olarak çalışma mantığı</h4>
 <img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/healthcheckplugin.PNG">
 <br><br>
-<footer><b>CTS Yazılım tarafından stajyer projesi olarak desteklenmektedir.</b></footer>
+<footer><b>CTS Yazılım tarafından stajyer projesi olarak desteklenmiştir.</b></footer>

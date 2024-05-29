@@ -2,7 +2,7 @@
 
 <h3>1. Entrance</h3>
 
-<p align="justify">Windows services health check project is a windows service health check project that checks the status of windows services installed in our system by taking the names of these services from the appsettings.json file. If at least one of the services whose status is checked is not working, a notification is sent to the admin e-mail address written in the appsettings.json file. Logs the status of the services to the mongodb database. It controls the resource consumption of the services (e.g. CPU, memory usage) and instantly monitors all this data on a frontend. It logs service statuses temporally according to the temporal value entered by the user from the appsettings.json file. You can filter these logged values ​​in a separate interface (by service name, time interval, etc.). It connects to Eventviewer and writes the error and warning logs of the relevant services to the database. It can filter the logs from a separate interface. From a separate interface, a rule can be created for the relevant service based on the event message, event type and service name entered by the user. According to this created rule, if the relevant service gives an error or warning, it is restarted. In addition, the user can restart the relevant service at periodic intervals entered (once a week, every 2 days, etc.).</p>
+<p align="justify">Windows service health check project is a Windows service health check project that checks the names of these services in the Windows environments installed on our system by taking them from the appsettings.json program. If at least one of the services whose status is checked is not working, a notification is sent via admin e-mail written in the appsettings.json file. Its services are registered in the mongodb database. The resource consumption (or CPU, memory usage) of the services is checked and all this data is displayed instantly on the front-end. It saves service statuses in the database according to the temporal value entered from the user's appsettings.json file. You can filter these saved values ​​in separate settings (by service name, time interval, etc.). It connects to Eventviewer and writes the error and warning logs of the relevant services to the database. It can filter the logs from a separate tariff. A rule can be created for the relevant service based on the event message, event type and service name entered from separate information. According to this rule, if the relevant service gives an error or warning, it is restarted. Additionally, the user can restart the service at entered periodic intervals (once a week, every 2 days, etc.).</p>
 
 <p align="justify">The project being developed is discussed in 3 parts. These are as follows:<br/><br>
 <b>HealthCheck.Infrastructure:</b> This is the part where various business and database processes of our application are carried out and the infrastructure of our application is hosted.<br><br>
@@ -27,12 +27,12 @@ It is the layer where classes corresponding to collections in the database are d
 </p>
 
 <p align="justify">
-    <b>ServicesHealthCheck.DataAccessLayer: </b> It is the layer where database-related CRUD operations are performed. There is a context class that corresponds to the database and where configuration settings related to the database are made. It references the entities layer to correspond to collections in the database. Since there are not many relational scripts and for fast read and write operation
-Mongodb was used as the database.
+    <b>ServicesHealthCheck.DataAccessLayer: </b> It is the layer where CRUD operations related to the database are performed. There is a context class that corresponds to the database and where configuration settings for the database are made. It references the Datas layer for the classes that will correspond to the collections in the database. Since there are not many relational states and for fast reading and writing
+MongoDB was used as the database.
 </p>
 
 <p align="justify">
-    <b>ServicesHealthCheck.Shared: </b> It is the layer where classes and interfaces commonly used by more than one layer are defined. It contains IEntity and Settings elements. IEntity defines classes as collections of databases. The Settings class is the class that corresponds to the database configuration settings.
+    <b>ServicesHealthCheck.Shared: </b> It is the layer where classes and interfaces commonly used by more than one layer are defined. Contains IEntity and Settings. Classes that implement the IEntity interface are defined as database collections. The Settings class is the class that corresponds to the database configuration settings.
 </p>
 
 <p align="justify">
@@ -40,7 +40,7 @@ Mongodb was used as the database.
 </p>
 
 <p align="justify">
-    <b>ServicesHealthCheck.BusinessLayer: </b> It is the layer where application-related business processes are carried out and database manager classes are located. CQRS design pattern is used to separate data reading and writing operations in CRUD operations. In this way, flexibility and sustainability are increased. The mediator library is used to use the CQRS design pattern effectively. The automapper library is used to easily perform mapping between dto classes and entity classes. Mailkit library is used to send notifications. The signalr.client library was used within the service under the Realtimes folder to send instant data from the Worker Service to the signalR layer.
+    <b>ServicesHealthCheck.BusinessLayer: </b> It is the layer where the business processes related to the application are carried out and the database manager classes are located. CQRS design pattern was used to separate data reading and writing operations in CRUD operations. In this way, flexibility and sustainability are increased. Mediator library was used to effectively use the CQRS design pattern. Automapper library was used to easily perform mapping between dto classes and entity classes. Mailkit library was used to send notifications. Signalr.client library was used within the service under Realtimes folder to send instant data from Worker Service to signalR layer.
 </p>
 
 <h4>HealthCheck.Servis - Layers</h4>
@@ -109,7 +109,7 @@ Publish the monitoring project. You can use the following command to run the pro
 <p align="justify">A setup project was created to install the project with its database components. First of all, create Items->MongoDb folders in the solution where the project is located. Then put the mongodb file into the mongodb folder you created. 
 Publish the ServicesHealthCheck.Monitoring project.</p>
 <p align="justify">Then, go to the setup project in the solution and go to bin->debug->net8.0. Run Setup.exe as an administrator. After the application is successfully installed, go to localhost:5181 from the browser.</p>
-<b>Note:</b> To see that the application runs as a Windows service, type "services" in the Windows search section. Find the HealthCheckProject service name in the window that opens and you can see that it is running successfully.
+<b>Note:</b> To see that the application runs as a Windows service, type "services" in the Windows search section. In the window that opens, find the HealthCheckProject service name and check its operating status.
 <h4>Working logic of the project as a windows service</h4>
 <img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/healthcheckplugin.PNG">
 <br><br>

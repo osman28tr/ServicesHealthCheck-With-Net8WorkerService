@@ -12,7 +12,7 @@
 
 <h3>2. Used Technologies</h3>
 <p align="justify">
-.Net Worker Background Services, WindowsServices, Asp.Net Core Mvc, Asp.Net Core API, Repository Design Pattern, CQRS Design Pattern, Mediator, Dtos, AutoMapper, SignalR, MailKit, Serilog, MongoDb</p>
+.Net Worker Background Services, WindowsServices, Asp.Net Core Mvc, Asp.Net Core API, Repository Design Pattern, CQRS Design Pattern, Mediator, Dtos, AutoMapper, SignalR, MailKit, Serilog, MongoDb, JQuery, Ajax</p>
 
 <h3>3. General Outlines of the Architecture Used in the Project</h3>
 

@@ -16,7 +16,7 @@
 
 <h3>3. Projede Kullanılan Mimarinin Genel Hatları</h3>
 
-<img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/arhitecture3.1.PNG" height="400px" width="650px">
+<img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/arhitecture4.2.PNG">
 
 <h3>4. Teknik Bilgilendirme</h3>
 <h4>HealthCheck.Infrastructure - Katmanlar</h4>

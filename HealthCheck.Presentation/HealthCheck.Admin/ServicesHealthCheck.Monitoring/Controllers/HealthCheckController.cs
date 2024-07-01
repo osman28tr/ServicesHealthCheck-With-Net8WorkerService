@@ -19,7 +19,7 @@ namespace ServicesHealthCheck.Monitoring.Controllers
         {
             _mediatr = mediatr;
         }
-
+        //deneme
         public async Task<IActionResult> Index()
         {
             //var result = await _mediatr.Send(new GetListServiceHealthCheckQuery());

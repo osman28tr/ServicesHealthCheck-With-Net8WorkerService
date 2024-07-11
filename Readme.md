@@ -67,6 +67,9 @@ It is the layer that allows data coming from the Worker service to be received v
 <p>Service Health Check</p>
 <img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/screenshot3.PNG">
 
+<p>Live Resource Usage Graphs of Services</p>
+<img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/screenshot4.PNG">
+
 <p>Service Health Check By Filter</p>
 <img src="HealthCheck.Presentation/HealthCheck.Admin/ServicesHealthCheck.Monitoring/wwwroot/images/servicefiltering2.PNG">
 
